@@ -1,21 +1,209 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import '../constants/colors.dart';
+import '../constants/app_theme.dart';
 import '../constants/tamil_data.dart';
+import '../widgets/glass_card.dart';
+import '../widgets/safe_image.dart';
 
-class RhymesScreen extends StatefulWidget {
+class RhymesScreen extends StatelessWidget {
   const RhymesScreen({super.key});
 
   @override
-  State<RhymesScreen> createState() => _RhymesScreenState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppTheme.backgroundLight,
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(context),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.all(20),
+                itemCount: TamilData.tamilRhymes.length,
+                itemBuilder: (context, index) {
+                  final rhyme = TamilData.tamilRhymes[index];
+                  return _buildRhymeCard(context, rhyme);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.backgroundLight.withOpacity(0.9),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildNavButton(
+            icon: Icons.arrow_back,
+            onTap: () => Navigator.pop(context),
+          ),
+          Column(
+            children: [
+              Text(
+                'SING ALONG',
+                style: GoogleFonts.lexend(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppTheme.primaryRed.withOpacity(0.8),
+                  letterSpacing: 1.5,
+                ),
+              ),
+              Text(
+                'Tamil Rhymes',
+                style: GoogleFonts.notoSansTamil(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.textDark,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(width: 40),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavButton({required IconData icon, required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: AppTheme.primaryRed.withOpacity(0.1),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: AppTheme.primaryRed, size: 24),
+      ),
+    );
+  }
+
+  Widget _buildRhymeCard(BuildContext context, Map<String, dynamic> rhyme) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppTheme.primaryRed.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(24),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => RhymePlayerScreen(rhyme: rhyme),
+              ),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryRed.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: SafeImage(
+                      assetPath: 'assets/images/${rhyme["image"] ?? "music_placeholder"}.png', 
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        rhyme['title'],
+                        style: GoogleFonts.notoSansTamil(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.textDark,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryRed.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          '${(rhyme['lines'] as List).length} Lines',
+                          style: GoogleFonts.lexend(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.primaryRed,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryRed,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.primaryRed.withOpacity(0.4),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 30),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
-class _RhymesScreenState extends State<RhymesScreen> {
+class RhymePlayerScreen extends StatefulWidget {
+  final Map<String, dynamic> rhyme;
+  const RhymePlayerScreen({super.key, required this.rhyme});
+
+  @override
+  State<RhymePlayerScreen> createState() => _RhymePlayerScreenState();
+}
+
+class _RhymePlayerScreenState extends State<RhymePlayerScreen> {
   final FlutterTts flutterTts = FlutterTts();
-  int? _selectedRhymeIndex;
   int _lineIndex = 0;
   bool _isPlaying = false;
+  List<dynamic> get _lines => widget.rhyme['lines'] as List;
 
   @override
   void initState() {
@@ -25,21 +213,21 @@ class _RhymesScreenState extends State<RhymesScreen> {
 
   void _initTts() async {
     await flutterTts.setLanguage("ta-IN");
-    await flutterTts.setPitch(1.2);
-    await flutterTts.setSpeechRate(0.4);
+    await flutterTts.setPitch(1.0);
+    await flutterTts.setSpeechRate(0.3);
   }
 
   Future<void> _speak(String text) async {
     setState(() => _isPlaying = true);
     await flutterTts.speak(text);
     flutterTts.setCompletionHandler(() {
-      setState(() => _isPlaying = false);
+      if (mounted) setState(() => _isPlaying = false);
     });
   }
 
   Future<void> _stop() async {
     await flutterTts.stop();
-    setState(() => _isPlaying = false);
+    if (mounted) setState(() => _isPlaying = false);
   }
 
   @override
@@ -50,173 +238,137 @@ class _RhymesScreenState extends State<RhymesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_selectedRhymeIndex != null) {
-      return _buildRhymePlayer();
-    }
+    final currentLine = _lines[_lineIndex];
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('குழந்தை பாடல்கள்'),
-      ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: TamilData.tamilRhymes.length,
-        itemBuilder: (context, index) {
-          final rhyme = TamilData.tamilRhymes[index];
-          return Card(
-            margin: const EdgeInsets.only(bottom: 16),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            elevation: 4,
-            child: ListTile(
-              contentPadding: const EdgeInsets.all(20),
-              leading: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.primaryRed.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.music_note, color: AppColors.primaryRed),
-              ),
-              title: Text(
-                rhyme['title']!,
-                style: GoogleFonts.notoSansTamil(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primaryRed,
-                ),
-              ),
-              subtitle: Text('${(rhyme['lines'] as List).length} Lines'),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-              onTap: () {
-                setState(() {
-                  _selectedRhymeIndex = index;
-                  _lineIndex = 0;
-                });
-              },
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildRhymePlayer() {
-    final rhyme = TamilData.tamilRhymes[_selectedRhymeIndex!];
-    final lines = rhyme['lines'] as List;
-    final currentLine = lines[_lineIndex];
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(rhyme['title']!),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            _stop();
-            setState(() => _selectedRhymeIndex = null);
-          },
-        ),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [AppColors.primaryRed.withOpacity(0.05), AppColors.white],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+      backgroundColor: AppTheme.backgroundLight,
+      body: SafeArea(
         child: Column(
           children: [
-            Expanded(
-              child: Center(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Image Area
-                      Container(
-                        width: 320,
-                        height: 320,
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(30),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primaryRed.withOpacity(0.1),
-                              blurRadius: 20,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        child: Image.asset(
-                          'assets/images/${currentLine['image']}.png',
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.music_video, size: 80, color: AppColors.primaryRed),
-                              const SizedBox(height: 10),
-                              Text(
-                                'Image: ${currentLine['image']}',
-                                style: const TextStyle(color: AppColors.textGray, fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 40),
-                      // Text Area
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 40),
-                        child: Text(
-                          currentLine['content'],
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.notoSansTamil(
-                            fontSize: 32,
-                            height: 1.5,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primaryRed,
-                          ),
-                        ),
-                      ),
-                    ],
+             Container(
+              padding: const EdgeInsets.all(16),
+              color: Colors.transparent, 
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, color: AppTheme.textDark),
+                    onPressed: () => Navigator.pop(context),
                   ),
-                ),
+                   Expanded(
+                    child: Text(
+                      widget.rhyme['title'],
+                      style: GoogleFonts.notoSansTamil(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.textDark,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                   const SizedBox(width: 48), // Balance back button
+                ],
               ),
             ),
-            // Bottom Controls
+            
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Image Placeholder with Glass or Premium style
+                  GlassCard(
+                    width: 300,
+                    height: 300,
+                    radius: 30,
+                    child: Center(
+                      child: SafeImage(
+                          assetPath: 'assets/images/${widget.rhyme["image"] ?? "rhyme_bg"}.png',
+                          fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  
+                  // Lyrics Card
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      child: Text(
+                        currentLine['content'],
+                        key: ValueKey(_lineIndex),
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.notoSansTamil(
+                          fontSize: 28,
+                          height: 1.5,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.textDark,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            
+            // Controls
             Container(
-              padding: const EdgeInsets.only(bottom: 40, left: 30, right: 30),
+              padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 30),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 20,
+                    offset: const Offset(0, -5),
+                  ),
+                ],
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  // Prev
                   IconButton(
-                    iconSize: 48,
-                    icon: Icon(Icons.skip_previous, 
-                      color: _lineIndex > 0 ? AppColors.primaryRed : Colors.grey[300]),
+                    iconSize: 40,
+                    icon: const Icon(Icons.skip_previous_rounded),
+                    color: _lineIndex > 0 ? AppTheme.textSlate : Colors.grey[200],
                     onPressed: _lineIndex > 0 ? () {
                       _stop();
                       setState(() => _lineIndex--);
                     } : null,
                   ),
+                  
+                  // Play/Pause
                   GestureDetector(
                     onTap: () => _isPlaying ? _stop() : _speak(currentLine['content']),
                     child: Container(
                       width: 80,
                       height: 80,
-                      decoration: const BoxDecoration(
-                        color: AppColors.primaryRed,
+                      decoration: BoxDecoration(
+                        color: _isPlaying ? AppTheme.accentRed : AppTheme.primaryRed,
                         shape: BoxShape.circle,
-                        boxShadow: [BoxShadow(color: AppColors.primaryRed, blurRadius: 10, spreadRadius: 1)],
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.primaryRed.withOpacity(0.4),
+                            blurRadius: 15,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
                       ),
-                      child: Icon(_isPlaying ? Icons.stop : Icons.play_arrow, size: 48, color: Colors.white),
+                      child: Icon(
+                        _isPlaying ? Icons.stop_rounded : Icons.play_arrow_rounded,
+                        color: Colors.white,
+                        size: 40,
+                      ),
                     ),
                   ),
+                  
+                  // Next
                   IconButton(
-                    iconSize: 48,
-                    icon: Icon(Icons.skip_next, 
-                      color: _lineIndex < lines.length - 1 ? AppColors.primaryRed : Colors.grey[300]),
-                    onPressed: _lineIndex < lines.length - 1 ? () {
+                    iconSize: 40,
+                    icon: const Icon(Icons.skip_next_rounded),
+                    color: _lineIndex < _lines.length - 1 ? AppTheme.textSlate : Colors.grey[200],
+                    onPressed: _lineIndex < _lines.length - 1 ? () {
                       _stop();
                       setState(() => _lineIndex++);
                     } : null,

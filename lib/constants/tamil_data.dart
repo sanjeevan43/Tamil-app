@@ -47,6 +47,22 @@ class TamilData {
       {'tamil': 'ஒன்பது', 'english': 'Nine', 'emoji': '9️⃣'},
       {'tamil': 'பத்து', 'english': 'Ten', 'emoji': '🔟'},
     ],
+    'Body': [
+      {'tamil': 'கண்', 'english': 'Eye', 'emoji': '👁️'},
+      {'tamil': 'காது', 'english': 'Ear', 'emoji': '👂'},
+      {'tamil': 'வாய்', 'english': 'Mouth', 'emoji': '👄'},
+      {'tamil': 'மூக்கு', 'english': 'Nose', 'emoji': '👃'},
+      {'tamil': 'கை', 'english': 'Hand', 'emoji': '✋'},
+      {'tamil': 'கால்', 'english': 'Leg', 'emoji': '🦵'},
+    ],
+    'Family': [
+      {'tamil': 'அம்மா', 'english': 'Mother', 'emoji': '👩'},
+      {'tamil': 'அப்பா', 'english': 'Father', 'emoji': '👨'},
+      {'tamil': 'அக்கா', 'english': 'Elder Sister', 'emoji': '👧'},
+      {'tamil': 'அண்ணா', 'english': 'Elder Brother', 'emoji': '👦'},
+      {'tamil': 'தம்பி', 'english': 'Younger Brother', 'emoji': '🧒'},
+      {'tamil': 'தங்கை', 'english': 'Younger Sister', 'emoji': '👶'},
+    ],
   };
 
   static const List<Map<String, dynamic>> lessons = [
@@ -86,31 +102,224 @@ class TamilData {
   static List<Map<String, dynamic>> getQuizQuestions() {
     return [
       {
-        'question': 'எந்த எழுத்து இது?',
+        'question': 'இது எந்த எழுத்து?',
         'letter': 'அ',
         'options': ['அ', 'ஆ', 'இ', 'ஈ'],
         'correct': 0,
       },
       {
         'question': 'நாய் என்பதன் ஆங்கில பொருள்?',
-        'letter': 'நாய்',
+        'letter': '🐕',
         'options': ['Cat', 'Dog', 'Bird', 'Horse'],
         'correct': 1,
       },
       {
-        'question': 'எந்த எழுத்து இது?',
+        'question': 'இது எந்த எழுத்து?',
         'letter': 'இ',
         'options': ['அ', 'ஆ', 'இ', 'ஈ'],
         'correct': 2,
       },
       {
         'question': 'பூனை என்பதன் ஆங்கில பொருள்?',
-        'letter': 'பூனை',
+        'letter': '🐈',
         'options': ['Dog', 'Cat', 'Bird', 'Fish'],
+        'correct': 1,
+      },
+      {
+        'question': 'Apple என்பது தமிழில்?',
+        'letter': '🍎',
+        'options': ['வாழை', 'ஆப்பிள்', 'ஆரஞ்சு', 'மாம்பழம்'],
+        'correct': 1,
+      },
+      {
+        'question': 'Red என்பது தமிழில்?',
+        'letter': '🔴',
+        'options': ['நீலம்', 'பச்சை', 'சிவப்பு', 'மஞ்சள்'],
+        'correct': 2,
+      },
+      {
+        'question': 'யானை என்பதன் ஆங்கில பொருள்?',
+        'letter': '🐘',
+        'options': ['Lion', 'Horse', 'Cat', 'Elephant'],
+        'correct': 3,
+      },
+      {
+        'question': 'ஐந்து என்பது எத்தனை?',
+        'letter': '5️⃣',
+        'options': ['3', '4', '5', '6'],
+        'correct': 2,
+      },
+      {
+        'question': 'அம்மா means?',
+        'letter': '👩',
+        'options': ['Father', 'Sister', 'Mother', 'Brother'],
+        'correct': 2,
+      },
+      {
+        'question': 'இது எந்த எழுத்து?',
+        'letter': 'ஓ',
+        'options': ['ஒ', 'ஓ', 'ஔ', 'ஐ'],
         'correct': 1,
       },
     ];
   }
 
   static final List<Map<String, dynamic>> quizQuestions = getQuizQuestions();
+
+  // Sentence data for Sentence Builder game
+  static const List<Map<String, dynamic>> sentences = [
+    {
+      'tamil': ['நான்', 'பள்ளி', 'செல்கிறேன்'],
+      'english': 'I go to school',
+      'hint': 'நான் + பள்ளி + செல்கிறேன்',
+    },
+    {
+      'tamil': ['இது', 'என்', 'வீடு'],
+      'english': 'This is my house',
+      'hint': 'இது + என் + வீடு',
+    },
+    {
+      'tamil': ['நாய்', 'ஓடுகிறது'],
+      'english': 'Dog is running',
+      'hint': 'நாய் + ஓடுகிறது',
+    },
+    {
+      'tamil': ['பூனை', 'பால்', 'குடிக்கிறது'],
+      'english': 'Cat drinks milk',
+      'hint': 'பூனை + பால் + குடிக்கிறது',
+    },
+    {
+      'tamil': ['மழை', 'வருகிறது'],
+      'english': 'Rain is coming',
+      'hint': 'மழை + வருகிறது',
+    },
+    {
+      'tamil': ['நான்', 'தமிழ்', 'படிக்கிறேன்'],
+      'english': 'I study Tamil',
+      'hint': 'நான் + தமிழ் + படிக்கிறேன்',
+    },
+  ];
+
+  // Fill Blanks Game specific data
+  static const List<Map<String, String>> fillBlanksWords = [
+    {'word': 'நாய்', 'english': 'Dog', 'emoji': '🐕'},
+    {'word': 'பூனை', 'english': 'Cat', 'emoji': '🐈'},
+    {'word': 'மீன்', 'english': 'Fish', 'emoji': '🐟'},
+    {'word': 'வாழை', 'english': 'Banana', 'emoji': '🍌'},
+    {'word': 'நீலம்', 'english': 'Blue', 'emoji': '🔵'},
+    {'word': 'பச்சை', 'english': 'Green', 'emoji': '🟢'},
+    {'word': 'அம்மா', 'english': 'Mother', 'emoji': '👩'},
+    {'word': 'அப்பா', 'english': 'Father', 'emoji': '👨'},
+    {'word': 'கண்', 'english': 'Eye', 'emoji': '👁️'},
+    {'word': 'காது', 'english': 'Ear', 'emoji': '👂'},
+  ];
+
+  static const List<Map<String, String>> globalFacts = [
+    {
+      'country': 'India',
+      'flag': '🇮🇳',
+      'fact': 'Tamil is a classical language of India and the official language of Tamil Nadu and Puducherry.'
+    },
+    {
+      'country': 'Sri Lanka',
+      'fact': 'Tamil is an official language in Sri Lanka, with a rich history in the North and East.',
+      'flag': '🇱🇰'
+    },
+    {
+      'country': 'Singapore',
+      'flag': '🇸🇬',
+      'fact': 'Tamil is one of the four official languages of Singapore, celebrated during Tamil Language Festival.'
+    },
+    {
+      'country': 'Malaysia',
+      'flag': '🇲🇾',
+      'fact': 'Malaysia has a large Tamil population with many Tamil-medium primary schools.'
+    },
+    {
+      'country': 'UK & Europe',
+      'flag': '🇬🇧',
+      'fact': 'London, Paris, and Switzerland have vibrant Tamil communities maintaining language through weekend schools.'
+    },
+    {
+      'country': 'North America',
+      'flag': '🇺🇸',
+      'fact': 'USA and Canada have many Tamil Sangams and schools teaching the next generation.'
+    },
+  ];
+
+  static const List<Map<String, dynamic>> tamilRhymes = [
+    {
+      'title': 'கைவீசம்மா கைவீசு',
+      'lines': [
+        {'content': 'கைவீசம்மா கைவீசு', 'image': 'rhyme_hand_wave'},
+        {'content': 'பள்ளிக்குச் செல்லலாம் கைவீசு', 'image': 'rhyme_school'},
+        {'content': 'பாடம் படிக்கலாம் கைவீசு', 'image': 'rhyme_study'},
+        {'content': 'பழங்கள் வாங்கலாம் கைவீசு', 'image': 'rhyme_fruits'},
+      ],
+    },
+    {
+      'title': 'நிலா நிலா ஓடி வா',
+      'lines': [
+        {'content': 'நிலா நிலா ஓடி வா', 'image': 'rhyme_moon_1'},
+        {'content': 'நில்லாமல் ஓடி வா', 'image': 'rhyme_moon_2'},
+        {'content': 'மலை மேலே ஏறி வா', 'image': 'rhyme_moon_3'},
+        {'content': 'மல்லிகைப் பூ கொண்டு வா', 'image': 'rhyme_moon_4'},
+      ],
+    },
+    {
+      'title': 'ஆத்திச்சூடி',
+      'lines': [
+        {'content': 'அறம் செய விரும்பு', 'image': 'rhyme_aathichudi_1'},
+        {'content': 'ஆறுவது சினம்', 'image': 'rhyme_aathichudi_2'},
+        {'content': 'இயல்வது கரவேல்', 'image': 'rhyme_aathichudi_3'},
+        {'content': 'ஈவது விலக்கேல்', 'image': 'rhyme_aathichudi_4'},
+      ],
+    },
+  ];
+
+  static const List<Map<String, dynamic>> tamilStories = [
+    {
+      'title': 'சிங்கமும் எலியும்',
+      'moral': 'யாரையும் குறைவாக எடை போடக்கூடாது.',
+      'scenes': [
+        {'content': 'ஒரு காட்டில் ஒரு சிங்கம் தூங்கிக்கொண்டிருந்தது.', 'image': 'story_lion_sleep'},
+        {'content': 'அங்கே ஒரு எலி வந்து சிங்கத்தின் மேல் விளையாடியது.', 'image': 'story_mouse_play'},
+        {'content': 'சிங்கம் கோபத்துடன் எலியைப் பிடித்தது.', 'image': 'story_lion_angry'},
+        {'content': 'எலி கெஞ்சியது, ஒரு நாள் நான் உனக்கு உதவுவேன் என்றது.', 'image': 'story_mouse_beg'},
+        {'content': 'சிங்கம் சிரித்துக்கொண்டே எலியை விட்டுவிட்டது.', 'image': 'story_lion_laugh'},
+      ],
+      'questions': [
+        {'question': 'காட்டில் எது தூங்கிக்கொண்டிருந்தது?', 'options': ['நாய்', 'பூனை', 'சிங்கம்', 'யானை'], 'correct': 2},
+        {'question': 'சிங்கத்தின் மேல் எது விளையாடியது?', 'options': ['முயல்', 'எலி', 'மயில்', 'கிளி'], 'correct': 1},
+      ],
+    },
+    {
+      'title': 'ஆமையும் முயலும்',
+      'moral': 'மெதுவாகச் சென்றாலும், நிலையாகச் செல்வது வெற்றி.',
+      'scenes': [
+        {'content': 'ஒரு நாள் முயல் ஆமையை பார்த்து, நான் மிகவும் வேகமாக ஓடுவேன் என்று கூறியது.', 'image': 'story_hare_boast'},
+        {'content': 'ஆமை சொன்னது: நாம் ஒரு ஓட்டப்பந்தயம் வைப்போம்!', 'image': 'story_tortoise_challenge'},
+        {'content': 'முயல் வேகமாக ஓடி, நடுவழியில் தூங்கிவிட்டது.', 'image': 'story_hare_sleep'},
+        {'content': 'ஆமை மெதுவாக, நிலையாக ஓடி, வெற்றி பெற்றது!', 'image': 'story_tortoise_win'},
+      ],
+      'questions': [
+        {'question': 'யார் வேகமாக ஓடுவேன் என்று பெருமை அடித்தது?', 'options': ['ஆமை', 'முயல்', 'நாய்', 'பூனை'], 'correct': 1},
+        {'question': 'கடைசியில் யார் வெற்றி பெற்றது?', 'options': ['முயல்', 'நாய்', 'ஆமை', 'யானை'], 'correct': 2},
+      ],
+    },
+    {
+      'title': 'தாகமுள்ள காகம்',
+      'moral': 'முயற்சி தொடர்ந்தால் வெற்றி நிச்சயம்.',
+      'scenes': [
+        {'content': 'ஒரு காகத்திற்கு மிகவும் தாகமாக இருந்தது.', 'image': 'story_crow_thirsty'},
+        {'content': 'ஒரு குடத்தில் கொஞ்சம் தண்ணீர் இருந்தது, ஆனால் அது எட்டவில்லை.', 'image': 'story_crow_pot'},
+        {'content': 'காகம் சிறிய கற்களை குடத்தில் போட்டது.', 'image': 'story_crow_stones'},
+        {'content': 'தண்ணீர் மேலே வந்தது! காகம் தண்ணீர் குடித்தது.', 'image': 'story_crow_drink'},
+      ],
+      'questions': [
+        {'question': 'காகத்திற்கு என்ன பிரச்சனை?', 'options': ['பசி', 'தாகம்', 'தூக்கம்', 'குளிர்'], 'correct': 1},
+        {'question': 'காகம் என்ன குடத்தில் போட்டது?', 'options': ['மணல்', 'இலைகள்', 'கற்கள்', 'பூக்கள்'], 'correct': 2},
+      ],
+    },
+  ];
 }

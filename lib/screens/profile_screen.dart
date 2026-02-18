@@ -190,7 +190,7 @@ class ProfileScreen extends StatelessWidget {
           children: avatars.map((avatar) {
             return GestureDetector(
               onTap: () {
-                progress.setAvatar(avatar);
+                progress.updateAvatar(avatar);
                 Navigator.pop(context);
               },
               child: Container(

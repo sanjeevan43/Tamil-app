@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import '../constants/colors.dart';
-import '../providers/progress_provider.dart';
+import '../constants/app_theme.dart';
+import '../providers/enhanced_progress_provider.dart';
 
 class StoryQuizScreen extends StatefulWidget {
   final List<Map<String, dynamic>> questions;
@@ -47,7 +47,7 @@ class _StoryQuizScreenState extends State<StoryQuizScreen> {
   }
 
   void _showResults() {
-    Provider.of<ProgressProvider>(context, listen: false)
+    Provider.of<EnhancedProgressProvider>(context, listen: false)
         .addStoryScore(widget.storyTitle, _score);
         
     showDialog(
@@ -58,14 +58,14 @@ class _StoryQuizScreenState extends State<StoryQuizScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.stars, color: AppColors.warning, size: 80),
+            const Icon(Icons.stars, color: AppTheme.warning, size: 80),
             const SizedBox(height: 20),
             Text(
               'அற்புதம்!',
               style: GoogleFonts.notoSansTamil(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: AppColors.primaryRed,
+                color: AppTheme.primaryRed,
               ),
             ),
             const SizedBox(height: 10),
@@ -109,8 +109,8 @@ class _StoryQuizScreenState extends State<StoryQuizScreen> {
               child: LinearProgressIndicator(
                 value: (_currentQuestion + 1) / widget.questions.length,
                 minHeight: 12,
-                backgroundColor: AppColors.primaryRed.withOpacity(0.1),
-                valueColor: const AlwaysStoppedAnimation(AppColors.primaryRed),
+                backgroundColor: AppTheme.primaryRed.withOpacity(0.1),
+                valueColor: const AlwaysStoppedAnimation(AppTheme.primaryRed),
               ),
             ),
             const SizedBox(height: 40),
@@ -119,7 +119,7 @@ class _StoryQuizScreenState extends State<StoryQuizScreen> {
             Container(
               padding: const EdgeInsets.all(30),
               decoration: BoxDecoration(
-                color: AppColors.white,
+                color: AppTheme.white,
                 borderRadius: BorderRadius.circular(25),
                 boxShadow: [
                   BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20),
@@ -131,7 +131,7 @@ class _StoryQuizScreenState extends State<StoryQuizScreen> {
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   height: 1.5,
-                  color: AppColors.textDark,
+                  color: AppTheme.textDark,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -148,16 +148,16 @@ class _StoryQuizScreenState extends State<StoryQuizScreen> {
                   bool isCorrect = index == question['correct'];
                   bool isSelected = index == _selectedAnswer;
 
-                  Color bgColor = AppColors.white;
-                  Color borderColor = AppColors.primaryRed.withOpacity(0.2);
+                  Color bgColor = AppTheme.white;
+                  Color borderColor = AppTheme.primaryRed.withOpacity(0.2);
                   
                   if (_answered) {
                     if (isCorrect) {
-                      bgColor = AppColors.success.withOpacity(0.1);
-                      borderColor = AppColors.success;
+                      bgColor = AppTheme.success.withOpacity(0.1);
+                      borderColor = AppTheme.success;
                     } else if (isSelected) {
-                      bgColor = AppColors.error.withOpacity(0.1);
-                      borderColor = AppColors.error;
+                      bgColor = AppTheme.error.withOpacity(0.1);
+                      borderColor = AppTheme.error;
                     }
                   }
 
@@ -176,7 +176,7 @@ class _StoryQuizScreenState extends State<StoryQuizScreen> {
                           children: [
                             Text(
                               '${index + 1}.',
-                              style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.textGray),
+                              style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textGray),
                             ),
                             const SizedBox(width: 15),
                             Expanded(
@@ -189,9 +189,9 @@ class _StoryQuizScreenState extends State<StoryQuizScreen> {
                               ),
                             ),
                             if (_answered && isCorrect)
-                              const Icon(Icons.check_circle, color: AppColors.success),
+                              const Icon(Icons.check_circle, color: AppTheme.success),
                             if (_answered && isSelected && !isCorrect)
-                              const Icon(Icons.cancel, color: AppColors.error),
+                              const Icon(Icons.cancel, color: AppTheme.error),
                           ],
                         ),
                       ),

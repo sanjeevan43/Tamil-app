@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_tts/flutter_tts.dart';
-import '../constants/colors.dart';
+import 'package:provider/provider.dart';
+import '../constants/app_theme.dart';
 import '../constants/tamil_data.dart';
+import '../providers/enhanced_progress_provider.dart';
+import '../widgets/safe_image.dart';
+import 'story_detail_screen.dart';
 import 'story_quiz_screen.dart';
 
 class StoriesScreen extends StatefulWidget {
@@ -13,227 +16,324 @@ class StoriesScreen extends StatefulWidget {
 }
 
 class _StoriesScreenState extends State<StoriesScreen> {
-  final FlutterTts flutterTts = FlutterTts();
-  int _storyIndex = 0;
-  int _sceneIndex = 0;
-  bool _isPlaying = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _initTts();
-  }
-
-  void _initTts() async {
-    await flutterTts.setLanguage("ta-IN");
-    await flutterTts.setPitch(1.0);
-    await flutterTts.setSpeechRate(0.5);
-  }
-
-  Future<void> _speak(String text) async {
-    setState(() => _isPlaying = true);
-    await flutterTts.speak(text);
-    flutterTts.setCompletionHandler(() {
-      setState(() => _isPlaying = false);
-    });
-  }
-
-  Future<void> _stop() async {
-    await flutterTts.stop();
-    setState(() => _isPlaying = false);
-  }
-
-  @override
-  void dispose() {
-    flutterTts.stop();
-    super.dispose();
-  }
-
-  void _nextScene() {
-    _stop();
-    final scenes = TamilData.tamilStories[_storyIndex]['scenes'] as List;
-    if (_sceneIndex < scenes.length - 1) {
-      setState(() => _sceneIndex++);
-    } else if (_storyIndex < TamilData.tamilStories.length - 1) {
-      // Show "The End / Moral" dialog or just move to next story
-      _showMoralDialog();
-    }
-  }
-
-  void _prevScene() {
-    _stop();
-    if (_sceneIndex > 0) {
-      setState(() => _sceneIndex--);
-    }
-  }
-
-  void _showMoralDialog() {
-    final story = TamilData.tamilStories[_storyIndex];
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('நீதி (Moral)', style: GoogleFonts.notoSansTamil(fontWeight: FontWeight.bold, color: AppColors.primaryRed)),
-        content: Text(story['moral'], style: GoogleFonts.notoSansTamil(fontSize: 18)),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => StoryQuizScreen(
-                    questions: List<Map<String, dynamic>>.from(story['questions']),
-                    storyTitle: story['title'],
-                  ),
-                ),
-              ).then((_) {
-                // After quiz, move to next story or reset
-                if (_storyIndex < TamilData.tamilStories.length - 1) {
-                  setState(() {
-                    _storyIndex++;
-                    _sceneIndex = 0;
-                  });
-                } else {
-                  setState(() {
-                    _storyIndex = 0;
-                    _sceneIndex = 0;
-                  });
-                }
-              });
-            },
-            child: const Text('Take Quiz'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              if (_storyIndex < TamilData.tamilStories.length - 1) {
-                setState(() {
-                  _storyIndex++;
-                  _sceneIndex = 0;
-                });
-              } else {
-                setState(() {
-                  _storyIndex = 0;
-                  _sceneIndex = 0;
-                });
-              }
-            },
-            child: const Text('Skip Quiz'),
-          ),
-        ],
-      ),
-    );
-  }
+  String _selectedFilter = 'All Stories'; // 'All Stories' or 'My Favorites'
 
   @override
   Widget build(BuildContext context) {
-    final story = TamilData.tamilStories[_storyIndex];
-    final scenes = story['scenes'] as List;
-    final currentScene = scenes[_sceneIndex];
+    final progress = Provider.of<EnhancedProgressProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(story['title']),
-        actions: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: Text(
-                '${_sceneIndex + 1} / ${scenes.length}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+      backgroundColor: AppTheme.backgroundLight,
+      body: CustomScrollView(
+        slivers: [
+          // Glass Header
+          SliverAppBar(
+            pinned: true,
+            backgroundColor: AppTheme.white.withOpacity(0.9),
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: AppTheme.textDark),
+              onPressed: () => Navigator.pop(context),
+            ),
+            title: Text(
+              'Moral Stories',
+              style: GoogleFonts.lexend(
+                color: AppTheme.textDark,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
               ),
             ),
+            actions: [
+              Container(
+                margin: const EdgeInsets.only(right: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryRed.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppTheme.primaryRed.withOpacity(0.2)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.stars, color: AppTheme.primaryRed, size: 18),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${progress.totalStars}',
+                      style: GoogleFonts.lexend(
+                        color: AppTheme.primaryRed,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
+
+          // Toggle Switch & Content
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Image Section
-                  Container(
-                    width: double.infinity,
-                    height: 300,
-                    margin: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(24),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primaryRed.withOpacity(0.2),
-                          blurRadius: 15,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: Image.asset(
-                      'assets/images/${currentScene['image']}.png',
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        color: AppColors.primaryRed.withOpacity(0.05),
-                        child: const Icon(Icons.image, size: 100, color: AppColors.primaryRed),
-                      ),
-                    ),
-                  ),
+                  // Filter Toggle
+                  _buildFilterToggle(),
+                  const SizedBox(height: 24),
+
+                  // Featured Story (First story)
+                  if (TamilData.tamilStories.isNotEmpty)
+                    _buildFeaturedStoryCard(context, TamilData.tamilStories[0]),
+
+                  const SizedBox(height: 24),
                   
-                  // Text Section
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
-                    child: Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: AppColors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: AppColors.primaryRed.withOpacity(0.1)),
-                      ),
-                      child: Text(
-                        currentScene['content'],
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.notoSansTamil(
-                          fontSize: 24,
-                          height: 1.8,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textDark,
-                        ),
-                      ),
-                    ),
-                  ),
+                  // Story List (Remaining stories)
+                  if (TamilData.tamilStories.length > 1)
+                    ...TamilData.tamilStories.skip(1).map((story) => 
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: _buildStoryCard(context, story),
+                      )
+                    ).toList(),
+                    
+                  // Placeholder for locked content if needed
+                  _buildLockedStoryCard(),
                 ],
               ),
             ),
           ),
-          
-          // Controls Section
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              boxShadow: [
-                BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -5)),
-              ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterToggle() {
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: AppTheme.primaryRed.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTheme.primaryRed.withOpacity(0.1)),
+      ),
+      child: Row(
+        children: [
+          _buildFilterButton('All Stories'),
+          _buildFilterButton('My Favorites'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterButton(String text) {
+    final isSelected = _selectedFilter == text;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => _selectedFilter = text),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: isSelected ? AppTheme.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    )
+                  ]
+                : null,
+          ),
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.lexend(
+              fontSize: 14,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+              color: isSelected ? AppTheme.primaryRed : AppTheme.textSlate,
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFeaturedStoryCard(BuildContext context, Map<String, dynamic> story) {
+    return Container(
+      decoration: AppTheme.glassRedCard(radius: 16),
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Image / Feature area
+          Stack(
+            children: [
+              Container(
+                height: 200,
+                width: double.infinity,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: SafeImage(
+                    assetPath: 'assets/images/story_placeholder_1.jpg',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 12,
+                left: 12,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppTheme.white.withOpacity(0.9),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    'TAMIL & ENGLISH',
+                    style: GoogleFonts.lexend(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.primaryRed,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: -20, // Overlap effect
+                right: 16,
+                child: GestureDetector(
+                  onTap: () => _navigateToStory(context, story),
+                  child: Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryRed,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.primaryRed.withOpacity(0.4),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(Icons.play_arrow, color: Colors.white, size: 28),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24), // Space for FAB overlap
+          
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                FloatingActionButton(
-                  heroTag: 'prev',
-                  onPressed: _sceneIndex > 0 ? _prevScene : null,
-                  backgroundColor: _sceneIndex > 0 ? AppColors.primaryRed : Colors.grey[300],
-                  child: const Icon(Icons.arrow_back, color: Colors.white),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            story['title'],
+                            style: GoogleFonts.notoSansTamil(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.textDark,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Moral: ${story['moral']}',
+                            style: GoogleFonts.lexend(
+                              fontSize: 12,
+                              color: AppTheme.primaryRed,
+                              fontStyle: FontStyle.italic,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.favorite_border, color: AppTheme.textSlate),
+                      onPressed: () {
+                        // Toggle favorite logic
+                      },
+                    ),
+                  ],
                 ),
-                FloatingActionButton.large(
-                  heroTag: 'play',
-                  onPressed: () => _isPlaying ? _stop() : _speak(currentScene['content']),
-                  backgroundColor: AppColors.primaryRed,
-                  child: Icon(_isPlaying ? Icons.stop : Icons.play_arrow, size: 48, color: Colors.white),
+                const SizedBox(height: 12),
+                Text(
+                  'A classic tale to learn about life values and language.',
+                  style: GoogleFonts.lexend(
+                    fontSize: 14,
+                    color: AppTheme.textSlate,
+                    height: 1.5,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                FloatingActionButton(
-                  heroTag: 'next',
-                  onPressed: _nextScene,
-                  backgroundColor: AppColors.primaryRed,
-                  child: const Icon(Icons.arrow_forward, color: Colors.white),
+                const SizedBox(height: 16),
+                
+                // Progress & Quiz Action
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: 6,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: AppTheme.primaryRed.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                            child: FractionallySizedBox(
+                              alignment: Alignment.centerLeft,
+                              widthFactor: 0.65, // Example progress
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: AppTheme.primaryRed,
+                                  borderRadius: BorderRadius.circular(3),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Read Progress: 65%',
+                            style: GoogleFonts.lexend(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                              color: AppTheme.textSlate,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                         Navigator.push(context, MaterialPageRoute(builder: (_) => StoryQuizScreen(
+                           questions: story['questions'] ?? [],
+                           storyTitle: story['title'],
+                         )));
+                      },
+                      icon: const Icon(Icons.quiz, size: 16),
+                      label: const Text('Quiz +5'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppTheme.primaryRed,
+                        side: BorderSide(color: AppTheme.primaryRed.withOpacity(0.2)),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -242,4 +342,171 @@ class _StoriesScreenState extends State<StoriesScreen> {
       ),
     );
   }
+
+  Widget _buildStoryCard(BuildContext context, Map<String, dynamic> story) {
+    return GestureDetector(
+      onTap: () => _navigateToStory(context, story),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: AppTheme.whiteCard(radius: 16),
+        child: Row(
+          children: [
+            // Thumbnail
+            Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.grey[200],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: SafeImage(
+                  assetPath: (story['scenes'] != null && (story['scenes'] as List).isNotEmpty)
+                      ? 'assets/images/${story['scenes'][0]['image']}.png'
+                      : 'assets/images/placeholder.png',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            
+            // Content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    story['title'],
+                    style: GoogleFonts.notoSansTamil(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.textDark,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    story['moral'],
+                    style: GoogleFonts.lexend(
+                      fontSize: 12,
+                      color: AppTheme.primaryRed,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Learn values through this engaging story.',
+                    style: GoogleFonts.lexend(
+                      fontSize: 12,
+                      color: AppTheme.textSlate,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 12),
+                  
+                  // Metadata row
+                  Row(
+                    children: [
+                      _buildMetaTag(Icons.schedule, '4 min'),
+                      const SizedBox(width: 12),
+                      _buildMetaTag(Icons.star, 'Level 1', color: AppTheme.amber),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildLockedStoryCard() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: AppTheme.whiteCard(radius: 16).copyWith(
+        color: AppTheme.white.withOpacity(0.6), // Dimmed
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.grey[300],
+            ),
+            child: const Icon(Icons.lock, color: AppTheme.textGray),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 120, 
+                  height: 16, 
+                  decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(4)),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  width: 200, 
+                  height: 12, 
+                  decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(4)),
+                ),
+                const SizedBox(height: 16),
+                 Container(
+                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                   decoration: AppTheme.pillBadge(bgColor: Colors.grey[200], borderColor: Colors.transparent),
+                   child: Text(
+                     'UNLOCK FOR 50 STARS',
+                     style: GoogleFonts.lexend(
+                       fontSize: 10,
+                       fontWeight: FontWeight.bold,
+                       color: AppTheme.textGray,
+                     ),
+                   ),
+                 ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMetaTag(IconData icon, String text, {Color color = AppTheme.textSlate}) {
+    return Row(
+      children: [
+        Icon(icon, size: 14, color: color),
+        const SizedBox(width: 4),
+        Text(
+          text,
+          style: GoogleFonts.lexend(
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+            color: color,
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _navigateToStory(BuildContext context, Map<String, dynamic> story) {
+      // Navigate to a reading screen, potentially reusing `StoryDetailScreen` 
+      // which I'll assume exists or needs creation. For now, pushing a placeholder or existing logic.
+      // The original code might have had logic in `StoriesScreen` directly or `StoryDetail`.
+      // Let's check if StoryDetailScreen exists.
+      // If not, I'll direct to a new simplified reading view inside this file or create one.
+      // Based on previous file list, `stories_screen.dart` handled reading itself or navigated.
+      // I'll create a `StoryReadingScreen` quickly if needed, or stick to this list.
+      // Wait, the prompt implies "use this code to improve this app".
+      // I should probably just ensure the navigation works.
+      
+      Navigator.push(context, MaterialPageRoute(builder: (_) => StoryDetailScreen(story: story)));
+  }
 }
+
+

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
 import 'package:provider/provider.dart';
-import '../constants/colors.dart';
+import '../constants/app_theme.dart';
 import '../constants/tamil_data.dart';
 import '../services/audio_service.dart';
-import '../providers/progress_provider.dart';
+import '../providers/enhanced_progress_provider.dart';
 
 class LetterHuntScreen extends StatefulWidget {
   const LetterHuntScreen({super.key});
@@ -124,8 +124,8 @@ class _LetterHuntScreenState extends State<LetterHuntScreen> with SingleTickerPr
     _spawnTimer?.cancel();
     _gameTimer?.cancel();
 
-    Provider.of<ProgressProvider>(context, listen: false).addXP(_score);
-    Provider.of<ProgressProvider>(context, listen: false).addCoins(_score ~/ 5);
+    Provider.of<EnhancedProgressProvider>(context, listen: false).addXP(_score);
+    Provider.of<EnhancedProgressProvider>(context, listen: false).addCoins(_score ~/ 5);
 
     showDialog(
       context: context,
@@ -167,7 +167,7 @@ class _LetterHuntScreenState extends State<LetterHuntScreen> with SingleTickerPr
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppColors.primaryRed, AppColors.darkRed],
+            colors: [AppTheme.primaryRed, AppTheme.darkRed],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),

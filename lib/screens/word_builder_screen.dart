@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../constants/colors.dart';
-import '../constants/tamil_data.dart';
+import 'package:characters/characters.dart';
+import '../constants/app_theme.dart';
 import '../services/audio_service.dart';
-import '../providers/progress_provider.dart';
+import '../providers/enhanced_progress_provider.dart';
 
 class WordBuilderScreen extends StatefulWidget {
   const WordBuilderScreen({super.key});
@@ -34,10 +34,8 @@ class _WordBuilderScreenState extends State<WordBuilderScreen> {
     _currentWordData = _allWords[_currentIndex];
     String word = _currentWordData['tamil']!;
     
-    // In Tamil, characters are complex (UirMei). 
-    // For simplicity in this demo, we'll treat the string as a list of characters.
-    // Note: Real Tamil character splitting is more complex.
-    List<String> chars = word.split('');
+    // Use characters.toList() for proper Tamil splitting (UirMei handling)
+    List<String> chars = word.characters.toList();
     _jumbledLetters = List.from(chars)..shuffle();
     _slots = List.filled(chars.length, null);
     setState(() {});
@@ -65,8 +63,8 @@ class _WordBuilderScreenState extends State<WordBuilderScreen> {
 
   void _showSuccess() {
     AudioService.playWord(_currentWordData['tamil']!);
-    Provider.of<ProgressProvider>(context, listen: false).addXP(50);
-    Provider.of<ProgressProvider>(context, listen: false).addCoins(20);
+    Provider.of<EnhancedProgressProvider>(context, listen: false).addXP(50);
+    Provider.of<EnhancedProgressProvider>(context, listen: false).addCoins(20);
 
     showDialog(
       context: context,
@@ -146,7 +144,7 @@ class _WordBuilderScreenState extends State<WordBuilderScreen> {
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: AppColors.primaryRed, width: 2),
+                      border: Border.all(color: AppTheme.primaryRed, width: 2),
                     ),
                     child: Center(
                       child: Text(_slots[index] ?? '', style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
@@ -184,7 +182,7 @@ class _WordBuilderScreenState extends State<WordBuilderScreen> {
         width: 60,
         height: 60,
         decoration: BoxDecoration(
-          color: AppColors.primaryRed,
+          color: AppTheme.primaryRed,
           borderRadius: BorderRadius.circular(12),
           boxShadow: isDragging ? [BoxShadow(color: Colors.black26, blurRadius: 10)] : null,
         ),

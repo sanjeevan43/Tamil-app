@@ -5,6 +5,7 @@ class EnhancedProgressProvider extends ChangeNotifier {
   // Student Data
   String _userName = 'Student';
   String _avatar = '👦';
+  String _region = 'India';
   int _level = 1;
   int _totalCoins = 0;
   int _totalStars = 0;
@@ -14,9 +15,10 @@ class EnhancedProgressProvider extends ChangeNotifier {
   
   // Engagement
   List<String> _achievementBadges = [];
+  List<String> _inventory = ['standard'];
   List<int> _unlockedLessons = [1, 2, 3];
   Map<int, int> _lessonProgress = {};
-  DateTime _lastLoginDate = DateTime.now();
+  Map<String, int> _storyQuizScores = {};
   
   // Teacher Mode
   bool _isTeacherMode = false;
@@ -25,15 +27,22 @@ class EnhancedProgressProvider extends ChangeNotifier {
   // Getters
   String get userName => _userName;
   String get avatar => _avatar;
+  String get region => _region;
   int get level => _level;
   int get totalCoins => _totalCoins;
+  int get coins => _totalCoins; // Alias for backward compatibility
   int get totalStars => _totalStars;
+  int get stars => _totalStars;
+  int get xp => _totalStars * 10;
+  String get currentEquipped => _avatar;
   int get streakDays => _streakDays;
   int get totalLettersLearned => _totalLettersLearned;
   int get quizScore => _quizScore;
   List<String> get achievementBadges => _achievementBadges;
+  List<String> get inventory => _inventory;
   List<int> get unlockedLessons => _unlockedLessons;
   Map<int, int> get lessonProgress => _lessonProgress;
+  Map<String, int> get storyQuizScores => _storyQuizScores;
   bool get isTeacherMode => _isTeacherMode;
   List<String> get assignedHomework => _assignedHomework;
 
@@ -41,6 +50,7 @@ class EnhancedProgressProvider extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     _userName = prefs.getString('userName') ?? 'Student';
     _avatar = prefs.getString('avatar') ?? '👦';
+    _region = prefs.getString('region') ?? 'India';
     _level = prefs.getInt('level') ?? 1;
     _totalCoins = prefs.getInt('totalCoins') ?? 0;
     _totalStars = prefs.getInt('totalStars') ?? 0;
@@ -48,10 +58,24 @@ class EnhancedProgressProvider extends ChangeNotifier {
     _totalLettersLearned = prefs.getInt('totalLettersLearned') ?? 0;
     _quizScore = prefs.getInt('quizScore') ?? 0;
     _achievementBadges = prefs.getStringList('achievementBadges') ?? [];
+    _inventory = prefs.getStringList('inventory') ?? ['standard'];
     _unlockedLessons = (prefs.getStringList('unlockedLessons') ?? ['1', '2', '3'])
         .map((e) => int.parse(e)).toList();
     _isTeacherMode = prefs.getBool('isTeacherMode') ?? false;
     _assignedHomework = prefs.getStringList('assignedHomework') ?? [];
+    
+    // Load complex maps
+    final lessonProgList = prefs.getStringList('lessonProgressMap') ?? [];
+    _lessonProgress = {
+      for (var e in lessonProgList) 
+        int.parse(e.split(':')[0]): int.parse(e.split(':')[1])
+    };
+
+    final storyScoreList = prefs.getStringList('storyScoresMap') ?? [];
+    _storyQuizScores = {
+      for (var e in storyScoreList) 
+        e.split(':')[0]: int.parse(e.split(':')[1])
+    };
     
     _updateStreak();
     notifyListeners();
@@ -74,7 +98,7 @@ class EnhancedProgressProvider extends ChangeNotifier {
       }
     }
     
-    _lastLoginDate = now;
+    
     await prefs.setString('lastLoginDate', now.toIso8601String());
     await prefs.setInt('streakDays', _streakDays);
   }
@@ -86,11 +110,31 @@ class EnhancedProgressProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setAvatar(String emoji) async {
+  Future<void> updateAvatar(String emoji) async {
     _avatar = emoji;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('avatar', emoji);
     notifyListeners();
+  }
+
+  Future<void> setRegion(String region) async {
+    _region = region;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('region', region);
+    notifyListeners();
+  }
+
+  Future<void> buyItem(String itemId, int price, String emoji) async {
+    if (_totalCoins >= price && !_inventory.contains(itemId)) {
+      _totalCoins -= price;
+      _inventory.add(itemId);
+      _avatar = emoji;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('totalCoins', _totalCoins);
+      await prefs.setStringList('inventory', _inventory);
+      await prefs.setString('avatar', emoji);
+      notifyListeners();
+    }
   }
 
   Future<void> incrementLettersLearned() async {
@@ -110,6 +154,16 @@ class EnhancedProgressProvider extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('quizScore', _quizScore);
     _checkLevelUp();
+    notifyListeners();
+  }
+
+  void addXP(int amount) {
+    _addStars(amount ~/ 10); // Normalizing XP to Stars
+    notifyListeners();
+  }
+
+  void addCoins(int amount) {
+    _addCoins(amount);
     notifyListeners();
   }
 
@@ -155,6 +209,12 @@ class EnhancedProgressProvider extends ChangeNotifier {
         await unlockLesson(lessonId + 1);
       }
     }
+    
+    // Save map
+    final prefs = await SharedPreferences.getInstance();
+    List<String> mapList = _lessonProgress.entries.map((e) => '${e.key}:${e.value}').toList();
+    await prefs.setStringList('lessonProgressMap', mapList);
+    
     notifyListeners();
   }
 
@@ -179,6 +239,19 @@ class EnhancedProgressProvider extends ChangeNotifier {
     _assignedHomework.add(homework);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList('assignedHomework', _assignedHomework);
+    notifyListeners();
+  }
+
+  Future<void> addStoryScore(String title, int score) async {
+    _storyQuizScores[title] = score;
+    _addCoins(score * 10);
+    _addStars(score * 5);
+    final prefs = await SharedPreferences.getInstance();
+    
+    // Save map properly
+    List<String> mapList = _storyQuizScores.entries.map((e) => '${e.key}:${e.value}').toList();
+    await prefs.setStringList('storyScoresMap', mapList);
+    
     notifyListeners();
   }
 
