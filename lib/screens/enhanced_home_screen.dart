@@ -9,6 +9,7 @@ import 'stories_screen.dart';
 import 'profile_screen.dart';
 import 'reading_journey_screen.dart';
 import 'lessons_screen.dart';
+import 'classroom_connect_screen.dart';
 
 class EnhancedHomeScreen extends StatelessWidget {
   const EnhancedHomeScreen({super.key});
@@ -18,67 +19,161 @@ class EnhancedHomeScreen extends StatelessWidget {
     final progress = Provider.of<EnhancedProgressProvider>(context);
     
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.white,
-              const Color(0xFFF8F9FA),
-            ],
+      backgroundColor: AppTheme.backgroundLight,
+      body: Stack(
+        children: [
+          // Dynamic Background Glow
+          Positioned(
+            top: -150,
+            right: -100,
+            child: Container(
+              width: 400,
+              height: 400,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    AppTheme.primary.withOpacity(0.08),
+                    AppTheme.primary.withOpacity(0.01),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          SafeArea(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 20),
-                  _buildHeader(context, progress),
+                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: _buildHeader(context, progress),
+                  ),
                   const SizedBox(height: 24),
-                  _buildStatsBar(progress),
+                  _buildQuickStats(progress),
                   const SizedBox(height: 32),
-                  _buildLevelProgress(progress),
+                  
+                  // Main Content Area
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildSectionHeader('Daily Goal', Icons.auto_awesome_rounded),
+                        const SizedBox(height: 16),
+                        _buildDailyMission(context),
+                        
+                        const SizedBox(height: 32),
+                        _buildSectionHeader('Quick Practice', Icons.bolt_rounded),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildQuickPracticeScroll(context),
+                  
                   const SizedBox(height: 32),
-                  _buildDailyMission(context),
-                  const SizedBox(height: 32),
-                  _buildMainGrid(context),
-                  const SizedBox(height: 20),
-                  _buildMoralStories(context),
-                  const SizedBox(height: 20),
-                  _buildWeekendChallenge(context),
-                  const SizedBox(height: 40),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildSectionHeader('Learning Paths', Icons.map_rounded),
+                        const SizedBox(height: 16),
+                        _buildMainPath(context),
+                        const SizedBox(height: 16),
+                        _buildSecondaryPaths(context),
+                        
+                        const SizedBox(height: 32),
+                        _buildSectionHeader('Your Progress', Icons.insights_rounded),
+                        const SizedBox(height: 16),
+                        _buildLevelSection(progress),
+                        
+                        const SizedBox(height: 32),
+                        _buildWeekendChallenge(context),
+                        
+                        const SizedBox(height: 32),
+                        _buildSectionHeader('Library & More', Icons.library_books_rounded),
+                        const SizedBox(height: 16),
+                        _buildStoriesCard(context),
+                        const SizedBox(height: 16),
+                        _buildConnectCard(context),
+                        
+                        const SizedBox(height: 80), // Extra space at bottom
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
-        ),
+        ],
       ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title, IconData icon) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: AppTheme.primary.withOpacity(0.08),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: AppTheme.primary, size: 20),
+        ),
+        const SizedBox(width: 12),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              _getTamilTitle(title),
+              style: GoogleFonts.notoSansTamil(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.textDark,
+              ),
+            ),
+            Text(
+              title.toUpperCase(),
+              style: GoogleFonts.inter(
+                fontSize: 10,
+                fontWeight: FontWeight.w900,
+                color: AppTheme.textSlate,
+                letterSpacing: 1.5,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
   Widget _buildHeader(BuildContext context, EnhancedProgressProvider progress) {
     return Row(
       children: [
-        Stack(
-          children: [
-            Container(
+        GestureDetector(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const ProfileScreen()),
+          ),
+          child: Hero(
+            tag: 'avatar_hero',
+            child: Container(
               width: 64,
               height: 64,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFFE3F2FD),
-                border: Border.all(color: Colors.white, width: 2),
+                color: Colors.white,
+                border: Border.all(color: AppTheme.primary.withOpacity(0.1), width: 2),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
+                    color: AppTheme.primary.withOpacity(0.1),
+                    blurRadius: 15,
+                    offset: const Offset(0, 5),
                   ),
                 ],
               ),
@@ -89,23 +184,7 @@ class EnhancedHomeScreen extends StatelessWidget {
                 ),
               ),
             ),
-            Positioned(
-              right: 0,
-              bottom: 0,
-              child: Container(
-                padding: const EdgeInsets.all(2),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.stars,
-                  color: Color(0xFFFFD700),
-                  size: 20,
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
         const SizedBox(width: 16),
         Expanded(
@@ -113,402 +192,336 @@ class EnhancedHomeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Vanakkam, ${progress.userName}!',
-                style: GoogleFonts.lexend(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF1A1A1A),
+                'Vanakkam,',
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: AppTheme.textSlate,
                 ),
               ),
               Text(
-                'Level ${progress.level} Tamil Explorer',
-                style: GoogleFonts.lexend(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.primaryRed,
+                progress.userName,
+                style: GoogleFonts.inter(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                  color: AppTheme.textDark,
+                  letterSpacing: -0.5,
                 ),
               ),
             ],
           ),
         ),
-        GestureDetector(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const ProfileScreen()),
+        _buildNotificationButton(),
+      ],
+    );
+  }
+
+  Widget _buildNotificationButton() {
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppTheme.borderLight),
           ),
+          child: IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.notifications_none_rounded, color: AppTheme.textDark),
+          ),
+        ),
+        Positioned(
+          right: 12,
+          top: 12,
           child: Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white,
+            width: 8,
+            height: 8,
+            decoration: const BoxDecoration(
+              color: AppTheme.primary,
               shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
             ),
-            child: const Icon(Icons.settings, color: AppTheme.primaryRed, size: 24),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildStatsBar(EnhancedProgressProvider progress) {
+  Widget _buildQuickStats(EnhancedProgressProvider progress) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+      height: 90,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        physics: const BouncingScrollPhysics(),
         children: [
-          _statItem('⭐', '${progress.totalStars}', 'STARS'),
-          Container(height: 30, width: 1, color: Colors.grey.withOpacity(0.2)),
-          _statItem('💰', '${progress.totalCoins}', 'COINS'),
-          Container(height: 30, width: 1, color: Colors.grey.withOpacity(0.2)),
-          _statItem('🔥', '${progress.streakDays}', 'DAYS'),
+          _buildStatCard('⭐', '${progress.totalStars}', 'Stars', AppTheme.amber),
+          const SizedBox(width: 12),
+          _buildStatCard('🔥', '${progress.streakDays}', 'Streak', AppTheme.primary),
+          const SizedBox(width: 12),
+          _buildStatCard('💰', '${progress.totalCoins}', 'Coins', AppTheme.gold),
+          const SizedBox(width: 12),
+          _buildStatCard('🏆', '${progress.level}', 'Level', Colors.blue),
         ],
       ),
     );
   }
 
-  Widget _statItem(String icon, String value, String label) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Text(icon, style: const TextStyle(fontSize: 20)),
-            const SizedBox(width: 8),
-            Text(
-              value,
-              style: GoogleFonts.lexend(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF1A1A1A),
+  Widget _buildStatCard(String emoji, String value, String label, Color color) {
+    return Container(
+      width: 110,
+      padding: const EdgeInsets.all(12),
+      decoration: AppTheme.whiteCard(radius: 20).copyWith(
+        border: Border.all(color: color.withOpacity(0.1), width: 1),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(emoji, style: const TextStyle(fontSize: 16)),
+              const SizedBox(width: 6),
+              Text(
+                value,
+                style: GoogleFonts.inter(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  color: AppTheme.textDark,
+                ),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: GoogleFonts.lexend(
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-            color: Colors.grey[500],
-            letterSpacing: 1,
+            ],
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLevelProgress(EnhancedProgressProvider progress) {
-    // Mocking XP based on stars for visual
-    int currentXP = progress.totalStars % 100 * 10;
-    int targetXP = 1000;
-    double progressPercent = (currentXP / targetXP).clamp(0.0, 1.0);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'LEVEL ${progress.level} PROGRESS',
-              style: GoogleFonts.lexend(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF4A4A4A),
-                letterSpacing: 0.5,
-              ),
-            ),
-            Text(
-              '$currentXP / $targetXP XP',
-              style: GoogleFonts.lexend(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.primaryRed,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: LinearProgressIndicator(
-            value: progressPercent,
-            minHeight: 10,
-            backgroundColor: const Color(0xFFF0F0F0),
-            valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryRed),
-          ),
-        ),
-        const SizedBox(height: 12),
-        Center(
-          child: Text(
-            'Keep it up! ${targetXP - currentXP} XP more for Level ${progress.level + 1} Master',
-            style: GoogleFonts.lexend(
-              fontSize: 11,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
+          Text(
+            label.toUpperCase(),
+            style: GoogleFonts.inter(
+              fontSize: 9,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.textSlate.withOpacity(0.6),
+              letterSpacing: 1,
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildDailyMission(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            const Icon(Icons.track_changes, color: AppTheme.primaryRed, size: 24),
-            const SizedBox(width: 8),
-            Text(
-              'Daily Mission',
-              style: GoogleFonts.lexend(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF1A1A1A),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: const Color(0xFFFFF5F5),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: AppTheme.primaryRed.withOpacity(0.1)),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    final progress = Provider.of<EnhancedProgressProvider>(context);
+    final mission = progress.dailyMissions.firstWhere((m) => !m['completed'], orElse: () => progress.dailyMissions.first);
+    double percent = (mission['current'] / mission['target']).clamp(0.0, 1.0);
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: AppTheme.premiumCard(radius: 28),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Identify 5 Vowels',
-                    style: GoogleFonts.lexend(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF1A1A1A),
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: AppTheme.primaryRed,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      'ACTIVE',
-                      style: GoogleFonts.lexend(
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'TODAY\'S TASK',
+                      style: GoogleFonts.inter(
                         fontSize: 10,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white.withOpacity(0.8),
+                        letterSpacing: 2,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      mission['title'],
+                      style: GoogleFonts.inter(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
                         color: Colors.white,
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Earn 50 bonus coins today!',
-                style: GoogleFonts.lexend(
-                  fontSize: 14,
-                  color: Colors.grey[600],
+                  ],
                 ),
               ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: List.generate(5, (index) {
-                            return Expanded(
-                              child: Container(
-                                height: 6,
-                                margin: EdgeInsets.only(right: index == 4 ? 0 : 4),
-                                decoration: BoxDecoration(
-                                  color: index < 2 
-                                      ? AppTheme.primaryRed 
-                                      : AppTheme.primaryRed.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(3),
-                                ),
-                              ),
-                            );
-                          }),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          '2/5 Completed',
-                          style: GoogleFonts.lexend(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.primaryRed,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const TamilLettersScreen()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryRed,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    ),
-                    child: Text(
-                      'Continue',
-                      style: GoogleFonts.lexend(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMainGrid(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            _gridItem(
-              context,
-              'Play Games',
-              'Learn while playing',
-              Icons.videogame_asset,
-              const Color(0xFFE3F2FD),
-              const Color(0xFF2196F3),
-              () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GamesHubScreen())),
-            ),
-            const SizedBox(width: 16),
-            _gridItem(
-              context,
-              'Learn Letters',
-              'Master the basics',
-              Icons.translate,
-              const Color(0xFFFFF5F5),
-              AppTheme.primaryRed,
-              () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TamilLettersScreen())),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            _gridItem(
-              context,
-              'Reading Journey',
-              'Step-by-step path',
-              Icons.explore_rounded,
-              const Color(0xFFE8F5E9),
-              Colors.green,
-              () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ReadingJourneyScreen())),
-            ),
-            const SizedBox(width: 16),
-            _gridItem(
-              context,
-              'All Lessons',
-              'Structured learning',
-              Icons.school_rounded,
-              const Color(0xFFFFF8E1),
-              Colors.amber[800]!,
-              () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LessonsScreen())),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _gridItem(
-    BuildContext context, 
-    String title, 
-    String subtitle, 
-    IconData icon, 
-    Color bgColor, 
-    Color iconColor,
-    VoidCallback onTap
-  ) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: bgColor,
+                  color: Colors.white.withOpacity(0.2),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, color: iconColor, size: 28),
+                child: const Icon(Icons.rocket_launch_rounded, color: Colors.white, size: 24),
               ),
-              const SizedBox(height: 16),
-              Text(
-                title,
-                style: GoogleFonts.lexend(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF1A1A1A),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Stack(
+            children: [
+              Container(
+                height: 8,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(4),
                 ),
               ),
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.lexend(
-                  fontSize: 10,
-                  color: Colors.grey[500],
+              FractionallySizedBox(
+                widthFactor: percent,
+                child: Container(
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                    boxShadow: [
+                      BoxShadow(color: Colors.white.withOpacity(0.5), blurRadius: 10),
+                    ],
+                  ),
                 ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '${(percent * 100).toInt()}% Completed',
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
+              ),
+              Text(
+                '${mission['current']}/${mission['target']}',
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickPracticeScroll(BuildContext context) {
+    return SizedBox(
+      height: 130,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        physics: const BouncingScrollPhysics(),
+        children: [
+          _practiceItem(
+            context,
+            'Vocabulary',
+            'Learn words',
+            Icons.translate_rounded,
+            const Color(0xFFE0F2FE),
+            Colors.blue,
+            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TamilLettersScreen())),
+          ),
+          const SizedBox(width: 16),
+          _practiceItem(
+            context,
+            'Pronounce',
+            'Speak Tamil',
+            Icons.mic_none_rounded,
+            const Color(0xFFF0FDF4),
+            Colors.green,
+            () {}, // Add proper navigation
+          ),
+          const SizedBox(width: 16),
+          _practiceItem(
+            context,
+            'Games',
+            'Fun drills',
+            Icons.sports_esports_rounded,
+            const Color(0xFFFFF7ED),
+            Colors.orange,
+            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GamesHubScreen())),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _practiceItem(BuildContext context, String title, String sub, IconData icon, Color bg, Color color, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 140,
+        padding: const EdgeInsets.all(16),
+        decoration: AppTheme.whiteCard(radius: 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
+              child: Icon(icon, color: color, size: 20),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w800, color: AppTheme.textDark),
+            ),
+            Text(
+              sub,
+              style: GoogleFonts.inter(fontSize: 11, color: AppTheme.textSlate.withOpacity(0.5), fontWeight: FontWeight.w600),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMainPath(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ReadingJourneyScreen())),
+      child: Container(
+        width: double.infinity,
+        height: 180,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(32),
+          image: const DecorationImage(
+            image: NetworkImage('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&q=80&w=800'),
+            fit: BoxFit.cover,
+            opacity: 0.2,
+          ),
+          gradient: LinearGradient(
+            colors: [Colors.black.withOpacity(0.8), Colors.black.withOpacity(0.4)],
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppTheme.primary,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  'ADVENTURE',
+                  style: GoogleFonts.inter(fontSize: 9, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Reading Journey',
+                style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.w900, color: Colors.white),
+              ),
+              Text(
+                'Explore the map of Tamil words',
+                style: GoogleFonts.inter(fontSize: 14, color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.w500),
               ),
             ],
           ),
@@ -517,58 +530,107 @@ class EnhancedHomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMoralStories(BuildContext context) {
+  Widget _buildSecondaryPaths(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: _pathItem(
+            context,
+            'Lessons',
+            'Full course',
+            Icons.school_rounded,
+            AppTheme.primary,
+            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LessonsScreen())),
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: _pathItem(
+            context,
+            'Mini Games',
+            'Fun Hub',
+            Icons.gamepad_rounded,
+            Colors.deepPurple,
+            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GamesHubScreen())),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _pathItem(BuildContext context, String title, String sub, IconData icon, Color color, VoidCallback onTap) {
     return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const StoriesScreen())),
+      onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
+        decoration: AppTheme.whiteCard(radius: 24),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 32),
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w800, color: AppTheme.textDark),
+            ),
+            Text(
+              sub,
+              style: GoogleFonts.inter(fontSize: 11, color: AppTheme.textSlate.withOpacity(0.5)),
             ),
           ],
         ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF3E5F5),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Icon(Icons.import_contacts, color: Colors.purple, size: 28),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
+      ),
+    );
+  }
+
+  Widget _buildLevelSection(EnhancedProgressProvider progress) {
+    int currentXP = progress.totalStars % 100 * 10;
+    int targetXP = 1000;
+    double progressPercent = (currentXP / targetXP).clamp(0.0, 1.0);
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppTheme.primary.withOpacity(0.03),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: AppTheme.primary.withOpacity(0.05)),
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Moral Stories',
-                    style: GoogleFonts.lexend(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF1A1A1A),
-                    ),
+                    'Level ${progress.level}',
+                    style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w900, color: AppTheme.textDark),
                   ),
                   Text(
-                    'Fun tales with great lessons',
-                    style: GoogleFonts.lexend(
-                      fontSize: 12,
-                      color: Colors.grey[500],
-                    ),
+                    '$currentXP / $targetXP XP',
+                    style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700, color: AppTheme.primary),
                   ),
                 ],
               ),
+              const Icon(Icons.stars_rounded, color: AppTheme.amber, size: 32),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: LinearProgressIndicator(
+              value: progressPercent,
+              minHeight: 10,
+              backgroundColor: Colors.white,
+              valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primary),
             ),
-            Icon(Icons.chevron_right, color: Colors.grey[400]),
-          ],
-        ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Keep going! ${((targetXP - currentXP) / 10).toInt()} stars to Level ${progress.level + 1}',
+            style: GoogleFonts.inter(fontSize: 12, color: AppTheme.textSlate, fontWeight: FontWeight.w600),
+          ),
+        ],
       ),
     );
   }
@@ -578,17 +640,13 @@ class EnhancedHomeScreen extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFFFF5722), Color(0xFFFF9100)],
+          colors: [Color(0xFF1E293B), Color(0xFF0F172A)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [
-          BoxShadow(
-            color: const Color(0xFFFF5722).withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
+          BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 15, offset: const Offset(0, 10)),
         ],
       ),
       child: Row(
@@ -598,30 +656,17 @@ class EnhancedHomeScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'WEEKEND CHALLENGE',
-                  style: GoogleFonts.lexend(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white.withOpacity(0.8),
-                    letterSpacing: 1,
-                  ),
+                  'LIMITED EVENT',
+                  style: GoogleFonts.inter(fontSize: 9, fontWeight: FontWeight.w900, color: AppTheme.accent, letterSpacing: 2),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'The Tamil Word Hunt',
-                  style: GoogleFonts.lexend(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+                  'The Word Hunter',
+                  style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.w900, color: Colors.white),
                 ),
-                const SizedBox(height: 4),
                 Text(
-                  'Win 200 bonus stars!',
-                  style: GoogleFonts.lexend(
-                    fontSize: 12,
-                    color: Colors.white.withOpacity(0.9),
-                  ),
+                  'Win a rare badge!',
+                  style: GoogleFonts.inter(fontSize: 13, color: Colors.white.withOpacity(0.7), fontWeight: FontWeight.w500),
                 ),
               ],
             ),
@@ -629,13 +674,97 @@ class EnhancedHomeScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: AppTheme.primary,
               borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: AppTheme.primary.withOpacity(0.4), blurRadius: 8)],
             ),
-            child: const Icon(Icons.emoji_events, color: Colors.white, size: 32),
+            child: const Icon(Icons.emoji_events_rounded, color: AppTheme.accent, size: 28),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildStoriesCard(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const StoriesScreen())),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: AppTheme.whiteCard(radius: 24),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(color: AppTheme.primary.withOpacity(0.05), borderRadius: BorderRadius.circular(16)),
+              child: const Icon(Icons.auto_stories_rounded, color: AppTheme.primary, size: 24),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Moral Stories',
+                    style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w800, color: AppTheme.textDark),
+                  ),
+                  Text(
+                    'Read ancient wisdom tales',
+                    style: GoogleFonts.inter(fontSize: 12, color: AppTheme.textSlate.withOpacity(0.5)),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right_rounded, color: AppTheme.textSlate),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildConnectCard(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ClassroomConnectScreen())),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: AppTheme.whiteCard(radius: 24),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(color: Colors.blue.withOpacity(0.05), borderRadius: BorderRadius.circular(16)),
+              child: const Icon(Icons.forum_rounded, color: Colors.blue, size: 24),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Classroom Connect',
+                    style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w800, color: AppTheme.textDark),
+                  ),
+                  Text(
+                    'Talk to your teacher',
+                    style: GoogleFonts.inter(fontSize: 12, color: AppTheme.textSlate.withOpacity(0.5)),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right_rounded, color: AppTheme.textSlate),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _getTamilTitle(String title) {
+    switch (title) {
+      case 'Daily Goal': return 'தினசரி குறிக்கோள்';
+      case 'Quick Practice': return 'விரைவான பயிற்சி';
+      case 'Learning Paths': return 'கற்றல் வழிகள்';
+      case 'Your Progress': return 'உங்கள் முன்னேற்றம்';
+      case 'Library & More': return 'நூலகம் மற்றும் கூடுதல்';
+      default: return title;
+    }
   }
 }
