@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'dart:math';
 import '../constants/app_theme.dart';
-import '../constants/tamil_data.dart';
+import '../services/game_logic.dart';
 import '../providers/enhanced_progress_provider.dart';
 
 class SentenceBuilderGame extends StatefulWidget {
@@ -13,217 +12,74 @@ class SentenceBuilderGame extends StatefulWidget {
 }
 
 class _SentenceBuilderGameState extends State<SentenceBuilderGame> {
-  int _currentSentenceIndex = 0;
-  List<String> _scrambledWords = [];
-  List<String> _userAnswer = [];
+  late Map<String, dynamic> _currentRound;
+  List<String> _userSentence = [];
   int _score = 0;
-  int _totalAttempted = 0;
-  bool _showHint = false;
 
   @override
   void initState() {
     super.initState();
-    _loadSentence();
+    _generateSentence();
   }
 
-  void _loadSentence() {
-    final sentence = TamilData.sentences[_currentSentenceIndex];
-    final words = List<String>.from(sentence['tamil'] as List);
-    _scrambledWords = List.from(words)..shuffle(Random());
-    _userAnswer = [];
-    _showHint = false;
+  void _generateSentence() {
+    _currentRound = GameLogic.generateSentenceBuilderRound();
+    _userSentence = [];
     setState(() {});
   }
 
   void _addWord(String word, int index) {
     setState(() {
-      _userAnswer.add(word);
-      _scrambledWords.removeAt(index);
+      _userSentence.add(word);
+      (_currentRound['words'] as List).removeAt(index);
     });
-
-    if (_scrambledWords.isEmpty) {
-      _checkAnswer();
-    }
+    _checkSentence();
   }
 
   void _removeWord(int index) {
     setState(() {
-      _scrambledWords.add(_userAnswer[index]);
-      _userAnswer.removeAt(index);
+      (_currentRound['words'] as List).add(_userSentence[index]);
+      _userSentence.removeAt(index);
     });
   }
 
-  void _checkAnswer() {
-    final sentence = TamilData.sentences[_currentSentenceIndex];
-    final correctOrder = List<String>.from(sentence['tamil'] as List);
-    _totalAttempted++;
-
-    if (_userAnswer.join(' ') == correctOrder.join(' ')) {
-      _score += 25;
-      Provider.of<EnhancedProgressProvider>(context, listen: false).addQuizScore(25);
-      _showSuccessDialog();
-    } else {
-      _showErrorDialog();
+  void _checkSentence() {
+    if (_userSentence.length == (_currentRound['correctOrder'] as List).length) {
+      if (_userSentence.join(' ') == (_currentRound['correctSentence'] as String)) {
+        _score += 25;
+        Provider.of<EnhancedProgressProvider>(context, listen: false).addRewards(coins: 20, stars: 2, missionId: 'game_hero');
+        _showSuccess();
+      }
     }
   }
 
-  void _showSuccessDialog() {
-    final sentence = TamilData.sentences[_currentSentenceIndex];
+  void _showSuccess() {
     showDialog(
       context: context,
-      barrierDismissible: false,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('🎉', style: TextStyle(fontSize: 60)),
+            const Text('✅', style: TextStyle(fontSize: 60)),
             const SizedBox(height: 16),
-            const Text(
-              'Correct!',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.success,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              sentence['english'] as String,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 16, color: AppTheme.textGray),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '+25 Points!',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.gold,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          if (_currentSentenceIndex < TamilData.sentences.length - 1)
+            const Text('Perfect!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.success)),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
-                setState(() {
-                  _currentSentenceIndex++;
-                  _loadSentence();
-                });
+                _generateSentence();
               },
               child: const Text('Next Sentence'),
-            )
-          else
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                _showFinalResults();
-              },
-              child: const Text('See Results'),
-            ),
-        ],
-      ),
-    );
-  }
-
-  void _showErrorDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('❌', style: TextStyle(fontSize: 60)),
-            const SizedBox(height: 16),
-            const Text(
-              'Try Again!',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.error,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'The order is not correct. Try rearranging the words.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: AppTheme.textGray),
             ),
           ],
         ),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _loadSentence();
-            },
-            child: const Text('Retry'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showFinalResults() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.emoji_events, color: AppTheme.warning, size: 80),
-            const SizedBox(height: 16),
-            const Text(
-              'All Done!',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.primaryRed,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Score: $_score',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() {
-                _currentSentenceIndex = 0;
-                _score = 0;
-                _totalAttempted = 0;
-                _loadSentence();
-              });
-            },
-            child: const Text('Play Again'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.darkRed),
-            child: const Text('Exit'),
-          ),
-        ],
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final sentence = TamilData.sentences[_currentSentenceIndex];
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sentence Builder'),
@@ -233,169 +89,58 @@ class _SentenceBuilderGameState extends State<SentenceBuilderGame> {
             child: Row(
               children: [
                 const Icon(Icons.star, color: AppTheme.gold),
-                const SizedBox(width: 4),
-                Text(' $_score', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(' $_score', style: const TextStyle(fontSize: 18)),
               ],
             ),
           ),
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-            // Progress bar
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: LinearProgressIndicator(
-                value: (_currentSentenceIndex + 1) / TamilData.sentences.length,
-                backgroundColor: Colors.grey.shade300,
-                color: AppTheme.primaryRed,
-                minHeight: 8,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Sentence ${_currentSentenceIndex + 1}/${TamilData.sentences.length}',
-              style: const TextStyle(fontSize: 14, color: AppTheme.textGray),
-            ),
-            const SizedBox(height: 24),
-
-            // English hint
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: AppTheme.premiumCard(),
-              child: Column(
-                children: [
-                  const Text(
-                    'Translate to Tamil:',
-                    style: TextStyle(fontSize: 14, color: AppTheme.white),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    sentence['english'] as String,
-                    style: const TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
-
-            // Hint button
-            if (_showHint)
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppTheme.gold.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    const Text('💡 ', style: TextStyle(fontSize: 18)),
-                    Expanded(
-                      child: Text(
-                        sentence['hint'] as String,
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            else
-              TextButton.icon(
-                onPressed: () => setState(() => _showHint = true),
-                icon: const Icon(Icons.lightbulb_outline, color: AppTheme.gold),
-                label: const Text('Show Hint', style: TextStyle(color: AppTheme.gold)),
-              ),
+            const Text('Build the sentence:', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
-
-            // Answer slots
             Container(
-              width: double.infinity,
-              constraints: const BoxConstraints(minHeight: 80),
+              height: 100,
               padding: const EdgeInsets.all(16),
               decoration: AppTheme.glassCard(),
-              child: _userAnswer.isEmpty
-                  ? const Center(
-                      child: Text(
-                        'Tap words below to build your sentence',
-                        style: TextStyle(color: AppTheme.textGray),
+              child: Center(
+                child: Wrap(
+                  spacing: 8,
+                  children: _userSentence.asMap().entries.map((entry) {
+                    return GestureDetector(
+                      onTap: () => _removeWord(entry.key),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryRed,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(entry.value, style: const TextStyle(fontSize: 18, color: AppTheme.white, fontWeight: FontWeight.bold)),
                       ),
-                    )
-                  : Wrap(
-                      spacing: 10,
-                      runSpacing: 10,
-                      children: _userAnswer.asMap().entries.map((entry) {
-                        return GestureDetector(
-                          onTap: () => _removeWord(entry.key),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 10,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppTheme.primaryRed,
-                              borderRadius: BorderRadius.circular(14),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppTheme.primaryRed.withOpacity(0.3),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: Text(
-                              entry.value,
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.white,
-                              ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
+                    );
+                  }).toList(),
+                ),
+              ),
             ),
-            const Spacer(),
-
-            // Scrambled words
-            const Text(
-              'Tap words in correct order:',
-              style: TextStyle(fontSize: 15, color: AppTheme.textGray),
-            ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 40),
+            const Text('Tap words to build:', style: TextStyle(fontSize: 16)),
+            const SizedBox(height: 20),
             Wrap(
               spacing: 12,
               runSpacing: 12,
-              alignment: WrapAlignment.center,
-              children: _scrambledWords.asMap().entries.map((entry) {
+              children: (_currentRound['words'] as List).asMap().entries.map((entry) {
                 return GestureDetector(
-                  onTap: () => _addWord(entry.value, entry.key),
+                  onTap: () => _addWord(entry.value as String, entry.key),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     decoration: AppTheme.gameCard(),
-                    child: Text(
-                      entry.value,
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.primaryRed,
-                      ),
-                    ),
+                    child: Text(entry.value as String, style: const TextStyle(fontSize: 18, color: AppTheme.primaryRed, fontWeight: FontWeight.bold)),
                   ),
                 );
               }).toList(),
             ),
-            const SizedBox(height: 30),
           ],
         ),
       ),

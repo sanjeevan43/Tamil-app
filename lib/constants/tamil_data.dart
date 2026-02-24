@@ -63,25 +63,40 @@ class TamilData {
       {'tamil': 'தம்பி', 'english': 'Younger Brother', 'emoji': '🧒'},
       {'tamil': 'தங்கை', 'english': 'Younger Sister', 'emoji': '👶'},
     ],
+    'Vegetables': [
+      {'tamil': 'தக்காளி', 'english': 'Tomato', 'emoji': '🍅'},
+      {'tamil': 'வெங்காயம்', 'english': 'Onion', 'emoji': '🧅'},
+      {'tamil': 'உருளைக்கிழங்கு', 'english': 'Potato', 'emoji': '🥔'},
+      {'tamil': 'கேரட்', 'english': 'Carrot', 'emoji': '🥕'},
+      {'tamil': 'கத்தரிக்காய்', 'english': 'Brinjal', 'emoji': '🍆'},
+    ],
+    'Nature': [
+      {'tamil': 'சூரியன்', 'english': 'Sun', 'emoji': '☀️'},
+      {'tamil': 'நிலா', 'english': 'Moon', 'emoji': '🌙'},
+      {'tamil': 'நட்சத்திரம்', 'english': 'Star', 'emoji': '⭐'},
+      {'tamil': 'மேகம்', 'english': 'Cloud', 'emoji': '☁️'},
+      {'tamil': 'மழை', 'english': 'Rain', 'emoji': '🌧️'},
+      {'tamil': 'மலை', 'english': 'Mountain', 'emoji': '⛰️'},
+    ],
   };
 
   static const List<Map<String, dynamic>> lessons = [
-    {'id': 1, 'title': 'உயிர் எழுத்துக்கள்', 'level': 'Beginner', 'locked': false},
-    {'id': 2, 'title': 'மெய் எழுத்துக்கள்', 'level': 'Beginner', 'locked': false},
-    {'id': 3, 'title': 'விலங்குகள்', 'level': 'Beginner', 'locked': false},
-    {'id': 4, 'title': 'பழங்கள்', 'level': 'Intermediate', 'locked': true},
-    {'id': 5, 'title': 'நிறங்கள்', 'level': 'Intermediate', 'locked': true},
-    {'id': 6, 'title': 'எண்கள்', 'level': 'Intermediate', 'locked': true},
-    {'id': 7, 'title': 'வாக்கியங்கள்', 'level': 'Advanced', 'locked': true},
+    {'id': 1, 'title': 'உயிர் எழுத்துக்கள்', 'english': 'Vowel Letters', 'level': 'Beginner', 'locked': false},
+    {'id': 2, 'title': 'மெய் எழுத்துக்கள்', 'english': 'Consonant Letters', 'level': 'Beginner', 'locked': false},
+    {'id': 3, 'title': 'விலங்குகள்', 'english': 'Animals', 'level': 'Beginner', 'locked': false},
+    {'id': 4, 'title': 'பழங்கள்', 'english': 'Fruits', 'level': 'Intermediate', 'locked': true},
+    {'id': 5, 'title': 'நிறங்கள்', 'english': 'Colors', 'level': 'Intermediate', 'locked': true},
+    {'id': 6, 'title': 'எண்கள்', 'english': 'Numbers', 'level': 'Intermediate', 'locked': true},
+    {'id': 7, 'title': 'வாக்கியங்கள்', 'english': 'Sentences', 'level': 'Advanced', 'locked': true},
   ];
 
   static const List<Map<String, dynamic>> games = [
-    {'id': 1, 'name': 'Letter Hunt', 'icon': '🎯', 'description': 'Find the correct letter'},
-    {'id': 2, 'name': 'Word Builder', 'icon': '🔨', 'description': 'Build Tamil words'},
-    {'id': 3, 'name': 'Memory Match', 'icon': '🧠', 'description': 'Match Tamil letters'},
-    {'id': 4, 'name': 'Quiz Battle', 'icon': '⚔️', 'description': 'Answer questions fast'},
-    {'id': 5, 'name': 'Fill Blanks', 'icon': '📝', 'description': 'Complete the word'},
-    {'id': 6, 'name': 'Sentence Builder', 'icon': '📚', 'description': 'Form sentences'},
+    {'id': 1, 'name': 'Letter Hunt', 'tamilName': 'எழுத்து வேட்டை', 'icon': '🎯', 'description': 'Find the correct letter'},
+    {'id': 2, 'name': 'Word Builder', 'tamilName': 'சொல் உருவாக்குதல்', 'icon': '🔨', 'description': 'Build Tamil words'},
+    {'id': 3, 'name': 'Memory Match', 'tamilName': 'நினைவகப் போட்டி', 'icon': '🧠', 'description': 'Match Tamil letters'},
+    {'id': 4, 'name': 'Quiz Battle', 'tamilName': 'வினாடி வினா போர்', 'icon': '⚔️', 'description': 'Answer questions fast'},
+    {'id': 5, 'name': 'Fill Blanks', 'tamilName': 'இடைவெளியை நிரப்பு', 'icon': '📝', 'description': 'Complete the word'},
+    {'id': 6, 'name': 'Sentence Builder', 'tamilName': 'வாக்கிய அமைப்பாளர்', 'icon': '📚', 'description': 'Form sentences'},
   ];
 
   static const List<String> achievements = [
@@ -198,6 +213,21 @@ class TamilData {
       'english': 'I study Tamil',
       'hint': 'நான் + தமிழ் + படிக்கிறேன்',
     },
+    {
+      'tamil': ['பூ', 'அழகாக', 'இருக்கிறது'],
+      'english': 'The flower is beautiful',
+      'hint': 'பூ + அழகாக + இருக்கிறது',
+    },
+    {
+      'tamil': ['சூரியன்', 'உதிக்கிறது'],
+      'english': 'The sun is rising',
+      'hint': 'சூரியன் + உதிக்கிறது',
+    },
+    {
+      'tamil': ['தம்பி', 'விளையாடுகிறான்'],
+      'english': 'Younger brother is playing',
+      'hint': 'தம்பி + விளையாடுகிறான்',
+    },
   ];
 
   // Fill Blanks Game specific data
@@ -250,6 +280,7 @@ class TamilData {
   static const List<Map<String, dynamic>> tamilRhymes = [
     {
       'title': 'கைவீசம்மா கைவீசு',
+      'englishTitle': 'Wave Your Hands',
       'lines': [
         {'content': 'கைவீசம்மா கைவீசு', 'image': 'rhyme_hand_wave'},
         {'content': 'பள்ளிக்குச் செல்லலாம் கைவீசு', 'image': 'rhyme_school'},
@@ -259,6 +290,7 @@ class TamilData {
     },
     {
       'title': 'நிலா நிலா ஓடி வா',
+      'englishTitle': 'Moon Moon Come Running',
       'lines': [
         {'content': 'நிலா நிலா ஓடி வா', 'image': 'rhyme_moon_1'},
         {'content': 'நில்லாமல் ஓடி வா', 'image': 'rhyme_moon_2'},
@@ -268,6 +300,7 @@ class TamilData {
     },
     {
       'title': 'ஆத்திச்சூடி',
+      'englishTitle': 'Aathichudi (Moral Codes)',
       'lines': [
         {'content': 'அறம் செய விரும்பு', 'image': 'rhyme_aathichudi_1'},
         {'content': 'ஆறுவது சினம்', 'image': 'rhyme_aathichudi_2'},
@@ -280,13 +313,14 @@ class TamilData {
   static const List<Map<String, dynamic>> tamilStories = [
     {
       'title': 'சிங்கமும் எலியும்',
+      'englishTitle': 'The Lion and the Mouse',
       'moral': 'யாரையும் குறைவாக எடை போடக்கூடாது.',
       'scenes': [
-        {'content': 'ஒரு காட்டில் ஒரு சிங்கம் தூங்கிக்கொண்டிருந்தது.', 'image': 'story_lion_sleep'},
-        {'content': 'அங்கே ஒரு எலி வந்து சிங்கத்தின் மேல் விளையாடியது.', 'image': 'story_mouse_play'},
-        {'content': 'சிங்கம் கோபத்துடன் எலியைப் பிடித்தது.', 'image': 'story_lion_angry'},
-        {'content': 'எலி கெஞ்சியது, ஒரு நாள் நான் உனக்கு உதவுவேன் என்றது.', 'image': 'story_mouse_beg'},
-        {'content': 'சிங்கம் சிரித்துக்கொண்டே எலியை விட்டுவிட்டது.', 'image': 'story_lion_laugh'},
+        {'content': 'ஒரு காட்டில் ஒரு சிங்கம் தூங்கிக்கொண்டிருந்தது.', 'englishContent': 'A lion was sleeping in a forest.', 'image': 'story_lion_sleep'},
+        {'content': 'அங்கே ஒரு எலி வந்து சிங்கத்தின் மேல் விளையாடியது.', 'englishContent': 'A mouse came there and played on the lion.', 'image': 'story_mouse_play'},
+        {'content': 'சிங்கம் கோபத்துடன் எலியைப் பிடித்தது.', 'englishContent': 'The lion caught the mouse angrily.', 'image': 'story_lion_angry'},
+        {'content': 'எலி கெஞ்சியது, ஒரு நாள் நான் உனக்கு உதவுவேன் என்றது.', 'englishContent': 'The mouse begged, saying "I will help you one day".', 'image': 'story_mouse_beg'},
+        {'content': 'சிங்கம் சிரித்துக்கொண்டே எலியை விட்டுவிட்டது.', 'englishContent': 'The lion laughed and let the mouse go.', 'image': 'story_lion_laugh'},
       ],
       'questions': [
         {'question': 'காட்டில் எது தூங்கிக்கொண்டிருந்தது?', 'options': ['நாய்', 'பூனை', 'சிங்கம்', 'யானை'], 'correct': 2},
@@ -295,12 +329,13 @@ class TamilData {
     },
     {
       'title': 'ஆமையும் முயலும்',
+      'englishTitle': 'The Tortoise and the Hare',
       'moral': 'மெதுவாகச் சென்றாலும், நிலையாகச் செல்வது வெற்றி.',
       'scenes': [
-        {'content': 'ஒரு நாள் முயல் ஆமையை பார்த்து, நான் மிகவும் வேகமாக ஓடுவேன் என்று கூறியது.', 'image': 'story_hare_boast'},
-        {'content': 'ஆமை சொன்னது: நாம் ஒரு ஓட்டப்பந்தயம் வைப்போம்!', 'image': 'story_tortoise_challenge'},
-        {'content': 'முயல் வேகமாக ஓடி, நடுவழியில் தூங்கிவிட்டது.', 'image': 'story_hare_sleep'},
-        {'content': 'ஆமை மெதுவாக, நிலையாக ஓடி, வெற்றி பெற்றது!', 'image': 'story_tortoise_win'},
+        {'content': 'ஒரு நாள் முயல் ஆமையை பார்த்து, நான் மிகவும் வேகமாக ஓடுவேன் என்று கூறியது.', 'englishContent': 'One day a hare saw a tortoise and said "I can run very fast".', 'image': 'story_hare_boast'},
+        {'content': 'ஆமை சொன்னது: நாம் ஒரு ஓட்டப்பந்தயம் வைப்போம்!', 'englishContent': 'The tortoise said: "Let\'s have a race!"', 'image': 'story_tortoise_challenge'},
+        {'content': 'முயல் வேகமாக ஓடி, நடுவழியில் தூங்கிவிட்டது.', 'englishContent': 'The hare ran fast and fell asleep midway.', 'image': 'story_hare_sleep'},
+        {'content': 'ஆமை மெதுவாக, நிலையாக ஓடி, வெற்றி பெற்றது!', 'englishContent': 'The tortoise ran slowly and steadily and won!', 'image': 'story_tortoise_win'},
       ],
       'questions': [
         {'question': 'யார் வேகமாக ஓடுவேன் என்று பெருமை அடித்தது?', 'options': ['ஆமை', 'முயல்', 'நாய்', 'பூனை'], 'correct': 1},
@@ -309,12 +344,13 @@ class TamilData {
     },
     {
       'title': 'தாகமுள்ள காகம்',
+      'englishTitle': 'The Thirsty Crow',
       'moral': 'முயற்சி தொடர்ந்தால் வெற்றி நிச்சயம்.',
       'scenes': [
-        {'content': 'ஒரு காகத்திற்கு மிகவும் தாகமாக இருந்தது.', 'image': 'story_crow_thirsty'},
-        {'content': 'ஒரு குடத்தில் கொஞ்சம் தண்ணீர் இருந்தது, ஆனால் அது எட்டவில்லை.', 'image': 'story_crow_pot'},
-        {'content': 'காகம் சிறிய கற்களை குடத்தில் போட்டது.', 'image': 'story_crow_stones'},
-        {'content': 'தண்ணீர் மேலே வந்தது! காகம் தண்ணீர் குடித்தது.', 'image': 'story_crow_drink'},
+        {'content': 'ஒரு காகத்திற்கு மிகவும் தாகமாக இருந்தது.', 'englishContent': 'A crow was very thirsty.', 'image': 'story_crow_thirsty'},
+        {'content': 'ஒரு குடத்தில் கொஞ்சம் தண்ணீர் இருந்தது, ஆனால் அது எட்டவில்லை.', 'englishContent': 'There was a little water in a pot, but it couldn\'t reach it.', 'image': 'story_crow_pot'},
+        {'content': 'காகம் சிறிய கற்களை குடத்தில் போட்டது.', 'englishContent': 'The crow put small stones into the pot.', 'image': 'story_crow_stones'},
+        {'content': 'தண்ணீர் மேலே வந்தது! காகம் தண்ணீர் குடித்தது.', 'englishContent': 'The water came up! The crow drank the water.', 'image': 'story_crow_drink'},
       ],
       'questions': [
         {'question': 'காகத்திற்கு என்ன பிரச்சனை?', 'options': ['பசி', 'தாகம்', 'தூக்கம்', 'குளிர்'], 'correct': 1},

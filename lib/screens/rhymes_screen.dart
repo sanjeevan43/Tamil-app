@@ -147,6 +147,14 @@ class RhymesScreen extends StatelessWidget {
                           color: AppTheme.textDark,
                         ),
                       ),
+                      Text(
+                        rhyme['englishTitle'] ?? '',
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: AppTheme.textSlate,
+                        ),
+                      ),
                       const SizedBox(height: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),

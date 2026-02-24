@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../providers/enhanced_progress_provider.dart';
 import 'teaching_guide_screen.dart';
+import 'classroom_connect_screen.dart';
 
 class TeacherDashboardScreen extends StatelessWidget {
   const TeacherDashboardScreen({super.key});
@@ -37,9 +38,15 @@ class TeacherDashboardScreen extends StatelessWidget {
             children: [
               _buildStudentOverview(progress),
               const SizedBox(height: 24),
+              _buildAnnouncement(context, progress),
+              const SizedBox(height: 24),
               _buildLessonControl(context, progress),
               const SizedBox(height: 24),
               _buildHomework(context, progress),
+              const SizedBox(height: 24),
+              _buildAssignQuiz(context, progress),
+              const SizedBox(height: 24),
+              _buildClassroomHub(context),
               const SizedBox(height: 24),
               _buildReports(context),
               const SizedBox(height: 24),
@@ -47,6 +54,53 @@ class TeacherDashboardScreen extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildAnnouncement(BuildContext context, EnhancedProgressProvider progress) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: AppTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.campaign_rounded, color: Colors.amber, size: 28),
+              const SizedBox(width: 12),
+              const Text(
+                'அறிவிப்பு பலகை (Notice Board)',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.amber),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.amber.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.amber.withOpacity(0.1)),
+            ),
+            child: Text(
+              progress.globalNotice,
+              style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.brown),
+            ),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton.icon(
+            onPressed: () => _showNoticeDialog(context, progress),
+            icon: const Icon(Icons.edit_notifications),
+            label: const Text('அறிவிப்பை மாற்று (Edit Notice)'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.amber,
+              foregroundColor: Colors.brown,
+              minimumSize: const Size(double.infinity, 45),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -62,11 +116,11 @@ class TeacherDashboardScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
-              const Icon(Icons.menu_book, color: Colors.amber, size: 28),
-              const SizedBox(width: 12),
-              const Text(
+              Icon(Icons.menu_book, color: Colors.amber, size: 28),
+              SizedBox(width: 12),
+              Text(
                 'கற்பித்தல் வழிகாட்டி',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.brown),
               ),
@@ -168,6 +222,7 @@ class TeacherDashboardScreen extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryRed,
               foregroundColor: Colors.white,
+              minimumSize: const Size(double.infinity, 45),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
           ),
@@ -194,6 +249,7 @@ class TeacherDashboardScreen extends StatelessWidget {
             ...progress.assignedHomework.map((hw) => ListTile(
                   leading: const Icon(Icons.assignment, color: AppTheme.primaryRed),
                   title: Text(hw),
+                  contentPadding: EdgeInsets.zero,
                 )),
           const SizedBox(height: 16),
           ElevatedButton.icon(
@@ -202,6 +258,65 @@ class TeacherDashboardScreen extends StatelessWidget {
             label: const Text('வீட்டுப்பாடம் கொடு (Assign Homework)'),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryRed,
+              foregroundColor: Colors.white,
+              minimumSize: const Size(double.infinity, 45),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAssignQuiz(BuildContext context, EnhancedProgressProvider progress) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: AppTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'வினாடி வினா ஒதுக்கீடு (Assign Quiz)',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.primaryRed),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton.icon(
+            onPressed: () => _showAssignQuizDialog(context, progress),
+            icon: const Icon(Icons.quiz_rounded),
+            label: const Text('வினாடி வினா கொடு (Assign Quiz)'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryRed,
+              foregroundColor: Colors.white,
+              minimumSize: const Size(double.infinity, 45),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildClassroomHub(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: AppTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'வகுப்பறை மையம் (Classroom Hub)',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),
+          ),
+          const SizedBox(height: 8),
+          const Text('கேள்விகளுக்கு பதிலளிக்கவும் மற்றும் வினாடி வினாக்களை அனுப்பவும்.', style: TextStyle(fontSize: 13)),
+          const SizedBox(height: 16),
+          ElevatedButton.icon(
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ClassroomConnectScreen())),
+            icon: const Icon(Icons.forum_rounded),
+            label: const Text('மையத்திற்குச் செல்லவும் (Go to Hub)'),
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(double.infinity, 50),
+              backgroundColor: Colors.blue,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
@@ -237,6 +352,33 @@ class TeacherDashboardScreen extends StatelessWidget {
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showNoticeDialog(BuildContext context, EnhancedProgressProvider progress) {
+    final controller = TextEditingController(text: progress.globalNotice);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('புதிய அறிவிப்பு'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(hintText: 'இங்கே அறிவிப்பைத் தட்டச்சு செய்க...'),
+          maxLines: 2,
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('வேண்டாம்')),
+          ElevatedButton(
+            onPressed: () {
+              if (controller.text.isNotEmpty) {
+                progress.setGlobalNotice(controller.text);
+                Navigator.pop(context);
+              }
+            },
+            child: const Text('அறிவிப்பு செய்'),
           ),
         ],
       ),
@@ -295,6 +437,30 @@ class TeacherDashboardScreen extends StatelessWidget {
             child: const Text('அனுப்பு'),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showAssignQuizDialog(BuildContext context, EnhancedProgressProvider progress) {
+    final quizzes = ['Vowels Challenge', 'Animals Master', 'Sentence Builder', 'Daily Tamil Test'];
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('வினாடி வினாவைத் தேர்ந்தெடுக்கவும்'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: quizzes.map((q) => ListTile(
+            title: Text(q),
+            leading: const Icon(Icons.quiz_rounded, color: AppTheme.primaryRed),
+            onTap: () {
+              progress.assignQuiz(q);
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('$q ஒதுக்கப்பட்டது!')),
+              );
+            },
+          )).toList(),
+        ),
       ),
     );
   }

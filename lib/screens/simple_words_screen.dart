@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../constants/tamil_data.dart';
 import '../services/audio_service.dart';
-import '../widgets/safe_image.dart';
-import '../widgets/glass_card.dart';
+import '../providers/enhanced_progress_provider.dart';
 
 class SimpleWordsScreen extends StatefulWidget {
   const SimpleWordsScreen({super.key});
@@ -14,61 +14,92 @@ class SimpleWordsScreen extends StatefulWidget {
 }
 
 class _SimpleWordsScreenState extends State<SimpleWordsScreen> {
-  String selectedCategory = 'Animals';
+  String _selectedCategory = 'Animals';
+  
+  final List<String> _categories = ['Animals', 'Fruits', 'Colors', 'Numbers'];
+  
+  void _updateProgress(BuildContext context) {
+    final progress = Provider.of<EnhancedProgressProvider>(context, listen: false);
+    // Simple logic: each category is worth 25%
+    int index = _categories.indexOf(_selectedCategory);
+    int percent = ((index + 1) / _categories.length * 100).toInt();
+    progress.updateLessonProgress(2, percent); // Lesson 2: Simple Words
+  }
 
   @override
   Widget build(BuildContext context) {
+    final words = TamilData.wordCategories[_selectedCategory] ?? [];
+    final progress = Provider.of<EnhancedProgressProvider>(context);
+
     return Scaffold(
       backgroundColor: AppTheme.backgroundLight,
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(context),
-            const SizedBox(height: 16),
+            _buildHeader(context, progress),
             _buildCategoryTabs(),
-            const SizedBox(height: 16),
-            Expanded(child: _buildWordsList()),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                physics: const BouncingScrollPhysics(),
+                itemCount: words.length,
+                itemBuilder: (context, index) {
+                  return _buildWordCard(words[index], index);
+                },
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, EnhancedProgressProvider progress) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
       decoration: BoxDecoration(
-        color: AppTheme.backgroundLight.withOpacity(0.9),
+        color: Colors.white,
+        border: Border(bottom: BorderSide(color: AppTheme.borderLight)),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
         children: [
-          _buildNavButton(
-            icon: Icons.arrow_back,
-            onTap: () => Navigator.pop(context),
-          ),
-          Column(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'VOCABULARY',
-                style: GoogleFonts.lexend(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.primaryRed.withOpacity(0.8),
-                  letterSpacing: 1.5,
+              _buildNavButton(
+                icon: Icons.close_rounded,
+                onTap: () => Navigator.pop(context),
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    Text(
+                      'VOCABULARY BUILDER',
+                      style: GoogleFonts.inter(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        color: AppTheme.primary,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Common Words',
+                      style: GoogleFonts.notoSansTamil(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.textDark,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Text(
-                'Simple Words',
-                style: GoogleFonts.notoSansTamil(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.textDark,
-                ),
+              _buildNavButton(
+                icon: Icons.search_rounded,
+                onTap: () {},
               ),
             ],
           ),
-          const SizedBox(width: 40), // Spacer for balance
         ],
       ),
     );
@@ -78,114 +109,82 @@ class _SimpleWordsScreenState extends State<SimpleWordsScreen> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 40,
-        height: 40,
+        width: 44,
+        height: 44,
         decoration: BoxDecoration(
-          color: AppTheme.primaryRed.withOpacity(0.1),
-          shape: BoxShape.circle,
+          color: AppTheme.offWhite,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppTheme.borderLight),
         ),
-        child: Icon(icon, color: AppTheme.primaryRed, size: 24),
+        child: Icon(icon, color: AppTheme.textDark, size: 22),
       ),
     );
   }
 
   Widget _buildCategoryTabs() {
-    return SizedBox(
-      height: 45,
-      child: ListView(
+    return Container(
+      height: 70,
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      decoration: const BoxDecoration(color: Colors.white),
+      child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        children: TamilData.wordCategories.keys.map((category) {
-          final isSelected = category == selectedCategory;
+        itemCount: _categories.length,
+        itemBuilder: (context, index) {
+          final cat = _categories[index];
+          final isSelected = _selectedCategory == cat;
           return GestureDetector(
-            onTap: () => setState(() => selectedCategory = category),
+            onTap: () {
+              setState(() => _selectedCategory = cat);
+              _updateProgress(context);
+            },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              margin: const EdgeInsets.only(right: 12),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(
-                color: isSelected ? AppTheme.primaryRed : Colors.white,
-                borderRadius: BorderRadius.circular(25),
-                border: Border.all(
-                  color: isSelected ? AppTheme.primaryRed : AppTheme.primaryRed.withOpacity(0.1),
-                  width: 1.5,
-                ),
-                boxShadow: isSelected
-                    ? [
-                        BoxShadow(
-                          color: AppTheme.primaryRed.withOpacity(0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        )
-                      ]
-                    : [],
-              ),
-              child: Center(
-                child: Text(
-                  category,
-                  style: GoogleFonts.lexend(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: isSelected ? Colors.white : AppTheme.textSlate,
-                  ),
+              margin: const EdgeInsets.symmetric(horizontal: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              decoration: isSelected 
+                  ? AppTheme.pillBadge(bgColor: AppTheme.primary)
+                  : AppTheme.pillBadge(bgColor: AppTheme.offWhite),
+              alignment: Alignment.center,
+              child: Text(
+                cat,
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                  color: isSelected ? Colors.white : AppTheme.textSlate,
                 ),
               ),
             ),
           );
-        }).toList(),
+        },
       ),
     );
   }
 
-  Widget _buildWordsList() {
-    final words = TamilData.wordCategories[selectedCategory] ?? [];
-    return ListView.builder(
-      padding: const EdgeInsets.all(20),
-      itemCount: words.length,
-      itemBuilder: (context, index) => _buildWordCard(words[index]),
-    );
-  }
-
-  Widget _buildWordCard(Map<String, String> word) {
+  Widget _buildWordCard(Map<String, String> word, int index) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.primaryRed.withOpacity(0.1)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+      decoration: AppTheme.whiteCard(radius: 24),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(24),
           onTap: () => AudioService.playWord(word['tamil']!),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             child: Row(
               children: [
-                // Image/Icon Container using Glass + SafeImage logic
                 Container(
-                  width: 70,
-                  height: 70,
+                  width: 72,
+                  height: 72,
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryRed.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(16),
+                    color: AppTheme.primary.withOpacity(0.06),
+                    borderRadius: BorderRadius.circular(18),
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: Center(
-                      child: Text(
-                        word['emoji']!,
-                        style: const TextStyle(fontSize: 34),
-                      ),
+                  child: Center(
+                    child: Text(
+                      word['emoji']!,
+                      style: const TextStyle(fontSize: 36),
                     ),
                   ),
                 ),
@@ -197,43 +196,32 @@ class _SimpleWordsScreenState extends State<SimpleWordsScreen> {
                       Text(
                         word['tamil']!,
                         style: GoogleFonts.notoSansTamil(
-                          fontSize: 22,
+                          fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: AppTheme.textDark,
                         ),
                       ),
-                      const SizedBox(height: 4),
                       Text(
                         word['english']!,
-                        style: GoogleFonts.lexend(
-                          fontSize: 14,
+                        style: GoogleFonts.inter(
+                          fontSize: 15,
                           fontWeight: FontWeight.w500,
-                          color: AppTheme.textSlate,
+                          color: AppTheme.primary,
                         ),
                       ),
                     ],
                   ),
                 ),
-                
-                // Play Button
                 Container(
-                  width: 48,
-                  height: 48,
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryRed,
+                    color: AppTheme.offWhite,
                     shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppTheme.primaryRed.withOpacity(0.3),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
                   ),
                   child: const Icon(
                     Icons.volume_up_rounded,
-                    color: Colors.white,
-                    size: 24,
+                    color: AppTheme.primary,
+                    size: 20,
                   ),
                 ),
               ],

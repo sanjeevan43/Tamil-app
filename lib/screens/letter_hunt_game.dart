@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'dart:math';
 import '../constants/app_theme.dart';
 import '../constants/tamil_data.dart';
 import '../services/audio_service.dart';
+import '../services/game_logic.dart';
 import '../providers/enhanced_progress_provider.dart';
 
 class LetterHuntGame extends StatefulWidget {
@@ -14,11 +14,11 @@ class LetterHuntGame extends StatefulWidget {
 }
 
 class _LetterHuntGameState extends State<LetterHuntGame> {
-  String _targetLetter = '';
-  List<String> _options = [];
+  late Map<String, dynamic> _currentRound;
   int _score = 0;
   int _round = 1;
   final int _maxRounds = 10;
+  bool _isAnswered = false;
 
   @override
   void initState() {
@@ -27,40 +27,32 @@ class _LetterHuntGameState extends State<LetterHuntGame> {
   }
 
   void _generateRound() {
-    final random = Random();
-    _targetLetter = TamilData.uyirEzhuthukkal[random.nextInt(TamilData.uyirEzhuthukkal.length)];
-    
-    _options = [_targetLetter];
-    while (_options.length < 6) {
-      final letter = TamilData.uyirEzhuthukkal[random.nextInt(TamilData.uyirEzhuthukkal.length)];
-      if (!_options.contains(letter)) {
-        _options.add(letter);
-      }
-    }
-    _options.shuffle();
-    
-    AudioService.playLetter(_targetLetter);
+    _currentRound = GameLogic.generateLetterHuntRound();
+    AudioService.playLetter(_currentRound['targetLetter']);
+    _isAnswered = false;
   }
 
-  void _checkAnswer(String selected) {
-    if (selected == _targetLetter) {
-      setState(() {
-        _score += 10;
+  void _checkAnswer(int selectedIndex) {
+    if (_isAnswered) return;
+    setState(() => _isAnswered = true);
+    
+    if (selectedIndex == _currentRound['correctIndex']) {
+      setState(() => _score += 10);
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (!mounted) return;
         if (_round < _maxRounds) {
-          _round++;
-          _generateRound();
+          setState(() {
+            _round++;
+            _generateRound();
+          });
         } else {
           _showResults();
         }
       });
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Try again!'),
-          duration: Duration(seconds: 1),
-          backgroundColor: AppTheme.error,
-        ),
-      );
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) setState(() => _isAnswered = false);
+      });
     }
   }
 
@@ -76,10 +68,7 @@ class _LetterHuntGameState extends State<LetterHuntGame> {
           children: [
             const Text('🎉', style: TextStyle(fontSize: 60)),
             const SizedBox(height: 16),
-            const Text(
-              'Game Complete!',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.primaryRed),
-            ),
+            const Text('Game Complete!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.primaryRed)),
             const SizedBox(height: 16),
             Text('Score: $_score/${_maxRounds * 10}', style: const TextStyle(fontSize: 20)),
             const SizedBox(height: 24),
@@ -139,25 +128,16 @@ class _LetterHuntGameState extends State<LetterHuntGame> {
               decoration: AppTheme.premiumCard(),
               child: Column(
                 children: [
-                  Text(
-                    'Round $_round/$_maxRounds',
-                    style: const TextStyle(fontSize: 18, color: AppTheme.white),
-                  ),
+                  Text('Round $_round/$_maxRounds', style: const TextStyle(fontSize: 18, color: AppTheme.white)),
                   const SizedBox(height: 12),
-                  const Text(
-                    'Find this letter:',
-                    style: TextStyle(fontSize: 20, color: AppTheme.white),
-                  ),
+                  const Text('Find this letter:', style: TextStyle(fontSize: 20, color: AppTheme.white)),
                   const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        _targetLetter,
-                        style: const TextStyle(fontSize: 60, fontWeight: FontWeight.bold, color: AppTheme.white),
-                      ),
+                      Text(_currentRound['targetLetter'], style: const TextStyle(fontSize: 60, fontWeight: FontWeight.bold, color: AppTheme.white)),
                       IconButton(
-                        onPressed: () => AudioService.playLetter(_targetLetter),
+                        onPressed: () => AudioService.playLetter(_currentRound['targetLetter']),
                         icon: const Icon(Icons.volume_up, color: AppTheme.white, size: 32),
                       ),
                     ],
@@ -173,17 +153,14 @@ class _LetterHuntGameState extends State<LetterHuntGame> {
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
                 ),
-                itemCount: _options.length,
+                itemCount: (_currentRound['options'] as List).length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
-                    onTap: () => _checkAnswer(_options[index]),
+                    onTap: _isAnswered ? null : () => _checkAnswer(index),
                     child: Container(
                       decoration: AppTheme.gameCard(),
                       child: Center(
-                        child: Text(
-                          _options[index],
-                          style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: AppTheme.primaryRed),
-                        ),
+                        child: Text((_currentRound['options'] as List)[index], style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: AppTheme.primaryRed)),
                       ),
                     ),
                   );

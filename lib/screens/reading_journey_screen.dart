@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../widgets/glass_card.dart';
 import '../data/reading_journey_data.dart';
+import '../providers/enhanced_progress_provider.dart';
 import 'reading_practice_screen.dart';
 
 class ReadingJourneyScreen extends StatelessWidget {
@@ -10,78 +12,65 @@ class ReadingJourneyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final progress = Provider.of<EnhancedProgressProvider>(context);
+    
     return Scaffold(
       backgroundColor: AppTheme.backgroundLight,
       body: Stack(
         children: [
-          // Background Decorative Elements
           const _BackgroundDecorations(),
           
           Column(
             children: [
-              // Header
-              const _ReadingJourneyHeader(),
+              _ReadingJourneyHeader(progress: progress),
               
-              // Map Container
               Expanded(
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   child: SizedBox(
-                    height: 1000, // Long scrollable area
+                    height: 1100,
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        // Winding Path
                         Positioned.fill(
                           child: CustomPaint(
                             painter: _PathPainter(),
                           ),
                         ),
                         
-                        // Level Nodes
-                        // Note: Reversed order visually (bottom to top) in HTML logic, but here we position them.
-                        // Y positions roughly match the SVG curve points.
-                        // 0 at top, 800 at bottom in SVG. Flip for UI if needed?
-                        // "M50 750" is bottom. "M50 0" is top.
-                        // So Level 1 is at bottom (750), Level 5 at top (0).
+                        ...List.generate(ReadingJourneyData.levels.length, (index) {
+                          final data = ReadingJourneyData.levels[index];
+                          final lessonId = data['id'];
+                          
+                          LevelStatus status;
+                          if (progress.unlockedLessons.contains(lessonId)) {
+                            final p = progress.lessonProgress[lessonId] ?? 0;
+                            status = p >= 100 ? LevelStatus.completed : LevelStatus.current;
+                          } else {
+                            status = LevelStatus.locked;
+                          }
+
+                          // Manual layout mapping for the winding path
+                          final layoutMap = [
+                            {'top': 900.0, 'alignment': 0.0},
+                            {'top': 730.0, 'alignment': 0.7},
+                            {'top': 560.0, 'alignment': -0.7},
+                            {'top': 390.0, 'alignment': 0.7},
+                            {'top': 220.0, 'alignment': 0.0},
+                          ];
+
+                          final layout = layoutMap[index % layoutMap.length];
+
+                          return _LevelNode(
+                            levelIndex: index,
+                            top: layout['top'] as double,
+                            alignment: layout['alignment'] as double,
+                            data: data,
+                            status: status,
+                          );
+                        }),
                         
-                        _LevelNode(
-                          levelIndex: 0,
-                          top: 800, 
-                          alignment: 0, 
-                          data: ReadingJourneyData.levels[0],
-                          status: LevelStatus.completed,
-                        ),
-                        _LevelNode(
-                          levelIndex: 1,
-                          top: 650, 
-                          alignment: 0.6, // Right
-                          data: ReadingJourneyData.levels[1],
-                          status: LevelStatus.completed,
-                        ),
-                        _LevelNode(
-                          levelIndex: 2,
-                          top: 500, 
-                          alignment: -0.6, // Left
-                          data: ReadingJourneyData.levels[2],
-                          status: LevelStatus.current,
-                        ),
-                        _LevelNode(
-                          levelIndex: 3,
-                          top: 350, 
-                          alignment: 0.6, // Right
-                          data: ReadingJourneyData.levels[3],
-                          status: LevelStatus.locked,
-                        ),
-                        _LevelNode(
-                          levelIndex: 4,
-                          top: 200, 
-                          alignment: 0, 
-                          data: ReadingJourneyData.levels[4],
-                          status: LevelStatus.locked,
-                        ),
-                        
-                        const SizedBox(height: 100), // Padding at bottom
+                        const SizedBox(height: 150),
                       ],
                     ),
                   ),
@@ -90,12 +79,11 @@ class ReadingJourneyScreen extends StatelessWidget {
             ],
           ),
 
-          // Floating Progress Footer
-          const Positioned(
-            bottom: 24,
+          Positioned(
+            bottom: 30,
             left: 24,
             right: 24,
-            child: _ProgressFooter(),
+            child: _ProgressFooter(progress: progress),
           ),
         ],
       ),
@@ -104,87 +92,93 @@ class ReadingJourneyScreen extends StatelessWidget {
 }
 
 class _ReadingJourneyHeader extends StatelessWidget {
-  const _ReadingJourneyHeader();
+  final EnhancedProgressProvider progress;
+  const _ReadingJourneyHeader({required this.progress});
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Column(
-          children: [
-            Text(
-              'POWERED BY HOPE3 SERVICES',
-              style: GoogleFonts.lexend(
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.5,
-                color: AppTheme.primaryRed.withOpacity(0.5),
-              ),
+    return Container(
+      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 10, bottom: 20),
+      color: Colors.white,
+      child: Column(
+        children: [
+          Text(
+            'MILESTONE TRACKER',
+            style: GoogleFonts.inter(
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              color: AppTheme.primary,
+              letterSpacing: 2,
             ),
-            const SizedBox(height: 8),
-            GlassCard(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              radius: 16,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        shape: BoxShape.circle,
+          ),
+          const SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildNavButton(
+                  context,
+                  icon: Icons.arrow_back_ios_new_rounded,
+                  onTap: () => Navigator.pop(context),
+                ),
+                Column(
+                  children: [
+                    Text(
+                      'வாசிப்புப் பயணம்',
+                      style: GoogleFonts.notoSansTamil(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.textDark,
                       ),
-                      child: const Icon(Icons.arrow_back, color: AppTheme.primaryRed),
                     ),
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        'வாசிப்புப் பயணம்',
-                        style: GoogleFonts.notoSansTamil(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.textDark,
-                        ),
+                    Text(
+                      'Learning Journey',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.textSlate,
                       ),
+                    ),
+                  ],
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  decoration: AppTheme.pillBadge(bgColor: AppTheme.primary.withOpacity(0.08)),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.stars_rounded, color: AppTheme.primary, size: 20),
+                      const SizedBox(width: 8),
                       Text(
-                        'Reading Journey',
-                        style: GoogleFonts.lexend(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: AppTheme.primaryRed.withOpacity(0.6),
+                        '${progress.totalStars}',
+                        style: GoogleFonts.inter(
+                          fontWeight: FontWeight.w800,
+                          color: AppTheme.primary,
                         ),
                       ),
                     ],
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: AppTheme.primaryRed.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.stars_rounded, color: Colors.amber, size: 18),
-                        const SizedBox(width: 4),
-                        Text(
-                          '24',
-                          style: GoogleFonts.lexend(
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.primaryRed,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavButton(BuildContext context, {required IconData icon, required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: AppTheme.offWhite,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppTheme.borderLight),
         ),
+        child: Icon(icon, color: AppTheme.textDark, size: 20),
       ),
     );
   }
@@ -195,7 +189,7 @@ enum LevelStatus { completed, current, locked }
 class _LevelNode extends StatelessWidget {
   final int levelIndex;
   final double top;
-  final double alignment; // -1.0 (left) to 1.0 (right)
+  final double alignment;
   final Map<String, dynamic> data;
   final LevelStatus status;
 
@@ -209,13 +203,6 @@ class _LevelNode extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Convert alignment to horizontal position offset contextually if needed, 
-    // but Stack alignment works better with Align widget logic?
-    // Actually, simple Align(alignment: Alignment(x, y)) works if parent is expanded.
-    // Since we are in a massive Stack, Positioned is better.
-    // We want to center horizontally roughly but offset by alignment.
-    // Screen width is usually ~360-400. Offset 0.6 is quite far right.
-
     return Positioned(
       top: top,
       left: 0,
@@ -223,45 +210,49 @@ class _LevelNode extends StatelessWidget {
       child: Align(
         alignment: Alignment(alignment, 0),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            // Node Icon
             GestureDetector(
               onTap: status == LevelStatus.locked ? null : () {
-                 if (status == LevelStatus.current || status == LevelStatus.completed) {
-                   Navigator.push(
-                     context,
-                     MaterialPageRoute(
-                       builder: (_) => ReadingPracticeScreen(levelData: data),
-                     ),
-                   );
-                 }
+                 Navigator.push(
+                   context,
+                   MaterialPageRoute(
+                     builder: (_) => ReadingPracticeScreen(levelData: data),
+                   ),
+                 );
               },
               child: _buildNodeIcon(),
             ),
-            
-            // Label
-            const SizedBox(height: 12),
-            GlassCard(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              radius: 12,
-              opacity: 0.6,
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: AppTheme.whiteCard(radius: 16),
               child: Column(
                 children: [
                   Text(
-                    'LEVEL ${data['id']}',
-                    style: GoogleFonts.lexend(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: status == LevelStatus.locked ? Colors.grey : AppTheme.primaryRed,
-                      letterSpacing: 1.0,
+                    'MODULE ${data['id']}',
+                    style: GoogleFonts.inter(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w900,
+                      color: status == LevelStatus.locked ? AppTheme.textGray : AppTheme.primary,
+                      letterSpacing: 1.5,
                     ),
                   ),
+                  const SizedBox(height: 2),
                   Text(
                     data['title'],
                     style: GoogleFonts.notoSansTamil(
-                      fontSize: 14,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
-                      color: status == LevelStatus.locked ? Colors.grey[600] : AppTheme.textDark,
+                      color: status == LevelStatus.locked ? AppTheme.textGray : AppTheme.textDark,
+                    ),
+                  ),
+                  Text(
+                    data['subtitle'] ?? '',
+                    style: GoogleFonts.inter(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: status == LevelStatus.locked ? AppTheme.textGray.withOpacity(0.6) : AppTheme.textSlate,
                     ),
                   ),
                 ],
@@ -276,108 +267,100 @@ class _LevelNode extends StatelessWidget {
   Widget _buildNodeIcon() {
     switch (status) {
       case LevelStatus.completed:
-        return Stack(
-          alignment: Alignment.bottomCenter,
-          clipBehavior: Clip.none,
-          children: [
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                color: AppTheme.primaryRed,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppTheme.primaryRed.withOpacity(0.4),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-                border: Border.all(color: Colors.white, width: 4),
+        return Container(
+          width: 72,
+          height: 72,
+          decoration: BoxDecoration(
+            color: AppTheme.primary,
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white, width: 6),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.primary.withOpacity(0.35),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
               ),
-              child: const Icon(Icons.check, color: Colors.white, size: 32),
-            ),
-            Positioned(
-              bottom: -10,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(3, (index) => 
-                  Icon(
-                    Icons.star_rounded, 
-                    size: 16, 
-                    color: index < (data['stars'] ?? 0) ? Colors.amber : Colors.grey[300]
-                  )
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
+          child: const Icon(Icons.check_rounded, color: Colors.white, size: 36),
         );
       case LevelStatus.current:
         return Stack(
           alignment: Alignment.center,
-          clipBehavior: Clip.none,
           children: [
-            // Pulse Effect
+            _PulseEffect(color: AppTheme.primary),
             Container(
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: AppTheme.primaryRed.withOpacity(0.2),
-                shape: BoxShape.circle,
-              ),
-            ),
-            Container(
-              width: 72,
-              height: 72,
-              decoration: BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
-                border: Border.all(color: AppTheme.primaryRed, width: 4),
+                border: Border.all(color: AppTheme.primary, width: 4),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.primaryRed.withOpacity(0.3),
-                    blurRadius: 15,
-                    offset: const Offset(0, 8),
+                    color: AppTheme.primary.withOpacity(0.25),
+                    blurRadius: 25,
+                    offset: const Offset(0, 12),
                   ),
                 ],
               ),
-              child: const Icon(Icons.play_arrow_rounded, color: AppTheme.primaryRed, size: 40),
-            ),
-            Positioned(
-              top: -12,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: AppTheme.primaryRed,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(color: Colors.black12, blurRadius: 4),
-                  ],
-                ),
-                child: Text(
-                  'CURRENT STEP',
-                  style: GoogleFonts.lexend(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+              child: const Icon(Icons.rocket_launch_rounded, color: AppTheme.primary, size: 40),
             ),
           ],
         );
       case LevelStatus.locked:
         return Container(
-          width: 64,
-          height: 64,
+          width: 68,
+          height: 68,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.5),
+            color: AppTheme.offWhite,
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.white),
+            border: Border.all(color: AppTheme.borderLight, width: 2),
           ),
-          child: Icon(Icons.lock_rounded, color: Colors.grey[400], size: 28),
+          child: Icon(Icons.lock_outline_rounded, color: AppTheme.textGray.withOpacity(0.3), size: 30),
         );
     }
+  }
+}
+
+class _PulseEffect extends StatefulWidget {
+  final Color color;
+  const _PulseEffect({required this.color});
+
+  @override
+  State<_PulseEffect> createState() => _PulseEffectState();
+}
+
+class _PulseEffectState extends State<_PulseEffect> with SingleTickerProviderStateMixin {
+  late AnimationController _ctrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat();
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _ctrl,
+      builder: (context, child) {
+        return Container(
+          width: 80 + (_ctrl.value * 40),
+          height: 80 + (_ctrl.value * 40),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: widget.color.withOpacity(0.2 * (1 - _ctrl.value)),
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -385,68 +368,37 @@ class _PathPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppTheme.primaryRed.withOpacity(0.2)
+      ..color = AppTheme.primary.withOpacity(0.12)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.0
-      // dotted line?
-      ;
+      ..strokeWidth = 4.0
+      ..strokeCap = StrokeCap.round;
 
-    // SVG: M50 750 C 90 700, 90 650, 50 600 C 10 550, 10 500, 50 450 ...
-    // Coordinate space: 0-100 X, 0-800 Y.
-    // We need to scale X to size.width (mostly centered) and map Y to size.height (or manually fixed 1000 height).
-    
-    // Manual mapping based on 1000px height container? Or relative?
-    // We fixed specific "top" positions for nodes: 800, 650, 500, 350, 200.
-    // Path should connect these.
-    
-    final path = Path();
     final w = size.width;
-    // final h = size.height; // Is 1000 approx
+    final path = Path();
     
-    // Start Bottom (Level 1)
-    path.moveTo(w * 0.5, 800 + 32); // Center of node
+    // Centers mapped to node positions
+    final points = [
+      Offset(w * 0.5, 936),
+      Offset(w * 0.85, 766),
+      Offset(w * 0.15, 596),
+      Offset(w * 0.85, 426),
+      Offset(w * 0.5, 256),
+    ];
     
-    // Curve to Level 2 (Right aligned at 650)
-    // Bezier control points need to be guessed to match smooth curve
-    path.cubicTo(
-      w * 0.8, 750, // Ctrl 1
-      w * 0.8, 700, // Ctrl 2
-      w * 0.5 + (w * 0.3), 650 + 32, // End (Level 2 center approx: 0.6 alignment is w*0.3 offset?)
-      // Alignment 0.6 is (0 axis) + 0.6 * (half width).
-      // Let's approximate visual look.
-    );
-     // Wait, simple cubicTo between nodes?
-     // Actually the SVG path is continuous.
-     // M50 750 ...
-     
-    // Drawing a simple continuous sine-like wave connecting the node centers is easier.
-    // Level 1: (0.5 w, 832)
-    // Level 2: (0.8 w, 682)
-    // Level 3: (0.2 w, 532)
-    // Level 4: (0.8 w, 382)
-    // Level 5: (0.5 w, 232)
-    
-    // Note: Node Top + 32 (half height of 64px icon) = Center Y.
-    
-    final p1 = Offset(w * 0.5, 832);
-    final p2 = Offset(w * 0.8, 682);
-    final p3 = Offset(w * 0.2, 532);
-    final p4 = Offset(w * 0.8, 382);
-    final p5 = Offset(w * 0.5, 232);
-    
-    final path2 = Path();
-    path2.moveTo(p1.dx, p1.dy);
-    _drawCurve(path2, p1, p2);
-    _drawCurve(path2, p2, p3);
-    _drawCurve(path2, p3, p4);
-    _drawCurve(path2, p4, p5);
-    
-    // Compute metrics for dashes
+    path.moveTo(points[0].dx, points[0].dy);
+    for (int i = 0; i < points.length - 1; i++) {
+      final p1 = points[i];
+      final p2 = points[i + 1];
+      final ctrl1 = Offset(p1.dx, p1.dy - 100);
+      final ctrl2 = Offset(p2.dx, p2.dy + 100);
+      path.cubicTo(ctrl1.dx, ctrl1.dy, ctrl2.dx, ctrl2.dy, p2.dx, p2.dy);
+    }
+
     final dashPath = Path();
-    final dashWidth = 10.0;
-    final dashSpace = 10.0;
+    const dashWidth = 12.0;
+    const dashSpace = 8.0;
     double distance = 0.0;
-    for (final pathMetric in path2.computeMetrics()) {
+    for (final pathMetric in path.computeMetrics()) {
       while (distance < pathMetric.length) {
         dashPath.addPath(
           pathMetric.extractPath(distance, distance + dashWidth),
@@ -458,30 +410,24 @@ class _PathPainter extends CustomPainter {
 
     canvas.drawPath(dashPath, paint);
   }
-  
-  void _drawCurve(Path path, Offset p1, Offset p2) {
-    // Simple cubic bezier with control points vertical
-    // Ctrl1: moving up from p1
-    // Ctrl2: moving down from p2? No, continuous flow.
-    // Actually flow is p1 -> p2 (Upwards visually, so Y decreases).
-    
-    final ctrl1 = Offset(p1.dx, p1.dy - 70);
-    final ctrl2 = Offset(p2.dx, p2.dy + 70);
-    path.cubicTo(ctrl1.dx, ctrl1.dy, ctrl2.dx, ctrl2.dy, p2.dx, p2.dy);
-  }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class _ProgressFooter extends StatelessWidget {
-  const _ProgressFooter();
+  final EnhancedProgressProvider progress;
+  const _ProgressFooter({required this.progress});
 
   @override
   Widget build(BuildContext context) {
-    return GlassCard(
-      radius: 20,
-      padding: const EdgeInsets.all(20),
+    int totalLevels = ReadingJourneyData.levels.length;
+    int completedLevels = ReadingJourneyData.levels.where((l) => (progress.lessonProgress[l['id']] ?? 0) >= 100).length;
+    double percent = completedLevels / totalLevels;
+
+    return Container(
+      decoration: AppTheme.whiteCard(radius: 28),
+      padding: const EdgeInsets.all(24),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -489,76 +435,59 @@ class _ProgressFooter extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'YOUR PROGRESS',
-                style: GoogleFonts.lexend(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryRed,
+                'YOUR JOURNEY PROGRESS',
+                style: GoogleFonts.inter(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w900,
+                  color: AppTheme.textSlate,
+                  letterSpacing: 1.2,
                 ),
               ),
               Text(
-                '60%',
-                style: GoogleFonts.lexend(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.textDark,
+                '${(percent * 100).toInt()}%',
+                style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w900,
+                  color: AppTheme.primary,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          Container(
-            height: 12,
-            decoration: BoxDecoration(
-              color: AppTheme.primaryRed.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: FractionallySizedBox(
-              widthFactor: 0.6,
-              alignment: Alignment.centerLeft,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppTheme.primaryRed,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-              ),
+          const SizedBox(height: 16),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: LinearProgressIndicator(
+              value: percent,
+              minHeight: 12,
+              backgroundColor: AppTheme.primary.withOpacity(0.06),
+              valueColor: AlwaysStoppedAnimation(AppTheme.primary),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
+            height: 60,
             child: ElevatedButton(
               onPressed: () {
-                // Navigate to current level
+                // Find first non-completed level
+                final nextLevel = ReadingJourneyData.levels.firstWhere(
+                  (l) => (progress.lessonProgress[l['id']] ?? 0) < 100,
+                  orElse: () => ReadingJourneyData.levels.last,
+                );
                 Navigator.push(
-                     context,
-                     MaterialPageRoute(
-                       builder: (_) => ReadingPracticeScreen(levelData: ReadingJourneyData.levels[2]), // Level 3 hardcoded for demo as current
-                     ),
-                   );
+                  context,
+                  MaterialPageRoute(builder: (_) => ReadingPracticeScreen(levelData: nextLevel)),
+                );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryRed,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                shadowColor: AppTheme.primaryRed.withOpacity(0.4),
-                elevation: 8,
+                backgroundColor: AppTheme.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                elevation: 0,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                   const Icon(Icons.rocket_launch_rounded, color: Colors.white),
-                   const SizedBox(width: 8),
-                   Text(
-                     'CONTINUE LEARNING',
-                     style: GoogleFonts.lexend(
-                       fontSize: 14,
-                       fontWeight: FontWeight.bold,
-                       color: Colors.white,
-                       letterSpacing: 1.0,
-                     ),
-                   ),
-                ],
+              child: Text(
+                'RESUME JOURNEY',
+                style: GoogleFonts.inter(fontWeight: FontWeight.w900, letterSpacing: 1.5),
               ),
             ),
           ),
@@ -574,13 +503,16 @@ class _BackgroundDecorations extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned.fill(
-      child: Stack(
-        children: [
-           Positioned(top: 40, left: -20, child: _bgText('அ')),
-           Positioned(top: 200, right: -20, child: _bgText('ஆ')),
-           Positioned(bottom: 200, left: -20, child: _bgText('இ')),
-           Positioned(bottom: 40, right: 20, child: _bgText('ஈ')),
-        ],
+      child: Opacity(
+        opacity: 0.04,
+        child: Stack(
+          children: [
+            Positioned(top: 100, left: 20, child: _bgText('அ')),
+            Positioned(top: 400, right: 30, child: _bgText('ஆ')),
+            Positioned(bottom: 300, left: 40, child: _bgText('இ')),
+            Positioned(bottom: 100, right: 10, child: _bgText('ஈ')),
+          ],
+        ),
       ),
     );
   }
@@ -588,11 +520,8 @@ class _BackgroundDecorations extends StatelessWidget {
   Widget _bgText(String text) {
     return Text(
       text,
-      style: GoogleFonts.notoSansTamil(
-        fontSize: 120,
-        fontWeight: FontWeight.w900,
-        color: AppTheme.primaryRed.withOpacity(0.03),
-      ),
+      style: GoogleFonts.notoSansTamil(fontSize: 160, fontWeight: FontWeight.bold),
     );
   }
 }
+

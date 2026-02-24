@@ -47,8 +47,13 @@ class _StoryQuizScreenState extends State<StoryQuizScreen> {
   }
 
   void _showResults() {
-    Provider.of<EnhancedProgressProvider>(context, listen: false)
-        .addStoryScore(widget.storyTitle, _score);
+    final progress = Provider.of<EnhancedProgressProvider>(context, listen: false);
+    progress.addStoryScore(widget.storyTitle, _score);
+    
+    // Award rewards based on performance
+    final coinsEarned = _score * 25;
+    final starsEarned = _score * 5;
+    progress.addRewards(coins: coinsEarned, stars: starsEarned, missionId: 'quiz_master');
         
     showDialog(
       context: context,

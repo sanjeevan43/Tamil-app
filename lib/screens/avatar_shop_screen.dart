@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../providers/enhanced_progress_provider.dart';
@@ -11,173 +12,224 @@ class AvatarShopScreen extends StatelessWidget {
     final progress = Provider.of<EnhancedProgressProvider>(context);
     
     final List<Map<String, dynamic>> shopItems = [
-      {'id': 'standard', 'name': 'Classic', 'price': 0, 'emoji': '👦', 'description': 'தொடக்க நண்பன்'},
-      {'id': 'india_explorer', 'name': 'India Explorer', 'price': 300, 'emoji': '🇮🇳', 'description': 'இந்தியத் தமிழ் மாணவன்'},
-      {'id': 'warrior', 'name': 'Tamil Warrior', 'price': 500, 'emoji': '💂', 'description': 'தமிழர் படைவீரன்'},
-      {'id': 'londoner', 'name': 'UK Londoner', 'price': 800, 'emoji': '🎡', 'description': 'லண்டன் வாழ் நண்பன்'},
-      {'id': 'usa_scholar', 'name': 'USA Scholar', 'price': 1000, 'emoji': '🎓', 'description': 'அமெரிக்க மாணவன்'},
-      {'id': 'eelam_scholar', 'name': 'Eelam Scholar', 'price': 700, 'emoji': '🌾', 'description': 'ஈழத்து அறிஞர்'},
-      {'id': 'singapore_tech', 'name': 'Singapore Techie', 'price': 1200, 'emoji': '💻', 'description': 'சிங்கப்பூர் கலைஞர்'},
-      {'id': 'dubai_explorer', 'name': 'Dubai Explorer', 'price': 1100, 'emoji': '🏙️', 'description': 'துபாய் பயணி'},
-      {'id': 'swiss_scholar', 'name': 'Swiss Scholar', 'price': 1500, 'emoji': '🏔️', 'description': 'சுவிஸ் அறிஞர்'},
-      {'id': 'king', 'name': 'Chola King', 'price': 5000, 'emoji': '👑', 'description': 'சோழ பேரரசன்'},
+      {'id': 'standard', 'name': 'Classic', 'price': 0, 'emoji': '👦', 'description': 'The Original Buddy'},
+      {'id': 'india_explorer', 'name': 'Learner', 'price': 300, 'emoji': '🇮🇳', 'description': 'Proud Student'},
+      {'id': 'warrior', 'name': 'Warrior', 'price': 500, 'emoji': '💂', 'description': 'Tamil Guard'},
+      {'id': 'londoner', 'name': 'Explorer', 'price': 800, 'emoji': '🎡', 'description': 'World Traveler'},
+      {'id': 'usa_scholar', 'name': 'Scholar', 'price': 1000, 'emoji': '🎓', 'description': 'Master Degree'},
+      {'id': 'eelam_scholar', 'name': 'Farmer', 'price': 700, 'emoji': '🌾', 'description': 'Nature Lover'},
+      {'id': 'singapore_tech', 'name': 'Techie', 'price': 1200, 'emoji': '💻', 'description': 'Future Designer'},
+      {'id': 'dubai_explorer', 'name': 'Tourist', 'price': 1100, 'emoji': '🏙️', 'description': 'City Adventurer'},
+      {'id': 'swiss_scholar', 'name': 'Alpinist', 'price': 1500, 'emoji': '🏔️', 'description': 'Peak Achiever'},
+      {'id': 'king', 'name': 'Monarch', 'price': 5000, 'emoji': '👑', 'description': 'True Legend'},
     ];
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
+      backgroundColor: AppTheme.backgroundLight,
       appBar: AppBar(
-        title: const Text('அவதார் கடை', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.transparent,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded, color: AppTheme.textDark),
+          onPressed: () => Navigator.pop(context),
+          style: IconButton.styleFrom(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          ),
+        ),
+        title: Text(
+          'AVATAR SHOP',
+          style: GoogleFonts.inter(fontWeight: FontWeight.w900, color: AppTheme.textDark, letterSpacing: 2, fontSize: 13),
+        ),
+        backgroundColor: Colors.white,
         elevation: 0,
+        centerTitle: true,
         actions: [
           Container(
-            margin: const EdgeInsets.all(8),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
-              color: AppTheme.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(20),
+              color: AppTheme.primary.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
-                const Text('🪙 ', style: TextStyle(fontSize: 18)),
-                Text('${progress.totalCoins}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.white)),
+                const Text('🪙 ', style: TextStyle(fontSize: 14)),
+                Text(
+                  '${progress.totalCoins}', 
+                  style: GoogleFonts.inter(fontWeight: FontWeight.w900, color: AppTheme.primary, fontSize: 14)
+                ),
               ],
             ),
           ),
-          const SizedBox(width: 8),
         ],
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [AppTheme.primaryRed, AppTheme.lightRed, AppTheme.offWhite],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            stops: const [0.0, 0.4, 0.9],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Avatar Preview
-              Container(
-                height: 200,
-                width: double.infinity,
-                margin: const EdgeInsets.all(16),
-                decoration: AppTheme.glassCard(),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 90,
-                      height: 90,
-                      decoration: BoxDecoration(
-                        color: AppTheme.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [BoxShadow(color: AppTheme.primaryRed.withOpacity(0.2), blurRadius: 20)],
-                      ),
-                      child: Center(
-                        child: Text(progress.avatar, style: const TextStyle(fontSize: 50)),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      '${progress.region} Explorer',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.primaryRed),
-                    ),
-                    Text(
-                      progress.userName,
-                      style: const TextStyle(color: AppTheme.textGray),
-                    ),
-                  ],
-                ),
-              ),
-
-              Expanded(
-                child: GridView.builder(
-                  padding: const EdgeInsets.all(16),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 0.8,
+      body: Column(
+        children: [
+          // Current Avatar Banner
+          Container(
+            padding: const EdgeInsets.all(28),
+            margin: const EdgeInsets.all(24),
+            decoration: AppTheme.premiumCard(radius: 36),
+            child: Row(
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [BoxShadow(color: AppTheme.primaryDark.withOpacity(0.3), blurRadius: 20)],
                   ),
-                  itemCount: shopItems.length,
-                  itemBuilder: (context, index) {
-                    final item = shopItems[index];
-                    final isOwned = progress.inventory.contains(item['id']);
-                    final isEquipped = progress.avatar == item['emoji'];
-
-                    return GestureDetector(
-                      onTap: () {
-                        if (isOwned) {
-                          progress.updateAvatar(item['emoji']);
-                        } else if (progress.totalCoins >= (item['price'] as int)) {
-                          _showBuyDialog(context, progress, item);
-                        }
-                      },
-                      child: Container(
-                        decoration: isEquipped 
-                          ? AppTheme.gameCard() 
-                          : AppTheme.glassCard().copyWith(
-                              border: Border.all(color: AppTheme.white.withOpacity(0.5)),
-                            ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(item['emoji'] as String, style: const TextStyle(fontSize: 50)),
-                            const SizedBox(height: 12),
-                            Text(item['name'] as String, style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textDark)),
-                            const SizedBox(height: 4),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
-                              child: Text(item['description'] as String, style: const TextStyle(fontSize: 10, color: AppTheme.textGray), textAlign: TextAlign.center),
-                            ),
-                            const SizedBox(height: 12),
-                            if (isOwned)
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: isEquipped ? AppTheme.white.withOpacity(0.2) : Colors.green.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  isEquipped ? 'EQUIPPED' : 'OWNED',
-                                  style: TextStyle(
-                                    color: isEquipped ? AppTheme.white : Colors.green,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              )
-                            else
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: AppTheme.gold.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Text('🪙 ', style: TextStyle(fontSize: 12)),
-                                    Text(
-                                      '${item['price']}',
-                                      style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.darkRed),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
+                  child: Center(
+                    child: Text(progress.avatar, style: const TextStyle(fontSize: 44)),
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(width: 24),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'CURRENT STYLE',
+                        style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.white.withOpacity(0.8), letterSpacing: 1),
+                      ),
+                      Text(
+                        '${progress.userName}',
+                        style: GoogleFonts.inter(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.white),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Level ${progress.level} Explorer',
+                        style: GoogleFonts.inter(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Row(
+              children: [
+                Container(
+                  width: 4,
+                  height: 20,
+                  decoration: BoxDecoration(color: AppTheme.primary, borderRadius: BorderRadius.circular(2)),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'COLLECTION',
+                  style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w900, color: AppTheme.primary, letterSpacing: 1),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          Expanded(
+            child: GridView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              physics: const BouncingScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 0.75,
+              ),
+              itemCount: shopItems.length,
+              itemBuilder: (context, index) {
+                final item = shopItems[index];
+                final isOwned = progress.inventory.contains(item['id']);
+                final isEquipped = progress.avatar == item['emoji'];
+
+                return GestureDetector(
+                  onTap: () {
+                    if (isOwned) {
+                      progress.updateAvatar(item['emoji']);
+                    } else if (progress.totalCoins >= (item['price'] as int)) {
+                      _showBuyDialog(context, progress, item);
+                    }
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    decoration: isEquipped 
+                      ? BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(32),
+                          border: Border.all(color: AppTheme.primary, width: 2.5),
+                          boxShadow: [BoxShadow(color: AppTheme.primary.withOpacity(0.1), blurRadius: 15, offset: const Offset(0, 8))],
+                        )
+                      : AppTheme.whiteCard(radius: 32),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 72,
+                          height: 72,
+                          decoration: BoxDecoration(
+                            color: isEquipped ? AppTheme.primary.withOpacity(0.06) : AppTheme.offWhite,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: Text(item['emoji'] as String, style: const TextStyle(fontSize: 40)),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          item['name'] as String, 
+                          style: GoogleFonts.inter(fontWeight: FontWeight.w800, color: AppTheme.textDark, fontSize: 16),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          item['description'] as String, 
+                          style: GoogleFonts.inter(fontSize: 11, color: AppTheme.textGray, fontWeight: FontWeight.w600), 
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16),
+                        if (isOwned)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: isEquipped ? AppTheme.primary : AppTheme.success.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              isEquipped ? 'ACTIVE' : 'READY',
+                              style: GoogleFonts.inter(
+                                color: isEquipped ? Colors.white : AppTheme.success,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          )
+                        else
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primary.withOpacity(0.06),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text('🪙 ', style: TextStyle(fontSize: 10)),
+                                Text(
+                                  '${item['price']}',
+                                  style: GoogleFonts.inter(fontWeight: FontWeight.w900, color: AppTheme.primary, fontSize: 13),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -186,26 +238,56 @@ class AvatarShopScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text('${item['name']} வாங்கவா?'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(item['emoji'], style: const TextStyle(fontSize: 60)),
-            const SizedBox(height: 16),
-            Text('Buy this avatar for ${item['price']} coins?'),
+            const SizedBox(height: 8),
+            Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(color: AppTheme.offWhite, shape: BoxShape.circle),
+              child: Center(child: Text(item['emoji'], style: const TextStyle(fontSize: 56))),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'UNLOCK ${item['name']}',
+              style: GoogleFonts.inter(fontWeight: FontWeight.w900, color: AppTheme.textDark, fontSize: 18),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Would you like to spend ${item['price']} coins to unlock this avatar style?',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(color: AppTheme.textSlate, fontWeight: FontWeight.w500, fontSize: 14),
+            ),
+            const SizedBox(height: 32),
+            Row(
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text('NOT YET', style: GoogleFonts.inter(fontWeight: FontWeight.w800, color: AppTheme.textGray)),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      progress.buyItem(item['id'], item['price'] as int, item['emoji'] as String);
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primary,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      elevation: 0,
+                    ),
+                    child: Text('BUY NOW', style: GoogleFonts.inter(fontWeight: FontWeight.w800, color: Colors.white)),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () {
-              progress.buyItem(item['id'], item['price'] as int, item['emoji'] as String);
-              Navigator.pop(context);
-            },
-            child: const Text('Buy Now'),
-          ),
-        ],
       ),
     );
   }

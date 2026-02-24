@@ -205,14 +205,31 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
               padding: const EdgeInsets.all(24),
               child: Center(
                 child: SingleChildScrollView(
-                  child: Text(
-                    scene['content'],
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.notoSansTamil(
-                      fontSize: 22,
-                      height: 1.6,
-                      color: AppTheme.textDark,
-                    ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        scene['content'],
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.notoSansTamil(
+                          fontSize: 22,
+                          height: 1.6,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.textDark,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        scene['englishContent'] ?? '',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          height: 1.4,
+                          fontWeight: FontWeight.w500,
+                          color: AppTheme.textSlate,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

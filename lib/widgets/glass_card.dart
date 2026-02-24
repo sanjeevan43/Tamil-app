@@ -20,8 +20,8 @@ class GlassCard extends StatelessWidget {
     this.height,
     this.padding,
     this.margin,
-    this.opacity = 0.7,
-    this.blur = 12.0,
+    this.opacity = 0.8,
+    this.blur = 16.0,
     this.radius = 24.0,
     this.showTrace = false,
   });
@@ -34,10 +34,10 @@ class GlassCard extends StatelessWidget {
       margin: margin,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(radius),
-        border: Border.all(color: AppTheme.primaryRed.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primaryRed.withOpacity(0.05),
+            color: Colors.black.withOpacity(0.04),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -58,7 +58,7 @@ class GlassCard extends StatelessWidget {
                   Positioned.fill(
                     child: IgnorePointer(
                       child: CustomPaint(
-                        painter: DashedRingPainter(color: AppTheme.primaryRed.withOpacity(0.3)),
+                        painter: DashedRingPainter(color: AppTheme.primary.withOpacity(0.2)),
                       ),
                     ),
                   ),
@@ -109,3 +109,4 @@ class DashedRingPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+

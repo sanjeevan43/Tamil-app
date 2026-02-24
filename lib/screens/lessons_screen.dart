@@ -18,33 +18,36 @@ class LessonsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppTheme.backgroundLight,
       appBar: AppBar(
-        title: Text(
-          'Learning Path',
-          style: GoogleFonts.lexend(fontWeight: FontWeight.bold, color: AppTheme.textDark),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded, color: AppTheme.textDark),
+          onPressed: () => Navigator.pop(context),
+          style: IconButton.styleFrom(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          ),
         ),
-        backgroundColor: Colors.transparent,
+        title: Text(
+          'LEARNING PATH',
+          style: GoogleFonts.inter(fontWeight: FontWeight.w900, color: AppTheme.textDark, letterSpacing: 2, fontSize: 13),
+        ),
+        backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
-        iconTheme: const IconThemeData(color: AppTheme.textDark),
         actions: [
           Container(
-            margin: const EdgeInsets.only(right: 16),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 14),
             decoration: BoxDecoration(
-              color: AppTheme.gold.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppTheme.gold),
+              color: AppTheme.primary.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
-                const Icon(Icons.star, color: AppTheme.gold, size: 18),
-                const SizedBox(width: 4),
+                const Icon(Icons.stars_rounded, color: Colors.amber, size: 18),
+                const SizedBox(width: 8),
                 Text(
                   '${progress.totalStars}',
-                  style: GoogleFonts.lexend(
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.textDark,
-                  ),
+                  style: GoogleFonts.inter(fontWeight: FontWeight.w900, color: AppTheme.primary, fontSize: 14),
                 ),
               ],
             ),
@@ -52,7 +55,8 @@ class LessonsScreen extends StatelessWidget {
         ],
       ),
       body: ListView.separated(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.fromLTRB(24, 24, 24, 60),
+        physics: const BouncingScrollPhysics(),
         itemCount: TamilData.lessons.length,
         separatorBuilder: (context, index) => _buildPathConnector(context, index, progress),
         itemBuilder: (context, index) {
@@ -63,6 +67,7 @@ class LessonsScreen extends StatelessWidget {
           return _buildLessonCard(
             context,
             lesson['title'] as String,
+            lesson['english'] as String,
             lesson['level'] as String,
             isUnlocked,
             lessonProgress,
@@ -74,19 +79,27 @@ class LessonsScreen extends StatelessWidget {
   }
 
   Widget _buildPathConnector(BuildContext context, int index, EnhancedProgressProvider progress) {
-    final isUnlocked = progress.unlockedLessons.contains(TamilData.lessons[index + 1]['id']);
-    return Center(
-      child: Container(
-        height: 20,
-        width: 4,
-        color: isUnlocked ? AppTheme.primaryRed.withOpacity(0.5) : Colors.grey[300],
-      ),
+    bool nextUnlocked = (index + 1 < TamilData.lessons.length) && 
+                       progress.unlockedLessons.contains(TamilData.lessons[index + 1]['id']);
+    return Row(
+      children: [
+        const SizedBox(width: 44), // Alignment with the icon center
+        Container(
+          height: 32,
+          width: 3,
+          decoration: BoxDecoration(
+            color: nextUnlocked ? AppTheme.primary.withOpacity(0.2) : AppTheme.borderLight.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildLessonCard(
     BuildContext context,
     String title,
+    String englishTitle,
     String level,
     bool isUnlocked,
     int progress,
@@ -95,36 +108,41 @@ class LessonsScreen extends StatelessWidget {
     Color levelColor = level == 'Beginner'
         ? AppTheme.success
         : level == 'Intermediate'
-            ? AppTheme.warning
-            : AppTheme.primaryRed;
+            ? AppTheme.primary
+            : AppTheme.accent;
 
     return Container(
       decoration: isUnlocked 
-          ? AppTheme.whiteCard(radius: 20)
+          ? AppTheme.whiteCard(radius: 32)
           : BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.grey[300]!),
+              color: AppTheme.offWhite,
+              borderRadius: BorderRadius.circular(32),
+              border: Border.all(color: AppTheme.borderLight),
             ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(32),
           onTap: isUnlocked ? () => _navigateToLesson(context, lessonId) : null,
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(24),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  width: 56,
+                  height: 56,
                   decoration: BoxDecoration(
-                    color: isUnlocked ? AppTheme.primaryRed.withOpacity(0.1) : Colors.grey[300],
+                    color: isUnlocked ? AppTheme.primary.withOpacity(0.06) : AppTheme.offWhite,
                     shape: BoxShape.circle,
+                    border: Border.all(
+                      color: isUnlocked ? (progress >= 100 ? AppTheme.success : AppTheme.primary).withOpacity(0.2) : AppTheme.borderLight,
+                      width: 2,
+                    ),
                   ),
                   child: Icon(
-                    isUnlocked ? (progress >= 100 ? Icons.check_circle : Icons.play_arrow_rounded) : Icons.lock,
-                    color: isUnlocked ? (progress >= 100 ? AppTheme.success : AppTheme.primaryRed) : Colors.grey[500],
-                    size: 28,
+                    isUnlocked ? (progress >= 100 ? Icons.check_rounded : Icons.play_arrow_rounded) : Icons.lock_outline_rounded,
+                    color: isUnlocked ? (progress >= 100 ? AppTheme.success : AppTheme.primary) : AppTheme.textGray,
+                    size: 24,
                   ),
                 ),
                 const SizedBox(width: 20),
@@ -133,54 +151,78 @@ class LessonsScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
-                              color: levelColor.withOpacity(0.1),
+                              color: isUnlocked ? levelColor.withOpacity(0.1) : AppTheme.textGray.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
                               level.toUpperCase(),
-                              style: GoogleFonts.lexend(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: levelColor,
+                              style: GoogleFonts.inter(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w900,
+                                color: isUnlocked ? levelColor : AppTheme.textGray,
+                                letterSpacing: 1.5,
                               ),
                             ),
                           ),
-                          const Spacer(),
                           if (isUnlocked && progress > 0)
                             Text(
                               '$progress%',
-                              style: GoogleFonts.lexend(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.textSlate,
+                              style: GoogleFonts.inter(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w900,
+                                color: AppTheme.primary,
                               ),
                             ),
                         ],
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 12),
                       Text(
                         title,
                         style: GoogleFonts.notoSansTamil(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: isUnlocked ? AppTheme.textDark : AppTheme.textSlate,
+                          color: isUnlocked ? AppTheme.textDark : AppTheme.textGray,
+                          height: 1.3,
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      if (isUnlocked)
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: LinearProgressIndicator(
-                            value: progress / 100,
-                            minHeight: 4,
-                            backgroundColor: AppTheme.primaryRed.withOpacity(0.1),
-                            valueColor: AlwaysStoppedAnimation(AppTheme.primaryRed),
-                          ),
+                      Text(
+                        englishTitle,
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: isUnlocked ? AppTheme.textSlate : AppTheme.textGray.withOpacity(0.6),
                         ),
+                      ),
+                      if (isUnlocked) ...[
+                        const SizedBox(height: 20),
+                        Stack(
+                          children: [
+                            Container(
+                              height: 6,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: AppTheme.offWhite,
+                                borderRadius: BorderRadius.circular(3),
+                              ),
+                            ),
+                            FractionallySizedBox(
+                              widthFactor: progress / 100,
+                              child: Container(
+                                height: 6,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(colors: [AppTheme.primary, AppTheme.accent]),
+                                  borderRadius: BorderRadius.circular(3),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ],
                   ),
                 ),

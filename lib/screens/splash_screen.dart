@@ -18,11 +18,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(seconds: 2), // Loop duration
+      duration: const Duration(seconds: 2),
       vsync: this,
     )..repeat(reverse: true);
     
-    // Navigate after delay
     Future.delayed(const Duration(seconds: 4), () {
       if (mounted) {
         Navigator.pushReplacement(
@@ -48,193 +47,152 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SizedBox.expand(
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFFFF0000), Color(0xFFDC2626), Color(0xFF8B0000)], // vibrant-red to deep-red
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          child: Stack(
-          alignment: Alignment.center,
-          children: [
-            // Background Shapes
-            Positioned(
-              top: -80,
-              left: -80,
-              child: _PulseCircle(
-                width: 320,
-                height: 320,
-                controller: _controller,
-                delay: 0.0,
-              ),
-            ),
-            Positioned(
-              top: MediaQuery.of(context).size.height / 2,
-              right: -128,
-              child: const _GlassCircle(width: 384, height: 384, opacity: 0.5),
-            ),
-            Positioned(
-              bottom: -40,
-              left: MediaQuery.of(context).size.width / 4,
-              child: _PulseCircle(
-                width: 256,
-                height: 256,
-                controller: _controller,
-                delay: 0.5,
-              ),
-            ),
-            
-            // Content
-            SafeArea(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Top Branding
-                  Padding(
-                    padding: const EdgeInsets.only(top: 48.0),
-                    child: Text(
-                      'POWERED BY HOPE3 SERVICES',
-                      style: GoogleFonts.openSans(
-                        color: Colors.white.withOpacity(0.9),
-                        fontSize: 10,
-                        letterSpacing: 3.0,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  
-                  // Main Logo Section
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Glass Overlay Card
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(40),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 64),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(40),
-                              border: Border.all(color: Colors.white.withOpacity(0.2)),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, 10),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'தமிழ்',
-                                  style: GoogleFonts.notoSansTamil(
-                                    fontSize: 96,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    height: 1.0,
-                                    shadows: [
-                                      Shadow(color: Colors.white.withOpacity(0.4), blurRadius: 20),
-                                      Shadow(color: Colors.black.withOpacity(0.3), offset: const Offset(0, 4), blurRadius: 10),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 24),
-                                Container(
-                                  height: 6,
-                                  width: 64,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.6),
-                                    borderRadius: BorderRadius.circular(3),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-                      Text(
-                        'LEARNING REIMAGINED',
-                        style: GoogleFonts.openSans(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w300,
-                          color: Colors.white.withOpacity(0.8),
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                  
-                  // Empty container to balance spacing
-                  Container(height: 80),
-                ],
-              ),
-            ),
-            
-            // Bottom Gradient Light
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              height: MediaQuery.of(context).size.height / 3,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.transparent, Colors.black.withOpacity(0.2)],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
+      body: Stack(
+        children: [
+          // Gradient Background
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppTheme.backgroundDark, 
+                    AppTheme.primaryDark,
+                    AppTheme.primary,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
               ),
             ),
-          ],
-        ),
-      ),
-    ),
-  );
-  }
-}
+          ),
+          
+          // Animated Decorative Elements
+          Positioned(
+            top: -100,
+            right: -50,
+            child: _PulseCircle(
+              width: 300,
+              height: 300,
+              controller: _controller,
+              color: AppTheme.primary.withOpacity(0.1),
+            ),
+          ),
+          Positioned(
+            bottom: -50,
+            left: -50,
+            child: _PulseCircle(
+              width: 250,
+              height: 250,
+              controller: _controller,
+              color: AppTheme.accent.withOpacity(0.1),
+            ),
+          ),
 
-class _GlassCircle extends StatelessWidget {
-  final double width;
-  final double height;
-  final double opacity;
+          // Main Content
+          SafeArea(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Glass Branding Card
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(48),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 60),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(48),
+                          border: Border.all(color: Colors.white.withOpacity(0.1)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 40,
+                              offset: const Offset(0, 20),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              width: double.infinity,
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  'தமிழ்',
+                                  style: GoogleFonts.notoSansTamil(
+                                    fontSize: 80,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    shadows: [
+                                      Shadow(
+                                        color: AppTheme.primary.withOpacity(0.5),
+                                        blurRadius: 30,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            Container(
+                              height: 4,
+                              width: 60,
+                              decoration: BoxDecoration(
+                                color: AppTheme.accent,
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 48),
+                  Text(
+                    'TAMIL MASTER',
+                    style: GoogleFonts.inter(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      letterSpacing: 4.0,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'LEARN • PLAY • GROW',
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white.withOpacity(0.5),
+                      letterSpacing: 2.0,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
 
-  const _GlassCircle({
-    required this.width,
-    required this.height,
-    this.opacity = 1.0,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: LinearGradient(
-          colors: [
-            Colors.white.withOpacity(0.3 * opacity),
-            Colors.white.withOpacity(0.05 * opacity),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        border: Border.all(color: Colors.white.withOpacity(0.15 * opacity)),
-      ),
-      child: ClipOval(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-          child: Container(color: Colors.transparent),
-        ),
+          // Footer Branding
+          Positioned(
+            bottom: 40,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Text(
+                'POWERED BY HOPE3 SERVICES',
+                style: GoogleFonts.inter(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white.withOpacity(0.4),
+                  letterSpacing: 2.0,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -244,13 +202,13 @@ class _PulseCircle extends StatelessWidget {
   final double width;
   final double height;
   final AnimationController controller;
-  final double delay;
+  final Color color;
 
   const _PulseCircle({
     required this.width,
     required this.height,
     required this.controller,
-    required this.delay,
+    required this.color,
   });
 
   @override
@@ -258,16 +216,19 @@ class _PulseCircle extends StatelessWidget {
     return AnimatedBuilder(
       animation: controller,
       builder: (context, child) {
-        final val = controller.value; 
         return Transform.scale(
-          scale: 1.0 + (0.05 * val),
-          child: Opacity(
-            opacity: 0.6 + (0.2 * val),
-            child: child,
+          scale: 1.0 + (controller.value * 0.1),
+          child: Container(
+            width: width,
+            height: height,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: color,
+            ),
           ),
         );
       },
-      child: _GlassCircle(width: width, height: height, opacity: 1.0),
     );
   }
 }
+
