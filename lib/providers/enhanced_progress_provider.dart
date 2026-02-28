@@ -40,11 +40,7 @@ class EnhancedProgressProvider extends ChangeNotifier {
   String get region => _region;
   int get level => _level;
   int get totalCoins => _totalCoins;
-  int get coins => _totalCoins;
   int get totalStars => _totalStars;
-  int get stars => _totalStars;
-  int get xp => _totalStars * 10;
-  String get currentEquipped => _avatar;
   int get streakDays => _streakDays;
   int get totalLettersLearned => _totalLettersLearned;
   int get quizScore => _quizScore;
@@ -124,7 +120,7 @@ class EnhancedProgressProvider extends ChangeNotifier {
       await _updateStreak();
       notifyListeners();
     } catch (e) {
-      debugPrint('Error initializing progress: $e');
+      // Ignored
     }
   }
 

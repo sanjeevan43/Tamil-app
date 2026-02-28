@@ -15,7 +15,7 @@ class WeeklyChallengeScreen extends StatelessWidget {
     final List<Map<String, dynamic>> challenges = [
       {'title': 'Letter Master', 'desc': 'Learn 10 new letters', 'goal': 10, 'current': progress.totalLettersLearned % 15, 'icon': Icons.abc},
       {'title': 'Story Hunter', 'desc': 'Complete 2 story quizzes', 'goal': 2, 'current': progress.storyQuizScores.length, 'icon': Icons.menu_book},
-      {'title': 'Treasure Seeker', 'desc': 'Earn 500 coins', 'goal': 500, 'current': progress.coins % 600, 'icon': Icons.monetization_on},
+      {'title': 'Treasure Seeker', 'desc': 'Earn 500 coins', 'goal': 500, 'current': progress.totalCoins % 600, 'icon': Icons.monetization_on},
       {'title': 'Streak Hero', 'desc': 'Maintain a 7-day streak', 'goal': 7, 'current': progress.streakDays, 'icon': Icons.local_fire_department},
     ];
 

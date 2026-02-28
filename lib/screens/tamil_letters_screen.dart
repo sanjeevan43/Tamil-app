@@ -5,448 +5,276 @@ import '../constants/app_theme.dart';
 import '../constants/tamil_data.dart';
 import '../services/audio_service.dart';
 import '../providers/enhanced_progress_provider.dart';
-import '../widgets/safe_image.dart';
 
-class TamilLettersScreen extends StatefulWidget {
+class TamilLettersScreen extends StatelessWidget {
   const TamilLettersScreen({super.key});
 
   @override
-  State<TamilLettersScreen> createState() => _TamilLettersScreenState();
-}
-
-class _TamilLettersScreenState extends State<TamilLettersScreen> {
-  int _currentIndex = 0;
-  final List<String> _letters = TamilData.uyirEzhuthukkal;
-  
-  final Map<String, Map<String, String>> _examples = {
-    'அ': {'tamil': 'அம்மா', 'english': 'Amma (Mother)', 'desc': 'A - sounds like "Up"', 'image': 'amma'},
-    'ஆ': {'tamil': 'ஆடு', 'english': 'Aadu (Goat)', 'desc': 'Aa - sounds like "Art"', 'image': 'aadu'},
-    'இ': {'tamil': 'இலை', 'english': 'Ilai (Leaf)', 'desc': 'E - sounds like "Ink"', 'image': 'ilai'},
-    'ஈ': {'tamil': 'ஈட்டி', 'english': 'Eetti (Spear)', 'desc': 'Ee - sounds like "Eel"', 'image': 'eetti'},
-    'உ': {'tamil': 'உலகு', 'english': 'Ulagu (World)', 'desc': 'U - sounds like "Put"', 'image': 'ulagu'},
-    'ஊ': {'tamil': 'ஊஞ்சல்', 'english': 'Oonjal (Swing)', 'desc': 'Oo - sounds like "Pool"', 'image': 'oonjal'},
-    'எ': {'tamil': 'எலி', 'english': 'Eli (Rat)', 'desc': 'E - sounds like "Elephant"', 'image': 'eli'},
-    'ஏ': {'tamil': 'ஏணி', 'english': 'Eni (Ladder)', 'desc': 'AE - sounds like "Eight"', 'image': 'eni'},
-    'ஐ': {'tamil': 'ஐவர்', 'english': 'Aivar (Five People)', 'desc': 'Ai - sounds like "Ice"', 'image': 'aivar'},
-    'ஒ': {'tamil': 'ஒட்டகம்', 'english': 'Ottagam (Camel)', 'desc': 'O - sounds like "One"', 'image': 'ottagam'},
-    'ஓ': {'tamil': 'ஓடம்', 'english': 'Odam (Boat)', 'desc': 'OA - sounds like "Boat"', 'image': 'odam'},
-    'ஔ': {'tamil': 'ஔவை', 'english': 'Avvai (Poet)', 'desc': 'Au - sounds like "Owl"', 'image': 'avvai'},
-  };
-
-  void _updateProgress(BuildContext context) {
-    final progress = Provider.of<EnhancedProgressProvider>(context, listen: false);
-    int percent = (((_currentIndex + 1) / _letters.length) * 100).toInt();
-    progress.updateLessonProgress(1, percent); // Lesson 1: Vowels
-    
-    // Increment total letters learned if this is the first time seeing it in this session
-    progress.incrementLettersLearned();
-    progress.addRewards(coins: 1, stars: 1); // Small reward for each letter viewed
-  }
-
-  void _nextLetter() {
-    setState(() {
-      _currentIndex = (_currentIndex + 1) % _letters.length;
-    });
-    _updateProgress(context);
-    AudioService.playLetter(_letters[_currentIndex]);
-  }
-
-  void _prevLetter() {
-    setState(() {
-      _currentIndex = (_currentIndex - 1 + _letters.length) % _letters.length;
-    });
-    _updateProgress(context);
-    AudioService.playLetter(_letters[_currentIndex]);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final letter = _letters[_currentIndex];
-    final progress = Provider.of<EnhancedProgressProvider>(context);
-    final exampleData = _examples[letter] ?? _examples['அ']!;
-
-    return Scaffold(
-      backgroundColor: AppTheme.backgroundLight,
-      body: SafeArea(
-        child: Column(
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+        backgroundColor: AppTheme.backgroundLight,
+        appBar: AppBar(
+          backgroundColor: AppTheme.primary,
+          title: Text(
+            'Tamil Alphabet',
+            style: GoogleFonts.poppins(fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          iconTheme: const IconThemeData(color: Colors.white),
+          elevation: 0,
+          bottom: TabBar(
+            isScrollable: true,
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white70,
+            indicatorColor: AppTheme.accent,
+            indicatorWeight: 4,
+            labelStyle: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13),
+            unselectedLabelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 12),
+            tabs: const [
+              Tab(text: 'Vowels\n(உயிர் - 12)'),
+              Tab(text: 'Consonants\n(மெய் - 18)'),
+              Tab(text: 'Combined\n(உயிர்மெய் - 216)'),
+              Tab(text: 'Special\n(ஆய்தம் - 1)'),
+            ],
+          ),
+        ),
+        body: const TabBarView(
           children: [
-            _buildHeader(context, progress),
-            
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24),
-                child: Column(
-                  children: [
-                    _buildLetterCard(letter, exampleData['desc']!),
-                    const SizedBox(height: 40),
-                    _buildAudioAction(letter),
-                    const SizedBox(height: 40),
-                    _buildExampleWord(exampleData),
-                  ],
-                ),
-              ),
-            ),
+            _VowelsGrid(),
+            _ConsonantsGrid(),
+            _CombinedList(),
+            _SpecialGrid(),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildHeader(BuildContext context, EnhancedProgressProvider progress) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(bottom: BorderSide(color: AppTheme.borderLight)),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildNavButton(
-                icon: Icons.close_rounded,
-                onTap: () => Navigator.pop(context),
-              ),
-              Expanded(
-                child: Column(
-                  children: [
-                    Text(
-                      'LEARNING FOUNDATIONS',
-                      style: GoogleFonts.inter(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w900,
-                        color: AppTheme.primary,
-                        letterSpacing: 2,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Tamil Vowels',
-                      style: GoogleFonts.notoSansTamil(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.textDark,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              _buildNavButton(
-                icon: Icons.info_outline_rounded,
-                onTap: () {},
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Column(
+class _LetterCard extends StatelessWidget {
+  final String letter;
+  final String? subtitle;
+
+  const _LetterCard({required this.letter, this.subtitle});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        AudioService.playLetter(letter);
+        
+        // Reward users silently
+        Provider.of<EnhancedProgressProvider>(context, listen: false).addRewards(coins: 1);
+        
+        // Show subtle feedback
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'MASTERY',
-                      style: GoogleFonts.inter(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w800,
-                        color: AppTheme.textSlate,
-                        letterSpacing: 1.0,
-                      ),
-                    ),
-                     Text(
-                      '${_currentIndex + 1} OF ${_letters.length} LETTERS',
-                      style: GoogleFonts.inter(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w900,
-                        color: AppTheme.primary,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Stack(
-                  children: [
-                    Container(
-                      height: 8,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: AppTheme.primary.withOpacity(0.08),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      height: 8,
-                      width: MediaQuery.of(context).size.width * ((_currentIndex + 1) / _letters.length),
-                      decoration: BoxDecoration(
-                        color: AppTheme.primary,
-                        borderRadius: BorderRadius.circular(4),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.primary.withOpacity(0.2),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                const Icon(Icons.volume_up, color: Colors.white),
+                const SizedBox(width: 10),
+                Text('Playing $letter', style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavButton({required IconData icon, required VoidCallback onTap}) {
-    return GestureDetector(
-      onTap: onTap,
+            duration: const Duration(milliseconds: 800),
+            backgroundColor: AppTheme.primary,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          )
+        );
+      },
       child: Container(
-        width: 44,
-        height: 44,
         decoration: BoxDecoration(
-          color: AppTheme.offWhite,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppTheme.borderLight),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.primary.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            )
+          ],
+          border: Border.all(color: AppTheme.primary.withOpacity(0.1)),
         ),
-        child: Icon(icon, color: AppTheme.textDark, size: 22),
-      ),
-    );
-  }
-
-  Widget _buildLetterCard(String letter, String desc) {
-    return Container(
-      width: double.infinity,
-      constraints: const BoxConstraints(maxWidth: 400),
-      decoration: AppTheme.whiteCard(radius: 32),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 80.0, horizontal: 24),
-            child: Column(
-              children: [
-                Text(
-                  letter,
-                  style: GoogleFonts.notoSansTamil(
-                    fontSize: 140,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.primary,
-                    height: 1.0,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  desc,
-                  style: GoogleFonts.inter(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: AppTheme.textSlate,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          
-          Positioned.fill(
-            child: GestureDetector(
-              onHorizontalDragEnd: (details) {
-                if (details.primaryVelocity! > 0) {
-                  _prevLetter();
-                } else if (details.primaryVelocity! < 0) {
-                  _nextLetter();
-                }
-              },
-              behavior: HitTestBehavior.translucent,
-            ),
-          ),
-          
-          Positioned(
-            bottom: 24,
-            right: 24,
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              letter,
+              style: GoogleFonts.notoSansTamil(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
                 color: AppTheme.primary,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(color: AppTheme.primary.withOpacity(0.3), blurRadius: 10),
-                ],
-              ),
-              child: const Icon(Icons.gesture_rounded, color: Colors.white, size: 24),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAudioAction(String letter) {
-    return GestureDetector(
-      onTap: () => AudioService.playLetter(letter),
-      child: Column(
-        children: [
-          Container(
-            width: 84,
-            height: 84,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppTheme.primary, AppTheme.primary.withOpacity(0.8)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: AppTheme.primary.withOpacity(0.3),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: const Icon(
-              Icons.volume_up_rounded,
-              color: Colors.white,
-              size: 40,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'LISTEN AND PRONOUNCE',
-            style: GoogleFonts.inter(
-              fontSize: 11,
-              fontWeight: FontWeight.w900,
-              color: AppTheme.primary,
-              letterSpacing: 1.5,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildExampleWord(Map<String, String> data) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: AppTheme.whiteCard(radius: 24),
-      child: Row(
-        children: [
-          Container(
-            width: 90,
-            height: 90,
-            decoration: BoxDecoration(
-              color: AppTheme.primary.withOpacity(0.04),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Center(
-                child: Text(
-                  _getEmojiForImage(data['image']!),
-                  style: const TextStyle(fontSize: 48),
-                ),
               ),
             ),
-          ),
-          const SizedBox(width: 20),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'VOCABULARY LINK',
-                  style: GoogleFonts.inter(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w900,
-                    color: AppTheme.textGray,
-                    letterSpacing: 1.2,
-                  ),
+            if (subtitle != null) ...[
+              const SizedBox(height: 4),
+              Text(
+                subtitle!,
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  color: AppTheme.textSlate,
+                  fontWeight: FontWeight.w500
                 ),
-                Text(
-                  data['tamil']!,
-                  style: GoogleFonts.notoSansTamil(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.textDark,
-                  ),
-                ),
-                Text(
-                  data['english']!,
-                  style: GoogleFonts.inter(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: AppTheme.primary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+              ),
+            ]
+          ],
+        ),
       ),
     );
-  }
-
-  String _getEmojiForImage(String imageName) {
-    switch (imageName) {
-      case 'amma': return '👩';
-      case 'aadu': return '🐐';
-      case 'ilai': return '🍃';
-      case 'eetti': return '🏹';
-      case 'ulagu': return '🌍';
-      case 'oonjal': return '🎡';
-      case 'eli': return '🐭';
-      case 'eni': return '🪜';
-      case 'aivar': return '🖐️';
-      case 'ottagam': return '🐪';
-      case 'odam': return '⛵';
-      case 'avvai': return '👵';
-      default: return '📖';
-    }
   }
 }
 
+class _VowelsGrid extends StatelessWidget {
+  const _VowelsGrid();
 
-class DashedRingPainter extends CustomPainter {
-  final Color color;
-  const DashedRingPainter({required this.color});
+  // Mapping generic transliterations for display
+  static const List<String> _transliteration = [
+    'a', 'aa', 'i', 'ii', 'u', 'uu', 'e', 'ee', 'ai', 'o', 'oo', 'au'
+  ];
 
   @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = 1.0
-      ..style = PaintingStyle.stroke;
-
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = 90.0; // r=45% of 200 size, here approx fixed for look
-
-    // Draw dashed circle
-    final path = Path()..addOval(Rect.fromCircle(center: center, radius: radius));
-    
-    // Manual dashed effect
-    final dashPath = Path();
-    final dashWidth = 5.0;
-    final dashSpace = 5.0;
-    double distance = 0.0;
-    
-    for (final pathMetric in path.computeMetrics()) {
-      while (distance < pathMetric.length) {
-        dashPath.addPath(
-          pathMetric.extractPath(distance, distance + dashWidth),
-          Offset.zero,
+  Widget build(BuildContext context) {
+    final letters = TamilData.uyirEzhuthukkal;
+    return GridView.builder(
+      padding: const EdgeInsets.all(24),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 1.0,
+      ),
+      itemCount: letters.length,
+      itemBuilder: (context, index) {
+        return _LetterCard(
+          letter: letters[index],
+          subtitle: _transliteration[index],
         );
-        distance += dashWidth + dashSpace;
-      }
-    }
-    
-    canvas.drawPath(dashPath, paint);
+      },
+    );
   }
+}
+
+class _ConsonantsGrid extends StatelessWidget {
+  const _ConsonantsGrid();
+
+  // Mapping generic transliterations for display
+  static const List<String> _transliteration = [
+    'ik', 'ing', 'ich', 'inj', 'it', 'in', 'ith', 'ind', 'ip', 'im',
+    'iy', 'ir', 'il', 'iv', 'izh', 'ill', 'irr', 'in'
+  ];
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  Widget build(BuildContext context) {
+    final letters = TamilData.meiEzhuthukkal;
+    return GridView.builder(
+      padding: const EdgeInsets.all(24),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 1.0,
+      ),
+      itemCount: letters.length,
+      itemBuilder: (context, index) {
+        return _LetterCard(
+          letter: letters[index],
+          subtitle: _transliteration[index],
+        );
+      },
+    );
+  }
+}
+
+class _CombinedList extends StatelessWidget {
+  const _CombinedList();
+
+  @override
+  Widget build(BuildContext context) {
+    final baseCon = TamilData.uyirMeiBase;
+    final combinations = TamilData.uyirMeiEzhuthukkal;
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: baseCon.length,
+      itemBuilder: (context, i) {
+        return Card(
+          margin: const EdgeInsets.only(bottom: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          elevation: 2,
+          child: ExpansionTile(
+            tilePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            title: Text(
+              '${baseCon[i]} Series',
+              style: GoogleFonts.notoSansTamil(
+                fontSize: 20, 
+                fontWeight: FontWeight.bold,
+                color: AppTheme.textDark
+              ),
+            ),
+            subtitle: Text('Tap to view 12 variations', style: GoogleFonts.poppins(fontSize: 12)),
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    childAspectRatio: 1.0,
+                  ),
+                  itemCount: combinations[i].length,
+                  itemBuilder: (context, j) {
+                    return _LetterCard(letter: combinations[i][j]);
+                  },
+                ),
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _SpecialGrid extends StatelessWidget {
+  const _SpecialGrid();
+
+  @override
+  Widget build(BuildContext context) {
+    final letters = TamilData.aayudhaEzhuthu;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 150,
+              width: 150,
+              child: _LetterCard(
+                letter: letters[0],
+                subtitle: 'ak',
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Aayudha Ezhuthu',
+              style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.textDark),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'A special Tamil letter commonly used to add a slightly guttural, stop-consonant sound.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(fontSize: 14, color: AppTheme.textSlate),
+            )
+          ],
+        ),
+      ),
+    );
+  }
 }

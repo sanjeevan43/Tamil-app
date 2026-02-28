@@ -59,7 +59,7 @@ class _ReadingPracticeScreenState extends State<ReadingPracticeScreen> with Sing
         setState(() => _isSpeechAvailable = available);
       }
     } catch (e) {
-      debugPrint('Speech init failed: $e');
+      // Intentionally silent
     }
   }
 

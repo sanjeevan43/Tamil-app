@@ -1,8 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
+import '../services/auth_service.dart';
 import 'enhanced_home_screen.dart';
+import 'login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -24,10 +27,15 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     
     Future.delayed(const Duration(seconds: 4), () {
       if (mounted) {
+        final authService = Provider.of<AuthService>(context, listen: false);
+        final nextScreen = authService.isAuthenticated 
+            ? const EnhancedHomeScreen() 
+            : const LoginScreen();
+
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
-            pageBuilder: (_, __, ___) => const EnhancedHomeScreen(),
+            pageBuilder: (_, __, ___) => nextScreen,
             transitionsBuilder: (_, animation, __, child) {
               return FadeTransition(opacity: animation, child: child);
             },

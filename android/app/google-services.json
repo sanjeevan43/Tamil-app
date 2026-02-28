@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "356453132420",
+    "project_id": "h3-tamil-app",
+    "storage_bucket": "h3-tamil-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:356453132420:android:3e590c5a61028cc096bad1",
+        "android_client_info": {
+          "package_name": "com.example.tamil_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "356453132420-osbjs78ts7i8uvubhg6ro3d8ma4dmehf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tamil_app",
+            "certificate_hash": "5fc20af62d5749ca20cf75dcbebcb07ddded1892"
+          }
+        },
+        {
+          "client_id": "356453132420-2r1d10i4lahn09gpvasanrl6ofk5r5ko.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlo9dFwBwh0bUjt8KLuh12fFYctSyOfG0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "356453132420-2r1d10i4lahn09gpvasanrl6ofk5r5ko.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

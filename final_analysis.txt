@@ -1,0 +1,52 @@
+Analyzing tamil_app...                                          
+
+   info - Unnecessary use of string interpolation - lib\screens\avatar_shop_screen.dart:96:25 - unnecessary_string_interpolations
+   info - Use 'const' with the constructor to improve performance - lib\screens\avatar_shop_screen.dart:249:27 - prefer_const_constructors
+   info - Statements in an if should be enclosed in a block - lib\screens\fill_blanks_game.dart:67:32 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\screens\fill_blanks_game.dart:68:24 - curly_braces_in_flow_control_structures
+warning - Unused import: '../constants/tamil_data.dart' - lib\screens\letter_hunt_game.dart:4:8 - unused_import
+   info - Use 'const' with the constructor to improve performance - lib\screens\profile_screen.dart:247:13 - prefer_const_constructors
+warning - Unused import: '../widgets/glass_card.dart' - lib\screens\reading_journey_screen.dart:5:8 - unused_import
+   info - Use 'const' with the constructor to improve performance - lib\screens\reading_journey_screen.dart:284:13 - prefer_const_constructors
+warning - Unused import: '../widgets/glass_card.dart' - lib\screens\reading_practice_screen.dart:9:8 - unused_import
+   info - Unnecessary use of double quotes - lib\screens\reading_practice_screen.dart:46:29 - prefer_single_quotes
+   info - Unnecessary use of double quotes - lib\screens\reading_practice_screen.dart:95:21 - prefer_single_quotes
+   info - Unnecessary use of double quotes - lib\screens\reading_practice_screen.dart:200:75 - prefer_single_quotes
+   info - Use 'const' with the constructor to improve performance - lib\screens\reading_practice_screen.dart:248:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reading_practice_screen.dart:294:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reading_practice_screen.dart:432:19 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\screens\reading_practice_screen.dart:435:20 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\screens\reading_practice_screen.dart:435:21 - prefer_const_constructors
+   info - Unnecessary use of double quotes - lib\screens\rhymes_screen.dart:223:34 - prefer_single_quotes
+   info - Use 'const' with the constructor to improve performance - lib\screens\simple_words_screen.dart:60:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\simple_words_screen.dart:62:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\simple_words_screen.dart:62:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\simple_words_screen.dart:217:31 - prefer_const_constructors
+   info - Unnecessary use of double quotes - lib\screens\sound_match_game.dart:38:35 - prefer_single_quotes
+   info - Unnecessary use of 'toList' in a spread - lib\screens\stories_screen.dart:124:23 - unnecessary_to_list_in_spreads
+   info - Use a 'SizedBox' to add whitespace to a layout - lib\screens\stories_screen.dart:197:15 - sized_box_for_whitespace
+   info - Use 'const' with the constructor to improve performance - lib\screens\stories_screen.dart:200:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\stories_screen.dart:326:36 - prefer_const_constructors
+warning - Unused import: '../widgets/safe_image.dart' - lib\screens\tamil_letters_screen.dart:8:8 - unused_import
+   info - Use 'const' with the constructor to improve performance - lib\screens\tamil_letters_screen.dart:99:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\tamil_letters_screen.dart:101:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\tamil_letters_screen.dart:101:32 - prefer_const_constructors
+   info - Use 'const' for final variables initialized to a constant value - lib\screens\tamil_letters_screen.dart:426:5 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - lib\screens\tamil_letters_screen.dart:433:5 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - lib\screens\tamil_letters_screen.dart:434:5 - prefer_const_declarations
+   info - Use 'const' with the constructor to improve performance - lib\screens\teacher_dashboard_screen.dart:68:11 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\screens\teacher_dashboard_screen.dart:69:23 - prefer_const_literals_to_create_immutables
+   info - The import of 'package:characters/characters.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\word_builder_game.dart:3:8 - unnecessary_import
+   info - Unnecessary use of string interpolation - lib\screens\word_builder_game.dart:124:15 - unnecessary_string_interpolations
+warning - Unused import: 'dart:math' - lib\screens\word_scramble_game.dart:1:8 - unused_import
+   info - The private field _selectedIndices could be 'final' - lib\screens\word_search_game.dart:21:16 - prefer_final_fields
+   info - The private field _foundWords could be 'final' - lib\screens\word_search_game.dart:22:15 - prefer_final_fields
+   info - The private field _selectionColor could be 'final' - lib\screens\word_search_game.dart:23:9 - prefer_final_fields
+warning - The value of the field '_selectionColor' isn't used - lib\screens\word_search_game.dart:23:9 - unused_field
+   info - The declaration '_handlePanStart' isn't referenced - lib\screens\word_search_game.dart:96:8 - unused_element
+   info - The declaration '_handlePanUpdate' isn't referenced - lib\screens\word_search_game.dart:100:8 - unused_element
+warning - The value of the local variable 'localOffset' isn't used - lib\screens\word_search_game.dart:102:12 - unused_local_variable
+   info - The private field _points could be 'final' - lib\screens\writing_practice_game.dart:16:16 - prefer_final_fields
+   info - Use 'const' for final variables initialized to a constant value - lib\services\game_logic.dart:85:5 - prefer_const_declarations
+   info - Function literals shouldn't be passed to 'forEach' - lib\services\game_logic.dart:103:37 - avoid_function_literals_in_foreach_calls
+

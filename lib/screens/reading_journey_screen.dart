@@ -78,13 +78,6 @@ class ReadingJourneyScreen extends StatelessWidget {
               ),
             ],
           ),
-
-          Positioned(
-            bottom: 30,
-            left: 24,
-            right: 24,
-            child: _ProgressFooter(progress: progress),
-          ),
         ],
       ),
     );
@@ -415,87 +408,6 @@ class _PathPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-class _ProgressFooter extends StatelessWidget {
-  final EnhancedProgressProvider progress;
-  const _ProgressFooter({required this.progress});
-
-  @override
-  Widget build(BuildContext context) {
-    int totalLevels = ReadingJourneyData.levels.length;
-    int completedLevels = ReadingJourneyData.levels.where((l) => (progress.lessonProgress[l['id']] ?? 0) >= 100).length;
-    double percent = completedLevels / totalLevels;
-
-    return Container(
-      decoration: AppTheme.whiteCard(radius: 28),
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'YOUR JOURNEY PROGRESS',
-                style: GoogleFonts.inter(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w900,
-                  color: AppTheme.textSlate,
-                  letterSpacing: 1.2,
-                ),
-              ),
-              Text(
-                '${(percent * 100).toInt()}%',
-                style: GoogleFonts.inter(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w900,
-                  color: AppTheme.primary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: LinearProgressIndicator(
-              value: percent,
-              minHeight: 12,
-              backgroundColor: AppTheme.primary.withOpacity(0.06),
-              valueColor: AlwaysStoppedAnimation(AppTheme.primary),
-            ),
-          ),
-          const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            height: 60,
-            child: ElevatedButton(
-              onPressed: () {
-                // Find first non-completed level
-                final nextLevel = ReadingJourneyData.levels.firstWhere(
-                  (l) => (progress.lessonProgress[l['id']] ?? 0) < 100,
-                  orElse: () => ReadingJourneyData.levels.last,
-                );
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => ReadingPracticeScreen(levelData: nextLevel)),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primary,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                elevation: 0,
-              ),
-              child: Text(
-                'RESUME JOURNEY',
-                style: GoogleFonts.inter(fontWeight: FontWeight.w900, letterSpacing: 1.5),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class _BackgroundDecorations extends StatelessWidget {
   const _BackgroundDecorations();
