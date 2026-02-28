@@ -18,9 +18,8 @@ class _WordSearchGameState extends State<WordSearchGame> {
   final List<String> _fillerLetters = ['க்', 'ங்', 'ச்', 'ஞ்', 'ட்', 'ண்', 'த்', 'ந்', 'ப்', 'ம்', 'ய்', 'ர்'];
   
   late List<List<String>> _grid;
-  List<Offset> _selectedIndices = [];
-  Set<String> _foundWords = {};
-  Color _selectionColor = AppTheme.primary.withOpacity(0.2);
+  final List<Offset> _selectedIndices = [];
+  final Set<String> _foundWords = {};
 
   @override
   void initState() {
@@ -93,16 +92,6 @@ class _WordSearchGameState extends State<WordSearchGame> {
     }
   }
 
-  void _handlePanStart(DragStartDetails details) {
-    _clearSelection();
-  }
-
-  void _handlePanUpdate(DragUpdateDetails details, double cellSize) {
-    RenderBox box = context.findRenderObject() as RenderBox;
-    Offset localOffset = box.globalToLocal(details.globalPosition);
-    
-    // Adjust for padding/appbar if necessary. Simpler approach: use GestureDetector on the grid itself.
-  }
 
   void _onCellTap(int r, int c) {
     Offset pos = Offset(r.toDouble(), c.toDouble());
