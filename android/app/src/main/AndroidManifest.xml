@@ -7,7 +7,7 @@
         </intent>
     </queries>
     <application
-        android:label="Tamil Master"
+        android:label="அகரவளம்"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

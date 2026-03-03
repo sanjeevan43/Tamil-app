@@ -294,9 +294,16 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen> {
           const SizedBox(width: 10),
           GestureDetector(
             onTap: () {
-              if (_msgController.text.isNotEmpty) {
+              if (_msgController.text.trim().isNotEmpty) {
                 progress.addMessage(progress.isTeacherMode ? 'Teacher' : progress.userName, _msgController.text);
                 _msgController.clear();
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Message cannot be empty! (செய்தி காலியாக இருக்கக்கூடாது)'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
               }
             },
             child: Container(

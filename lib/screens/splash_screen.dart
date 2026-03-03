@@ -160,7 +160,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   ),
                   const SizedBox(height: 48),
                   Text(
-                    'TAMIL MASTER',
+                    'அகரவளம்',
                     style: GoogleFonts.inter(
                       fontSize: 22,
                       fontWeight: FontWeight.w900,

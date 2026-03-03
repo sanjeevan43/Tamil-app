@@ -373,9 +373,13 @@ class TeacherDashboardScreen extends StatelessWidget {
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('வேண்டாம்')),
           ElevatedButton(
             onPressed: () {
-              if (controller.text.isNotEmpty) {
+              if (controller.text.trim().isNotEmpty) {
                 progress.setGlobalNotice(controller.text);
                 Navigator.pop(context);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Notice cannot be empty!'), backgroundColor: Colors.red),
+                );
               }
             },
             child: const Text('அறிவிப்பு செய்'),
@@ -429,10 +433,14 @@ class TeacherDashboardScreen extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              if (controller.text.isNotEmpty) {
+              if (controller.text.trim().isNotEmpty) {
                 progress.assignHomework(controller.text);
+                Navigator.pop(context);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Homework cannot be empty!'), backgroundColor: Colors.red),
+                );
               }
-              Navigator.pop(context);
             },
             child: const Text('அனுப்பு'),
           ),

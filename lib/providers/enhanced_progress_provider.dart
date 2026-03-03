@@ -25,7 +25,7 @@ class EnhancedProgressProvider extends ChangeNotifier {
   List<String> _assignedHomework = [];
   List<Map<String, String>> _discussions = [];
   List<Map<String, dynamic>> _assignedQuizzes = [];
-  String _globalNotice = 'Welcome to Tamil Master!';
+  String _globalNotice = 'Welcome to அகரவளம்!';
   
   // Daily Missions
   List<Map<String, dynamic>> _dailyMissions = [
@@ -74,7 +74,7 @@ class EnhancedProgressProvider extends ChangeNotifier {
           .map((e) => int.parse(e)).toList();
       _isTeacherMode = prefs.getBool('isTeacherMode') ?? false;
       _assignedHomework = prefs.getStringList('assignedHomework') ?? [];
-      _globalNotice = prefs.getString('globalNotice') ?? 'Welcome to Tamil Master!';
+      _globalNotice = prefs.getString('globalNotice') ?? 'Welcome to அகரவளம்!';
       
       final missionsJson = prefs.getStringList('dailyMissions') ?? [];
       if (missionsJson.isNotEmpty) {

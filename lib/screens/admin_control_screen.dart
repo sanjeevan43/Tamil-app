@@ -23,8 +23,14 @@ class _AdminControlScreenState extends State<AdminControlScreen> {
     final english = _englishController.text;
     final sentence = _sentenceController.text;
 
-    if (word.isNotEmpty && english.isNotEmpty) {
-      final dateStr = DateTime.now().toIso8601String().split('T').first;
+    if (word.trim().isEmpty || english.trim().isEmpty || sentence.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all fields!'), backgroundColor: Colors.red),
+      );
+      return;
+    }
+
+    final dateStr = DateTime.now().toIso8601String().split('T').first;
       await _firestore.addDailyWord({
         'word': word,
         'english': english,
@@ -37,17 +43,19 @@ class _AdminControlScreenState extends State<AdminControlScreen> {
       );
       _wordController.clear();
       _englishController.clear();
-      _sentenceController.clear();
-    }
+    _sentenceController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Admin Dashboard')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Add Daily Tamil Power Word', style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -87,17 +95,19 @@ class _AdminControlScreenState extends State<AdminControlScreen> {
                 );
               }
             ),
-            ElevatedButton(
-              onPressed: () {
-                _firestore.addTopic({
-                  'title': 'New Lesson',
-                  'order': 1,
-                  'status': 'unlocked',
-                });
-              },
-              child: const Text('Add Demo Topic'),
+                ElevatedButton(
+                  onPressed: () {
+                    _firestore.addTopic({
+                      'title': 'New Lesson',
+                      'order': 1,
+                      'status': 'unlocked',
+                    });
+                  },
+                  child: const Text('Add Demo Topic'),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

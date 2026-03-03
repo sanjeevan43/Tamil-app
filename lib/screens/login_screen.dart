@@ -88,7 +88,9 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24.0),
-              child: Card(
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 400),
+                child: Card(
                 elevation: 8,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 child: Padding(
@@ -113,7 +115,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             prefixIcon: Icon(Icons.email),
                           ),
                           keyboardType: TextInputType.emailAddress,
-                          validator: (value) => value!.isEmpty ? 'Enter email' : null,
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) return 'Enter email';
+                            if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value.trim())) {
+                              return 'Enter a valid email address';
+                            }
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 16),
                         TextFormField(
@@ -123,7 +131,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             prefixIcon: Icon(Icons.lock),
                           ),
                           obscureText: true,
-                          validator: (value) => value!.length < 6 ? 'Password too short' : null,
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) return 'Enter password';
+                            if (value.length < 6) return 'Password too short (min 6 chars)';
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 24),
                         if (_isLoading)
@@ -160,9 +172,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: Text(_isLogin 
                               ? "Don't have an account? Register" 
                               : "Already have an account? Login"),
-                          ),
+                            ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
                 ),
