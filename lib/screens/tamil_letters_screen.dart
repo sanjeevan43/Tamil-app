@@ -16,26 +16,30 @@ class TamilLettersScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: AppTheme.backgroundLight,
         appBar: AppBar(
-          backgroundColor: AppTheme.primary,
-          title: Text(
-            'Tamil Alphabet',
-            style: GoogleFonts.poppins(fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-          iconTheme: const IconThemeData(color: Colors.white),
+          backgroundColor: Colors.white,
           elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.secondary, size: 20),
+            onPressed: () => Navigator.pop(context),
+          ),
+          centerTitle: false,
+          title: Text(
+            'TAMIL ALPHABET',
+            style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.secondary, fontSize: 18, letterSpacing: 1),
+          ),
           bottom: TabBar(
             isScrollable: true,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: AppTheme.accent,
+            labelColor: AppTheme.primary,
+            unselectedLabelColor: AppTheme.textGray,
+            indicatorColor: AppTheme.primary,
             indicatorWeight: 4,
-            labelStyle: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13),
-            unselectedLabelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 12),
+            labelStyle: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1),
+            unselectedLabelStyle: GoogleFonts.outfit(fontWeight: FontWeight.w700, fontSize: 13),
             tabs: const [
-              Tab(text: 'Vowels\n(உயிர் - 12)'),
-              Tab(text: 'Consonants\n(மெய் - 18)'),
-              Tab(text: 'Combined\n(உயிர்மெய் - 216)'),
-              Tab(text: 'Special\n(ஆய்தம் - 1)'),
+              Tab(text: 'VOWELS (12)'),
+              Tab(text: 'CONSONANTS (18)'),
+              Tab(text: 'COMBINED (216)'),
+              Tab(text: 'SPECIAL (1)'),
             ],
           ),
         ),
@@ -63,11 +67,7 @@ class _LetterCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         AudioService.playLetter(letter);
-        
-        // Reward users silently
         Provider.of<EnhancedProgressProvider>(context, listen: false).addRewards(coins: 1);
-        
-        // Show subtle feedback
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -75,28 +75,28 @@ class _LetterCard extends StatelessWidget {
               children: [
                 const Icon(Icons.volume_up, color: Colors.white),
                 const SizedBox(width: 10),
-                Text('Playing $letter', style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
+                Text('Playing $letter', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
               ],
             ),
             duration: const Duration(milliseconds: 800),
             backgroundColor: AppTheme.primary,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          )
+          ),
         );
       },
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: AppTheme.primary.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            )
+              color: AppTheme.primary.withOpacity(0.08),
+              blurRadius: 15,
+              offset: const Offset(0, 6),
+            ),
           ],
-          border: Border.all(color: AppTheme.primary.withOpacity(0.1)),
+          border: Border.all(color: AppTheme.primary.withOpacity(0.1), width: 1.5),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -104,22 +104,22 @@ class _LetterCard extends StatelessWidget {
             Text(
               letter,
               style: GoogleFonts.notoSansTamil(
-                fontSize: 32,
+                fontSize: 36,
                 fontWeight: FontWeight.bold,
                 color: AppTheme.primary,
               ),
             ),
-            if (subtitle != null) ...[
-              const SizedBox(height: 4),
+            if (subtitle != null) ...{
+              const SizedBox(height: 6),
               Text(
                 subtitle!,
-                style: GoogleFonts.poppins(
-                  fontSize: 12,
-                  color: AppTheme.textSlate,
-                  fontWeight: FontWeight.w500
+                style: GoogleFonts.outfit(
+                  fontSize: 11,
+                  color: AppTheme.textGray,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-            ]
+            },
           ],
         ),
       ),
@@ -130,7 +130,6 @@ class _LetterCard extends StatelessWidget {
 class _VowelsGrid extends StatelessWidget {
   const _VowelsGrid();
 
-  // Mapping generic transliterations for display
   static const List<String> _transliteration = [
     'a', 'aa', 'i', 'ii', 'u', 'uu', 'e', 'ee', 'ai', 'o', 'oo', 'au'
   ];
@@ -139,11 +138,11 @@ class _VowelsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final letters = TamilData.uyirEzhuthukkal;
     return GridView.builder(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
+        crossAxisSpacing: 14,
+        mainAxisSpacing: 14,
         childAspectRatio: 1.0,
       ),
       itemCount: letters.length,
@@ -160,7 +159,6 @@ class _VowelsGrid extends StatelessWidget {
 class _ConsonantsGrid extends StatelessWidget {
   const _ConsonantsGrid();
 
-  // Mapping generic transliterations for display
   static const List<String> _transliteration = [
     'ik', 'ing', 'ich', 'inj', 'it', 'in', 'ith', 'ind', 'ip', 'im',
     'iy', 'ir', 'il', 'iv', 'izh', 'ill', 'irr', 'in'
@@ -170,11 +168,11 @@ class _ConsonantsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final letters = TamilData.meiEzhuthukkal;
     return GridView.builder(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
+        crossAxisSpacing: 14,
+        mainAxisSpacing: 14,
         childAspectRatio: 1.0,
       ),
       itemCount: letters.length,
@@ -202,38 +200,45 @@ class _CombinedList extends StatelessWidget {
       itemBuilder: (context, i) {
         return Card(
           margin: const EdgeInsets.only(bottom: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          elevation: 2,
-          child: ExpansionTile(
-            tilePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-            title: Text(
-              '${baseCon[i]} Series',
-              style: GoogleFonts.notoSansTamil(
-                fontSize: 20, 
-                fontWeight: FontWeight.bold,
-                color: AppTheme.textDark
-              ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          elevation: 0,
+          color: Colors.white,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: AppTheme.primary.withOpacity(0.1), width: 1.5),
             ),
-            subtitle: Text('Tap to view 12 variations', style: GoogleFonts.poppins(fontSize: 12)),
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
-                    childAspectRatio: 1.0,
-                  ),
-                  itemCount: combinations[i].length,
-                  itemBuilder: (context, j) {
-                    return _LetterCard(letter: combinations[i][j]);
-                  },
+            child: ExpansionTile(
+              tilePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              title: Text(
+                '${baseCon[i]} Series',
+                style: GoogleFonts.notoSansTamil(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.primary,
                 ),
-              )
-            ],
+              ),
+              subtitle: Text('Tap to view 12 variations', style: GoogleFonts.outfit(fontSize: 12, color: AppTheme.textGray)),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      childAspectRatio: 1.0,
+                    ),
+                    itemCount: combinations[i].length,
+                    itemBuilder: (context, j) {
+                      return _LetterCard(letter: combinations[i][j]);
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -254,24 +259,24 @@ class _SpecialGrid extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              height: 150,
-              width: 150,
+              height: 160,
+              width: 160,
               child: _LetterCard(
                 letter: letters[0],
                 subtitle: 'ak',
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             Text(
               'Aayudha Ezhuthu',
-              style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.textDark),
+              style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w900, color: AppTheme.secondary),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
             Text(
               'A special Tamil letter commonly used to add a slightly guttural, stop-consonant sound.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(fontSize: 14, color: AppTheme.textSlate),
-            )
+              style: GoogleFonts.outfit(fontSize: 14, color: AppTheme.textGray, height: 1.5),
+            ),
           ],
         ),
       ),

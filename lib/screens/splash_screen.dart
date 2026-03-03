@@ -1,11 +1,15 @@
-import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../services/auth_service.dart';
+import '../providers/enhanced_progress_provider.dart';
 import 'enhanced_home_screen.dart';
 import 'login_screen.dart';
+import 'admin_control_screen.dart';
+import 'teacher_dashboard_screen.dart';
+import 'parent_dashboard_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -25,23 +29,47 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       vsync: this,
     )..repeat(reverse: true);
     
-    Future.delayed(const Duration(seconds: 4), () {
+    Future.delayed(const Duration(seconds: 4), () async {
       if (mounted) {
         final authService = Provider.of<AuthService>(context, listen: false);
-        final nextScreen = authService.isAuthenticated 
-            ? const EnhancedHomeScreen() 
-            : const LoginScreen();
+        final progress = Provider.of<EnhancedProgressProvider>(context, listen: false);
+        
+        if (authService.isAuthenticated) {
+          await progress.initializeProgress(uid: authService.user?.uid);
+        }
 
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (_, __, ___) => nextScreen,
-            transitionsBuilder: (_, animation, __, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-            transitionDuration: const Duration(milliseconds: 1000),
-          ),
-        );
+        Widget nextScreen;
+        if (authService.isAuthenticated) {
+          final role = authService.userRole;
+          switch (role) {
+            case 'admin':
+              nextScreen = const AdminControlScreen();
+              break;
+            case 'teacher':
+              nextScreen = TeacherDashboardScreen();
+              break;
+            case 'parent':
+              nextScreen = const ParentDashboardScreen();
+              break;
+            default:
+              nextScreen = const EnhancedHomeScreen();
+          }
+        } else {
+          nextScreen = const LoginScreen();
+        }
+
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (_, __, ___) => nextScreen,
+              transitionsBuilder: (_, animation, __, child) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+              transitionDuration: const Duration(milliseconds: 1000),
+            ),
+          );
+        }
       }
     });
   }
@@ -57,13 +85,13 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     return Scaffold(
       body: Stack(
         children: [
-          // Gradient Background
+          // Premium Gradient Background (Black to Deep Red)
           Positioned.fill(
             child: Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppTheme.backgroundDark, 
+                    AppTheme.secondary, 
                     AppTheme.primaryDark,
                     AppTheme.primary,
                   ],
@@ -74,27 +102,18 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             ),
           ),
           
-          // Animated Decorative Elements
-          Positioned(
-            top: -100,
-            right: -50,
+          // Subtly Animated Topographic Elements (Abstract)
+          ...List.generate(3, (index) => Positioned(
+            top: index * 200.0 - 100,
+            right: index.isEven ? -100 : null,
+            left: index.isOdd ? -100 : null,
             child: _PulseCircle(
-              width: 300,
-              height: 300,
+              width: 400,
+              height: 400,
               controller: _controller,
-              color: AppTheme.primary.withOpacity(0.1),
+              color: index == 0 ? Colors.white.withOpacity(0.05) : AppTheme.primary.withOpacity(0.08),
             ),
-          ),
-          Positioned(
-            bottom: -50,
-            left: -50,
-            child: _PulseCircle(
-              width: 250,
-              height: 250,
-              controller: _controller,
-              color: AppTheme.accent.withOpacity(0.1),
-            ),
-          ),
+          )),
 
           // Main Content
           SafeArea(
@@ -102,80 +121,63 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Glass Branding Card
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(48),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 60),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.05),
-                          borderRadius: BorderRadius.circular(48),
-                          border: Border.all(color: Colors.white.withOpacity(0.1)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              blurRadius: 40,
-                              offset: const Offset(0, 20),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SizedBox(
-                              width: double.infinity,
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text(
-                                  'தமிழ்',
-                                  style: GoogleFonts.notoSansTamil(
-                                    fontSize: 80,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    shadows: [
-                                      Shadow(
-                                        color: AppTheme.primary.withOpacity(0.5),
-                                        blurRadius: 30,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            Container(
-                              height: 4,
-                              width: 60,
-                              decoration: BoxDecoration(
-                                color: AppTheme.accent,
-                                borderRadius: BorderRadius.circular(2),
-                              ),
-                            ),
-                          ],
-                        ),
+                  // Logo Container with Glass Effect
+                  AnimatedBuilder(
+                    animation: _controller,
+                    builder: (context, child) {
+                      return Transform.scale(
+                        scale: 1.0 + (_controller.value * 0.05),
+                        child: child,
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(40),
+                      width: 250,
+                      height: 250,
+                      decoration: AppTheme.whiteCard(radius: 60).copyWith(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.4),
+                            blurRadius: 50,
+                            offset: const Offset(0, 25),
+                          ),
+                        ],
+                      ),
+                      child: Image.asset(
+                        'assets/images/29099e40-2686-49d2-af50-5d939b785f80.png',
+                        fit: BoxFit.contain,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 48),
+                  const SizedBox(height: 60),
+                  
+                  // Text Branding
                   Text(
                     'அகரவளம்',
-                    style: GoogleFonts.inter(
-                      fontSize: 22,
+                    style: GoogleFonts.outfit(
+                      fontSize: 32,
                       fontWeight: FontWeight.w900,
                       color: Colors.white,
-                      letterSpacing: 4.0,
+                      letterSpacing: 2.0,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
+                  Container(
+                    height: 3,
+                    width: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                   Text(
-                    'LEARN • PLAY • GROW',
-                    style: GoogleFonts.inter(
+                    'TAMIL LEARNING EXCELLENCE',
+                    style: GoogleFonts.outfit(
                       fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white.withOpacity(0.5),
-                      letterSpacing: 2.0,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white.withOpacity(0.7),
+                      letterSpacing: 4.0,
                     ),
                   ),
                 ],
@@ -185,18 +187,27 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
           // Footer Branding
           Positioned(
-            bottom: 40,
+            bottom: 50,
             left: 0,
             right: 0,
             child: Center(
-              child: Text(
-                'POWERED BY HOPE3 SERVICES',
-                style: GoogleFonts.inter(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white.withOpacity(0.4),
-                  letterSpacing: 2.0,
-                ),
+              child: Column(
+                children: [
+                  const CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white24),
+                    strokeWidth: 2,
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'POWERED BY HOPE3 SERVICES',
+                    style: GoogleFonts.outfit(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white.withOpacity(0.4),
+                      letterSpacing: 3.0,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -213,6 +224,7 @@ class _PulseCircle extends StatelessWidget {
   final Color color;
 
   const _PulseCircle({
+    super.key,
     required this.width,
     required this.height,
     required this.controller,
@@ -239,4 +251,3 @@ class _PulseCircle extends StatelessWidget {
     );
   }
 }
-

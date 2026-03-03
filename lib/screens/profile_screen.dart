@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../providers/enhanced_progress_provider.dart';
+import '../services/auth_service.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -15,24 +16,20 @@ class ProfileScreen extends StatelessWidget {
       backgroundColor: AppTheme.backgroundLight,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: AppTheme.textDark),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.secondary, size: 20),
           onPressed: () => Navigator.pop(context),
-          style: IconButton.styleFrom(
-            backgroundColor: Colors.white,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-          ),
         ),
         title: Text(
-          'USER PROFILE',
-          style: GoogleFonts.inter(fontWeight: FontWeight.w900, color: AppTheme.textDark, letterSpacing: 2, fontSize: 13),
+          'MY PROFILE',
+          style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.secondary, letterSpacing: 2, fontSize: 13),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         child: Column(
           children: [
             _buildAvatarSection(context, progress),
@@ -57,40 +54,41 @@ class ProfileScreen extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            width: 120,
-            height: 120,
+            width: 130,
+            height: 130,
             decoration: BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,
               boxShadow: [
-                BoxShadow(color: AppTheme.primaryDark.withOpacity(0.3), blurRadius: 25, offset: const Offset(0, 10)),
+                BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 30, offset: const Offset(0, 15)),
               ],
-              border: Border.all(color: Colors.white, width: 4),
+              border: Border.all(color: Colors.white.withOpacity(0.3), width: 8),
             ),
             child: Center(
-              child: Text(progress.avatar, style: const TextStyle(fontSize: 64)),
+              child: Text(progress.avatar, style: const TextStyle(fontSize: 70)),
             ),
           ),
           const SizedBox(height: 24),
           Text(
             progress.userName,
-            style: GoogleFonts.inter(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -0.5),
+            style: GoogleFonts.outfit(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -0.5),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(20),
+              color: Colors.white.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: Colors.white.withOpacity(0.1)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.verified_rounded, color: Colors.white, size: 16),
+                const Icon(Icons.shield_rounded, color: Colors.white, size: 18),
                 const SizedBox(width: 8),
                 Text(
-                  'LEVEL ${progress.level} EXPLORER',
-                  style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1),
+                  'LVL ${progress.level} TAMIL SCHOLAR',
+                  style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1.5),
                 ),
               ],
             ),
@@ -109,32 +107,35 @@ class ProfileScreen extends StatelessWidget {
       mainAxisSpacing: 16,
       childAspectRatio: 1.1,
       children: [
-        _buildStatCard('⭐', '${progress.totalStars}', 'STARS COLLECTED'),
-        _buildStatCard('🔥', '${progress.streakDays}', 'DAY STREAK'),
-        _buildStatCard('🪙', '${progress.totalCoins}', 'TOTAL COINS'),
-        _buildStatCard('🏆', '${progress.achievementBadges.length}', 'BADGES WON'),
+        _buildStatCard('🎯', '${progress.totalStars}', 'STARS HELD', const Color(0xFF6200EA)),
+        _buildStatCard('🔥', '${progress.streakDays}', 'DAY STREAK', AppTheme.primary),
+        _buildStatCard('💎', '${progress.totalCoins}', 'TOTAL COINS', const Color(0xFF00B0FF)),
+        _buildStatCard('🏆', '${progress.achievementBadges.length}', 'BADGES WON', const Color(0xFF00C853)),
       ],
     );
   }
 
-  Widget _buildStatCard(String emoji, String value, String label) {
+  Widget _buildStatCard(String emoji, String value, String label, Color accent) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: AppTheme.whiteCard(radius: 32),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 28)),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(color: accent.withOpacity(0.1), shape: BoxShape.circle),
+            child: Text(emoji, style: const TextStyle(fontSize: 24)),
+          ),
           const SizedBox(height: 12),
           Text(
             value,
-            style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.w900, color: AppTheme.textDark),
+            style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.w900, color: AppTheme.secondary),
           ),
-          const SizedBox(height: 4),
           Text(
             label, 
             textAlign: TextAlign.center,
-            style: GoogleFonts.inter(fontSize: 9, fontWeight: FontWeight.w800, color: AppTheme.textSlate, letterSpacing: 0.5),
+            style: GoogleFonts.outfit(fontSize: 9, fontWeight: FontWeight.w800, color: AppTheme.textGray, letterSpacing: 1),
           ),
         ],
       ),
@@ -144,36 +145,39 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildAchievements(EnhancedProgressProvider progress) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(28),
-      decoration: AppTheme.whiteCard(radius: 36),
+      padding: const EdgeInsets.all(32),
+      decoration: AppTheme.whiteCard(radius: 40).copyWith(
+        color: AppTheme.topoLight,
+        border: Border.all(color: AppTheme.topoSilver, width: 1.5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Container(
-                 padding: const EdgeInsets.all(8),
-                 decoration: BoxDecoration(color: AppTheme.primary.withOpacity(0.06), borderRadius: BorderRadius.circular(10)),
-                 child: const Icon(Icons.emoji_events_rounded, color: AppTheme.primary, size: 20),
+                 padding: const EdgeInsets.all(10),
+                 decoration: BoxDecoration(color: AppTheme.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(14)),
+                 child: const Icon(Icons.stars_rounded, color: AppTheme.primary, size: 22),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 16),
               Text(
-                'ACHIEVEMENTS',
-                style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w900, color: AppTheme.primary, letterSpacing: 1.5),
+                'HALL OF FAME',
+                style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w900, color: AppTheme.secondary, letterSpacing: 2),
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 28),
           if (progress.achievementBadges.isEmpty)
             Center(
               child: Column(
                 children: [
-                   const Icon(Icons.lock_outline_rounded, size: 48, color: AppTheme.borderLight),
-                   const SizedBox(height: 12),
+                   Icon(Icons.lock_person_rounded, size: 56, color: AppTheme.secondary.withOpacity(0.05)),
+                   const SizedBox(height: 16),
                    Text(
                      'No badges earned yet.\nStart learning to win them!',
                      textAlign: TextAlign.center,
-                     style: GoogleFonts.inter(color: AppTheme.textGray, fontWeight: FontWeight.w500, height: 1.4),
+                     style: GoogleFonts.outfit(color: AppTheme.textGray, fontWeight: FontWeight.w600, height: 1.5),
                    ),
                 ],
               ),
@@ -184,20 +188,23 @@ class ProfileScreen extends StatelessWidget {
               runSpacing: 12,
               children: progress.achievementBadges.map((badge) {
                 return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   decoration: BoxDecoration(
-                    color: AppTheme.primary.withOpacity(0.06),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppTheme.primary.withOpacity(0.1)),
+                    color: AppTheme.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: AppTheme.topoSilver),
+                    boxShadow: [
+                      BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4)),
+                    ],
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.stars_rounded, color: Colors.amber, size: 18),
-                      const SizedBox(width: 8),
+                      const Icon(Icons.verified_rounded, color: AppTheme.primary, size: 18),
+                      const SizedBox(width: 10),
                       Text(
                         badge, 
-                        style: GoogleFonts.inter(fontWeight: FontWeight.w800, fontSize: 13, color: AppTheme.textDark),
+                        style: GoogleFonts.outfit(fontWeight: FontWeight.w800, fontSize: 13, color: AppTheme.secondary),
                       ),
                     ],
                   ),
@@ -213,17 +220,27 @@ class ProfileScreen extends StatelessWidget {
     return Column(
       children: [
         _profileAction(
-          icon: Icons.edit_rounded,
-          label: 'Change My Name',
-          color: AppTheme.primary,
+          icon: Icons.badge_rounded,
+          label: 'Edit Profile Name',
+          color: AppTheme.secondary,
           onTap: () => _showNameDialog(context, progress),
         ),
         const SizedBox(height: 16),
         _profileAction(
-          icon: Icons.delete_forever_rounded,
-          label: 'Reset My Progress',
-          color: Colors.redAccent,
+          icon: Icons.refresh_rounded,
+          label: 'Factory Reset Progress',
+          color: AppTheme.primary,
           onTap: () => _showResetDialog(context, progress),
+        ),
+        const SizedBox(height: 16),
+        _profileAction(
+          icon: Icons.power_settings_new_rounded,
+          label: 'Sign Out Account',
+          color: AppTheme.textGray,
+          onTap: () {
+            Provider.of<AuthService>(context, listen: false).signOut();
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          },
         ),
       ],
     );
@@ -233,18 +250,18 @@ class ProfileScreen extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-        decoration: AppTheme.whiteCard(radius: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+        decoration: AppTheme.whiteCard(radius: 28),
         child: Row(
           children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(width: 16),
+            Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withOpacity(0.08), borderRadius: BorderRadius.circular(14)), child: Icon(icon, color: color, size: 24)),
+            const SizedBox(width: 20),
             Text(
               label,
-              style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w800, color: AppTheme.textDark),
+              style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w800, color: AppTheme.secondary),
             ),
             const Spacer(),
-            Icon(Icons.chevron_right_rounded, color: AppTheme.borderLight),
+            const Icon(Icons.arrow_forward_ios_rounded, color: AppTheme.topoSilver, size: 16),
           ],
         ),
       ),
@@ -253,40 +270,53 @@ class ProfileScreen extends StatelessWidget {
 
   void _showNameDialog(BuildContext context, EnhancedProgressProvider progress) {
     final controller = TextEditingController(text: progress.userName);
+    final formKey = GlobalKey<FormState>();
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-        title: Text('Edit Name', style: GoogleFonts.inter(fontWeight: FontWeight.w900)),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          style: GoogleFonts.inter(fontWeight: FontWeight.w600),
-          decoration: InputDecoration(
-            hintText: 'Enter your name',
-            filled: true,
-            fillColor: AppTheme.offWhite,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+        title: Text('Update Identity', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.secondary)),
+        content: Form(
+          key: formKey,
+          child: TextFormField(
+            controller: controller,
+            autofocus: true,
+            style: GoogleFonts.outfit(fontWeight: FontWeight.w700),
+            decoration: InputDecoration(
+              hintText: 'Enter your name',
+              filled: true,
+              fillColor: AppTheme.topoLight,
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none),
+            ),
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return 'Name cannot be empty';
+              }
+              if (value.trim().length < 2) {
+                return 'Name must be at least 2 characters';
+              }
+              if (value.trim().length > 50) {
+                return 'Name must be less than 50 characters';
+              }
+              return null;
+            },
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('CANCEL', style: GoogleFonts.inter(fontWeight: FontWeight.w800, color: AppTheme.textGray)),
+            child: Text('CANCEL', style: GoogleFonts.outfit(fontWeight: FontWeight.w800, color: AppTheme.textGray)),
           ),
           ElevatedButton(
             onPressed: () {
-              if (controller.text.trim().isNotEmpty) {
-                progress.setUserName(controller.text);
+              if (formKey.currentState!.validate()) {
+                progress.setUserName(controller.text.trim());
                 Navigator.pop(context);
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Name cannot be empty!'), backgroundColor: Colors.red),
-                );
               }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-            child: Text('SAVE', style: GoogleFonts.inter(fontWeight: FontWeight.w800, color: Colors.white)),
+            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.secondary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
+            child: Text('UPDATE', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: Colors.white)),
           ),
         ],
       ),
@@ -297,24 +327,24 @@ class ProfileScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-        title: Text('Reset Progress?', style: GoogleFonts.inter(fontWeight: FontWeight.w900, color: Colors.redAccent)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+        title: Text('Reset Explorer Stats?', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.primary)),
         content: Text(
-          'This will permanently delete all your stars, coins, and levels. This cannot be undone.',
-          style: GoogleFonts.inter(fontWeight: FontWeight.w500, color: AppTheme.textSlate),
+          'This will permanently erase all your milestones, coins, and scholarly level. This action is irreversible.',
+          style: GoogleFonts.outfit(fontWeight: FontWeight.w500, color: AppTheme.textGray, height: 1.6),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('KEEP MY DATA', style: GoogleFonts.inter(fontWeight: FontWeight.w800, color: AppTheme.textGray)),
+            child: Text('KEEP DATA', style: GoogleFonts.outfit(fontWeight: FontWeight.w800, color: AppTheme.textGray)),
           ),
           ElevatedButton(
             onPressed: () {
               progress.resetProgress();
               Navigator.pop(context);
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-            child: Text('RESET EVERYTHING', style: GoogleFonts.inter(fontWeight: FontWeight.w800, color: Colors.white)),
+            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
+            child: Text('ERASE ALL', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: Colors.white)),
           ),
         ],
       ),

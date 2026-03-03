@@ -15,18 +15,31 @@ class ParentDashboardScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppTheme.backgroundLight,
       appBar: AppBar(
-        title: Text(
-          'Parent Dashboard',
-          style: GoogleFonts.lexend(fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: AppTheme.textDark),
-        titleTextStyle: GoogleFonts.lexend(
-          color: AppTheme.textDark,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
+        centerTitle: false,
+        title: Row(
+          children: [
+            Container(
+              height: 36,
+              width: 36,
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: AppTheme.topoSilver),
+                boxShadow: [
+                  BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4)),
+                ],
+              ),
+              child: Image.asset('assets/images/29099e40-2686-49d2-af50-5d939b785f80.png'),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'PARENT HUB',
+              style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.secondary, fontSize: 16, letterSpacing: 1.5),
+            ),
+          ],
         ),
       ),
       body: SingleChildScrollView(
