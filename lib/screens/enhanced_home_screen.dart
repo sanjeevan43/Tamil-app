@@ -14,6 +14,7 @@ import 'pronunciation_practice_game.dart';
 import 'offline_dictionary_screen.dart';
 import 'daily_word_screen.dart';
 import 'admin_control_screen.dart';
+import 'student_classrooms_screen.dart';
 
 class EnhancedHomeScreen extends StatefulWidget {
   const EnhancedHomeScreen({super.key});
@@ -245,6 +246,8 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
             () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PronunciationPracticeGame()))),
         _fastItem(context, 'Daily Word', 'Power word', Icons.wb_sunny_rounded, const Color(0xFFFFFDE7), Colors.amber,
             () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DailyTamilPowerWordScreen()))),
+        _fastItem(context, 'Classrooms', 'Learn together', Icons.school_rounded, const Color(0xFFE8EAF6), Colors.indigo,
+            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const StudentClassroomsScreen()))),
         if (Provider.of<AuthService>(context, listen: false).userRole == 'admin')
           _fastItem(context, 'Admin', 'Manage app', Icons.admin_panel_settings_rounded, const Color(0xFFFFEBEE), AppTheme.primary,
               () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminControlScreen()))),

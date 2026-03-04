@@ -24,6 +24,14 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(':app')
+
+    if (project.name == 'desktop_webview_auth') {
+        project.ext.flutter = [
+            compileSdkVersion: 34,
+            minSdkVersion: 21,
+            targetSdkVersion: 34
+        ]
+    }
 }
 
 tasks.register("clean", Delete) {

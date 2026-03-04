@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -148,5 +150,65 @@ class FirestoreService {
       return doc.data()!['progress'] as Map<String, dynamic>;
     }
     return null;
+  }
+
+  // --- File Storage ---
+  Future<String?> uploadFile(String path, File file) async {
+    try {
+      final ref = FirebaseStorage.instance.ref().child(path);
+      final uploadTask = await ref.putFile(file);
+      final url = await uploadTask.ref.getDownloadURL();
+      return url;
+    } catch (e) {
+      print('Error uploading file: $e');
+      return null;
+    }
+  }
+
+  // --- Classrooms (Admin/Student Features) ---
+  Stream<QuerySnapshot> getClassroomsStream() {
+    return _db.collection('classrooms').orderBy('createdAt', descending: true).snapshots();
+  }
+
+  Future<void> createClassroom(String name, String description, String createdBy) async {
+    await _db.collection('classrooms').add({
+      'name': name,
+      'description': description,
+      'createdBy': createdBy,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> deleteClassroom(String classroomId) async {
+    await _db.collection('classrooms').doc(classroomId).delete();
+  }
+
+  // --- Classroom Posts ---
+  Stream<QuerySnapshot> getClassroomPostsStream(String classroomId) {
+    return _db
+        .collection('classrooms')
+        .doc(classroomId)
+        .collection('posts')
+        .orderBy('createdAt', descending: true)
+        .snapshots();
+  }
+
+  Future<void> addClassroomPost(
+      String classroomId, 
+      String title, 
+      String content, 
+      String? fileUrl, 
+      String? fileType) async {
+    await _db.collection('classrooms').doc(classroomId).collection('posts').add({
+      'title': title,
+      'content': content,
+      'fileUrl': fileUrl,
+      'fileType': fileType,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> deleteClassroomPost(String classroomId, String postId) async {
+    await _db.collection('classrooms').doc(classroomId).collection('posts').doc(postId).delete();
   }
 }

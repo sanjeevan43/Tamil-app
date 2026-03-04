@@ -5,6 +5,7 @@ import '../services/firestore_service.dart';
 import '../constants/app_theme.dart';
 import '../services/auth_service.dart';
 import 'package:provider/provider.dart';
+import 'admin_classrooms_tab.dart';
 
 class AdminControlScreen extends StatefulWidget {
   const AdminControlScreen({super.key});
@@ -28,7 +29,7 @@ class _AdminControlScreenState extends State<AdminControlScreen> with SingleTick
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
   }
 
   @override
@@ -133,9 +134,11 @@ class _AdminControlScreenState extends State<AdminControlScreen> with SingleTick
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.white,
+          isScrollable: true,
           tabs: const [
             Tab(icon: Icon(Icons.wb_sunny_outlined), text: 'Daily Word'),
             Tab(icon: Icon(Icons.topic_outlined), text: 'Topics'),
+            Tab(icon: Icon(Icons.school_outlined), text: 'Classrooms'),
             Tab(icon: Icon(Icons.people_outline), text: 'Users'),
           ],
         ),
@@ -145,6 +148,7 @@ class _AdminControlScreenState extends State<AdminControlScreen> with SingleTick
         children: [
           _buildDailyWordTab(),
           _buildTopicsTab(),
+          const AdminClassroomsTab(),
           _buildUsersTab(),
         ],
       ),
