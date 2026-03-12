@@ -1,155 +1,308 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import '../constants/app_theme.dart';
-import '../widgets/glass_card.dart';
+import 'dart:math' as math;
 import '../data/reading_journey_data.dart';
 import '../providers/enhanced_progress_provider.dart';
-import 'reading_practice_screen.dart';
+import 'level_game_screen.dart';
 
-class ReadingJourneyScreen extends StatelessWidget {
+class ReadingJourneyScreen extends StatefulWidget {
   const ReadingJourneyScreen({super.key});
 
   @override
+  State<ReadingJourneyScreen> createState() => _ReadingJourneyScreenState();
+}
+
+class _ReadingJourneyScreenState extends State<ReadingJourneyScreen>
+    with TickerProviderStateMixin {
+  late ScrollController _scrollController;
+  late AnimationController _pulseController;
+  late Animation<double> _pulseAnimation;
+
+  // Stage color palette
+  static const List<Color> stageColors = [
+    Color(0xFFFF7043), // Deep Orange
+    Color(0xFF42A5F5), // Blue
+    Color(0xFF66BB6A), // Green
+    Color(0xFFAB47BC), // Purple
+    Color(0xFFEF5350), // Red
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.15).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _pulseController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final progress = Provider.of<EnhancedProgressProvider>(context);
-    
+    final progress = context.watch<EnhancedProgressProvider>();
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      backgroundColor: AppTheme.backgroundLight,
+      backgroundColor: const Color(0xFFF5F0E8),
       body: Stack(
         children: [
-          const _BackgroundDecorations(),
-          
-          Column(
-            children: [
-              _ReadingJourneyHeader(progress: progress),
-              
-              Expanded(
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: SizedBox(
-                    height: 1100,
-                    child: Stack(
-                      alignment: Alignment.center,
+          // Background pattern
+          const _TamilWatermark(),
+
+          // Main scroll
+          CustomScrollView(
+            controller: _scrollController,
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              // Header
+              SliverAppBar(
+                expandedHeight: 200,
+                pinned: true,
+                elevation: 0,
+                backgroundColor: const Color(0xFFF5F0E8).withOpacity(0.95),
+                leading: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.08),
+                            blurRadius: 8,
+                          ),
+                        ],
+                      ),
+                      child: const Icon(Icons.arrow_back_rounded,
+                          color: Color(0xFF424242)),
+                    ),
+                  ),
+                ),
+                actions: [
+                  // XP Badge
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Colors.orange[400]!, Colors.orange[700]!],
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.orange.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                      child: Row(
+                        children: [
+                          const Text('⚡', style: TextStyle(fontSize: 16)),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${progress.xpPoints}',
+                            style: GoogleFonts.outfit(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // Star Counter
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFFFD600), Color(0xFFFFAB00)],
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.amber.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.star_rounded, color: Colors.white, size: 20),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${progress.totalStars}',
+                            style: GoogleFonts.outfit(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                ],
+                flexibleSpace: FlexibleSpaceBar(
+                  background: Padding(
+                    padding:
+                        const EdgeInsets.only(top: 70, left: 24, right: 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Positioned.fill(
-                          child: CustomPaint(
-                            painter: _PathPainter(),
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'வாசிப்புப் பயணம்',
+                            style: GoogleFonts.notoSansTamil(
+                              fontSize: 30,
+                              fontWeight: FontWeight.w900,
+                              color: const Color(0xFF3E2723),
+                            ),
                           ),
                         ),
-                        
-                        ...List.generate(ReadingJourneyData.levels.length, (index) {
-                          final data = ReadingJourneyData.levels[index];
-                          final lessonId = data['id'];
-                          
-                          LevelStatus status;
-                          if (progress.unlockedLessons.contains(lessonId)) {
-                            final p = progress.lessonProgress[lessonId] ?? 0;
-                            status = p >= 100 ? LevelStatus.completed : LevelStatus.current;
-                          } else {
-                            status = LevelStatus.locked;
-                          }
-
-                          // Manual layout mapping for the winding path
-                          final layoutMap = [
-                            {'top': 900.0, 'alignment': 0.0},
-                            {'top': 730.0, 'alignment': 0.7},
-                            {'top': 560.0, 'alignment': -0.7},
-                            {'top': 390.0, 'alignment': 0.7},
-                            {'top': 220.0, 'alignment': 0.0},
-                          ];
-
-                          final layout = layoutMap[index % layoutMap.length];
-
-                          return _LevelNode(
-                            levelIndex: index,
-                            top: layout['top'] as double,
-                            alignment: layout['alignment'] as double,
-                            data: data,
-                            status: status,
-                          );
-                        }),
-                        
-                        const SizedBox(height: 150),
+                        Text(
+                          'Learning Journey',
+                          style: GoogleFonts.outfit(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1.5,
+                            color: const Color(0xFF8D6E63),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Overall Progress Bar
+                        _buildOverallProgress(progress),
                       ],
                     ),
                   ),
                 ),
               ),
+
+              // Stage Banners + Level Nodes
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    if (index >= ReadingJourneyData.stages.length) return null;
+                    final stage = ReadingJourneyData.stages[index];
+                    final stageLevels =
+                        ReadingJourneyData.getLevelsForStage(stage['id']);
+                    final stageColor =
+                        stageColors[(stage['id'] - 1) % stageColors.length];
+
+                    return Column(
+                      children: [
+                        // Stage Banner
+                        _buildStageBanner(stage, stageColor, progress),
+
+                        // Level Nodes (zig-zag)
+                        ...List.generate(stageLevels.length, (levelIndex) {
+                          final level = stageLevels[levelIndex];
+                          final globalLevelIndex = ReadingJourneyData.levels
+                              .indexWhere((l) => l['id'] == level['id']);
+                          final isZigRight = globalLevelIndex % 2 == 0;
+
+                          return _buildLevelNode(
+                            level: level,
+                            isZigRight: isZigRight,
+                            stageColor: stageColor,
+                            screenWidth: screenWidth,
+                            progress: progress,
+                            isLastInStage:
+                                levelIndex == stageLevels.length - 1,
+                          );
+                        }),
+
+                        const SizedBox(height: 10),
+                      ],
+                    );
+                  },
+                  childCount: ReadingJourneyData.stages.length,
+                ),
+              ),
+
+              const SliverToBoxAdapter(child: SizedBox(height: 100)),
             ],
           ),
         ],
       ),
     );
   }
-}
 
-class _ReadingJourneyHeader extends StatelessWidget {
-  final EnhancedProgressProvider progress;
-  const _ReadingJourneyHeader({required this.progress});
+  Widget _buildOverallProgress(EnhancedProgressProvider progress) {
+    final completedLevels = ReadingJourneyData.levels
+        .where((l) => progress.isLevelCompleted(l['id']))
+        .length;
+    final totalLevels = ReadingJourneyData.levels.length;
+    final percent = completedLevels / totalLevels;
 
-  @override
-  Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 10, bottom: 20),
-      color: Colors.white,
-      child: Column(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 4)),
+        ],
+      ),
+      child: Row(
         children: [
-          Text(
-            'MILESTONE TRACKER',
-            style: GoogleFonts.inter(
-              fontSize: 10,
-              fontWeight: FontWeight.w900,
-              color: AppTheme.primary,
-              letterSpacing: 2,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildNavButton(
-                  context,
-                  icon: Icons.arrow_back_ios_new_rounded,
-                  onTap: () => Navigator.pop(context),
-                ),
-                Column(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'வாசிப்புப் பயணம்',
-                      style: GoogleFonts.notoSansTamil(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.textDark,
-                      ),
+                      'Level $completedLevels / $totalLevels',
+                      style: GoogleFonts.outfit(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 13,
+                          color: const Color(0xFF5D4037)),
                     ),
                     Text(
-                      'Learning Journey',
-                      style: GoogleFonts.inter(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.textSlate,
-                      ),
+                      '${(percent * 100).toInt()}%',
+                      style: GoogleFonts.outfit(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 13,
+                          color: const Color(0xFF3E2723)),
                     ),
                   ],
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                  decoration: AppTheme.pillBadge(bgColor: AppTheme.primary.withOpacity(0.08)),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.stars_rounded, color: AppTheme.primary, size: 20),
-                      const SizedBox(width: 8),
-                      Text(
-                        '${progress.totalStars}',
-                        style: GoogleFonts.inter(
-                          fontWeight: FontWeight.w800,
-                          color: AppTheme.primary,
-                        ),
-                      ),
-                    ],
+                const SizedBox(height: 8),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: LinearProgressIndicator(
+                    value: percent,
+                    minHeight: 10,
+                    backgroundColor: const Color(0xFFEFEBE9),
+                    valueColor:
+                        const AlwaysStoppedAnimation<Color>(Color(0xFFFF7043)),
                   ),
                 ),
               ],
@@ -160,244 +313,717 @@ class _ReadingJourneyHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildNavButton(BuildContext context, {required IconData icon, required VoidCallback onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: AppTheme.offWhite,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppTheme.borderLight),
+  Widget _buildStageBanner(Map<String, dynamic> stage, Color stageColor,
+      EnhancedProgressProvider progress) {
+    final stageProgress = progress.getStageProgress(stage['id']);
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      decoration: BoxDecoration(
+        color: stageColor,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: stageColor.withOpacity(0.4),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
+        image: DecorationImage(
+          image: const NetworkImage('https://www.transparenttextures.com/patterns/cubes.png'),
+          opacity: 0.1,
+          repeat: ImageRepeat.repeat,
         ),
-        child: Icon(icon, color: AppTheme.textDark, size: 20),
       ),
-    );
-  }
-}
-
-enum LevelStatus { completed, current, locked }
-
-class _LevelNode extends StatelessWidget {
-  final int levelIndex;
-  final double top;
-  final double alignment;
-  final Map<String, dynamic> data;
-  final LevelStatus status;
-
-  const _LevelNode({
-    required this.levelIndex,
-    required this.top,
-    required this.alignment,
-    required this.data,
-    required this.status,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      top: top,
-      left: 0,
-      right: 0,
-      child: Align(
-        alignment: Alignment(alignment, 0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            GestureDetector(
-              onTap: status == LevelStatus.locked ? null : () {
-                 Navigator.push(
-                   context,
-                   MaterialPageRoute(
-                     builder: (_) => ReadingPracticeScreen(levelData: data),
-                   ),
-                 );
-              },
-              child: _buildNodeIcon(),
+      child: Row(
+        children: [
+          // Stage Number Badge
+          Container(
+            width: 54,
+            height: 54,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white.withOpacity(0.3), width: 2),
             ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: AppTheme.whiteCard(radius: 16),
-              child: Column(
-                children: [
-                  Text(
-                    'MODULE ${data['id']}',
-                    style: GoogleFonts.inter(
-                      fontSize: 9,
-                      fontWeight: FontWeight.w900,
-                      color: status == LevelStatus.locked ? AppTheme.textGray : AppTheme.primary,
-                      letterSpacing: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    data['title'],
-                    style: GoogleFonts.notoSansTamil(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: status == LevelStatus.locked ? AppTheme.textGray : AppTheme.textDark,
-                    ),
-                  ),
-                  Text(
-                    data['subtitle'] ?? '',
-                    style: GoogleFonts.inter(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: status == LevelStatus.locked ? AppTheme.textGray.withOpacity(0.6) : AppTheme.textSlate,
-                    ),
-                  ),
-                ],
+            child: Center(
+              child: Text(
+                '${stage['id']}',
+                style: GoogleFonts.outfit(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white),
               ),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(width: 18),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  stage['tamilName'],
+                  style: GoogleFonts.notoSansTamil(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                Text(
+                  stage['name'].toUpperCase(),
+                  style: GoogleFonts.outfit(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white.withOpacity(0.9),
+                    letterSpacing: 2,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Stack(
+                  children: [
+                    Container(
+                      height: 8,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    AnimatedContainer(
+                      duration: const Duration(seconds: 1),
+                      height: 8,
+                      width: MediaQuery.of(context).size.width * 0.5 * stageProgress,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Colors.white.withOpacity(0.9), Colors.white],
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.white.withOpacity(0.3),
+                            blurRadius: 4,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${(stageProgress * 100).toInt()}% COMPLETED',
+                  style: GoogleFonts.outfit(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white.withOpacity(0.8),
+                    letterSpacing: 1,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white54, size: 16),
+        ],
       ),
     );
   }
 
-  Widget _buildNodeIcon() {
-    switch (status) {
-      case LevelStatus.completed:
-        return Container(
-          width: 72,
-          height: 72,
+  Widget _buildLevelNode({
+    required Map<String, dynamic> level,
+    required bool isZigRight,
+    required Color stageColor,
+    required double screenWidth,
+    required EnhancedProgressProvider progress,
+    required bool isLastInStage,
+  }) {
+    final levelId = level['id'] as int;
+    final isUnlocked = progress.isLevelUnlocked(levelId);
+    final isCompleted = progress.isLevelCompleted(levelId);
+    final isCurrent = levelId == progress.level;
+    final stars = progress.getLevelStarRating(levelId);
+
+    // Zig-zag positioning
+    final double xOffset = isZigRight
+        ? screenWidth * 0.25
+        : screenWidth * 0.55;
+
+    return SizedBox(
+      height: 130,
+      child: Stack(
+        children: [
+          // Connecting path line
+          if (!isLastInStage)
+            Positioned(
+              left: 0,
+              right: 0,
+              top: 50,
+              bottom: 0,
+              child: CustomPaint(
+                painter: _PathLinePainter(
+                  startX: xOffset + 35,
+                  startY: 30,
+                  endX: (isZigRight
+                          ? screenWidth * 0.55
+                          : screenWidth * 0.25) +
+                      35,
+                  endY: 100,
+                  color: isCompleted
+                      ? stageColor.withOpacity(0.5)
+                      : Colors.grey[300]!,
+                ),
+              ),
+            ),
+
+          // Level Circle Button
+          Positioned(
+            left: xOffset,
+            top: 15,
+            child: GestureDetector(
+              onTap: isUnlocked
+                  ? () => _onLevelTapped(levelId, level, stageColor, progress)
+                  : null,
+              child: isCurrent
+                  ? AnimatedBuilder(
+                      animation: _pulseAnimation,
+                      builder: (context, child) {
+                        return Transform.scale(
+                          scale: _pulseAnimation.value,
+                          child: child,
+                        );
+                      },
+                      child: _buildLevelCircle(
+                        levelId: levelId,
+                        isUnlocked: isUnlocked,
+                        isCompleted: isCompleted,
+                        isCurrent: isCurrent,
+                        stars: stars,
+                        stageColor: stageColor,
+                        level: level,
+                      ),
+                    )
+                  : _buildLevelCircle(
+                      levelId: levelId,
+                      isUnlocked: isUnlocked,
+                      isCompleted: isCompleted,
+                      isCurrent: isCurrent,
+                      stars: stars,
+                      stageColor: stageColor,
+                      level: level,
+                    ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLevelCircle({
+    required int levelId,
+    required bool isUnlocked,
+    required bool isCompleted,
+    required bool isCurrent,
+    required int stars,
+    required Color stageColor,
+    required Map<String, dynamic> level,
+  }) {
+    return Column(
+      children: [
+        // Main circle
+        Container(
+          width: 70,
+          height: 70,
           decoration: BoxDecoration(
-            color: AppTheme.primary,
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.white, width: 6),
+            gradient: isUnlocked
+                ? LinearGradient(
+                    colors: [
+                      stageColor,
+                      stageColor.withOpacity(0.7),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  )
+                : null,
+            color: isUnlocked ? null : const Color(0xFFE0E0E0),
+            border: Border.all(
+              color: isCurrent
+                  ? Colors.white
+                  : (isCompleted ? Colors.white : Colors.grey[300]!),
+              width: isCurrent ? 4 : 3,
+            ),
             boxShadow: [
-              BoxShadow(
-                color: AppTheme.primary.withOpacity(0.35),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
+              if (isCurrent)
+                BoxShadow(
+                  color: stageColor.withOpacity(0.5),
+                  blurRadius: 20,
+                  spreadRadius: 4,
+                ),
+              if (isUnlocked && !isCurrent)
+                BoxShadow(
+                  color: stageColor.withOpacity(0.25),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
             ],
           ),
-          child: const Icon(Icons.check_rounded, color: Colors.white, size: 36),
-        );
-      case LevelStatus.current:
-        return Stack(
-          alignment: Alignment.center,
-          children: [
-            _PulseEffect(color: AppTheme.primary),
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                border: Border.all(color: AppTheme.primary, width: 4),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppTheme.primary.withOpacity(0.25),
-                    blurRadius: 25,
-                    offset: const Offset(0, 12),
-                  ),
-                ],
-              ),
-              child: const Icon(Icons.rocket_launch_rounded, color: AppTheme.primary, size: 40),
-            ),
-          ],
-        );
-      case LevelStatus.locked:
-        return Container(
-          width: 68,
-          height: 68,
-          decoration: BoxDecoration(
-            color: AppTheme.offWhite,
-            shape: BoxShape.circle,
-            border: Border.all(color: AppTheme.borderLight, width: 2),
+          child: Center(
+            child: isUnlocked
+                ? (isCompleted
+                    ? const Icon(Icons.check_rounded,
+                        color: Colors.white, size: 32)
+                    : Text(
+                        '$levelId',
+                        style: GoogleFonts.outfit(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                        ),
+                      ))
+                : Icon(Icons.lock_rounded,
+                    color: Colors.grey[500], size: 28),
           ),
-          child: Icon(Icons.lock_outline_rounded, color: AppTheme.textGray.withOpacity(0.3), size: 30),
-        );
-    }
+        ),
+
+        const SizedBox(height: 6),
+
+        // Star rating
+        if (isCompleted)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(3, (i) {
+              return Icon(
+                i < stars ? Icons.star_rounded : Icons.star_outline_rounded,
+                color: i < stars
+                    ? const Color(0xFFFFD600)
+                    : Colors.grey[400],
+                size: 16,
+              );
+            }),
+          )
+        else if (isUnlocked)
+          FittedBox(
+            child: Text(
+              level['title'],
+              style: GoogleFonts.outfit(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF5D4037),
+              ),
+            ),
+          )
+        else
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(3, (i) {
+              return Icon(
+                Icons.star_outline_rounded,
+                color: Colors.grey[300],
+                size: 14,
+              );
+            }),
+          ),
+      ],
+    );
   }
-}
 
-class _PulseEffect extends StatefulWidget {
-  final Color color;
-  const _PulseEffect({required this.color});
+  void _onLevelTapped(int levelId, Map<String, dynamic> level, Color stageColor,
+      EnhancedProgressProvider progress) {
+    final isCompleted = progress.isLevelCompleted(levelId);
+    final stars = progress.getLevelStarRating(levelId);
 
-  @override
-  State<_PulseEffect> createState() => _PulseEffectState();
-}
-
-class _PulseEffectState extends State<_PulseEffect> with SingleTickerProviderStateMixin {
-  late AnimationController _ctrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat();
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _ctrl,
-      builder: (context, child) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
         return Container(
-          width: 80 + (_ctrl.value * 40),
-          height: 80 + (_ctrl.value * 40),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: widget.color.withOpacity(0.2 * (1 - _ctrl.value)),
+          padding: const EdgeInsets.all(28),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Handle bar
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Level circle
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    colors: [stageColor, stageColor.withOpacity(0.6)],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: stageColor.withOpacity(0.3),
+                      blurRadius: 15,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Text(
+                    '$levelId',
+                    style: GoogleFonts.outfit(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Stars
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(3, (i) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    child: Icon(
+                      i < stars
+                          ? Icons.star_rounded
+                          : Icons.star_outline_rounded,
+                      color: i < stars
+                          ? const Color(0xFFFFD600)
+                          : Colors.grey[300],
+                      size: 32,
+                    ),
+                  );
+                }),
+              ),
+
+              const SizedBox(height: 12),
+
+              // Title
+              Text(
+                level['tamilTitle'],
+                style: GoogleFonts.notoSansTamil(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                  color: const Color(0xFF3E2723),
+                ),
+              ),
+              Text(
+                level['title'],
+                style: GoogleFonts.outfit(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[600],
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              Text(
+                level['description'],
+                textAlign: TextAlign.center,
+                style: GoogleFonts.outfit(
+                  fontSize: 13,
+                  color: Colors.grey[500],
+                  height: 1.4,
+                ),
+              ),
+
+              const SizedBox(height: 6),
+
+              // XP and Reward Area
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF8E1),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: const Color(0xFFFFE082), width: 1.5),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Text('⚡', style: TextStyle(fontSize: 16)),
+                    ),
+                    const SizedBox(width: 10),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'POTENTIAL XP',
+                          style: GoogleFonts.outfit(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            color: const Color(0xFFFF8F00),
+                            letterSpacing: 1,
+                          ),
+                        ),
+                        Text(
+                          '+${level['xp']} XP',
+                          style: GoogleFonts.outfit(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
+                            color: const Color(0xFFBF360C),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 32),
+
+              // Start button
+              SizedBox(
+                width: double.infinity,
+                height: 58,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context); // Close sheet
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LevelGameScreen(
+                          level: level,
+                          stageColor: stageColor,
+                          onComplete: (earnedStars) {
+                            progress.completeLevel(levelId, earnedStars);
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: stageColor,
+                    foregroundColor: Colors.white,
+                    elevation: 4,
+                    shadowColor: stageColor.withOpacity(0.4),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        isCompleted ? 'PLAY AGAIN' : 'START LEVEL',
+                        style: GoogleFonts.outfit(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      const Icon(Icons.play_arrow_rounded, size: 28),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
           ),
         );
       },
     );
   }
+
+  void _showCompletionCelebration(
+      BuildContext ctx, int levelId, int stars, Color color) {
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return Dialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('🎉', style: TextStyle(fontSize: 60)),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Level $levelId Complete!',
+                    style: GoogleFonts.outfit(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w900,
+                      color: const Color(0xFF3E2723),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(3, (i) {
+                      return TweenAnimationBuilder<double>(
+                        tween: Tween(begin: 0, end: i < stars ? 1.0 : 0.3),
+                        duration:
+                            Duration(milliseconds: 400 + (i * 200)),
+                        curve: Curves.elasticOut,
+                        builder: (context, value, child) {
+                          return Transform.scale(
+                            scale: 0.5 + (value * 0.5),
+                            child: Opacity(
+                              opacity: value.clamp(0.3, 1.0),
+                              child: Icon(
+                                Icons.star_rounded,
+                                color: i < stars
+                                    ? const Color(0xFFFFD600)
+                                    : Colors.grey[300],
+                                size: 48,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    stars == 3
+                        ? 'Perfect! ⭐⭐⭐'
+                        : stars == 2
+                            ? 'Great job! ⭐⭐'
+                            : 'Good work! ⭐',
+                    style: GoogleFonts.outfit(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: color,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14)),
+                      ),
+                      child: Text(
+                        'CONTINUE',
+                        style: GoogleFonts.outfit(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    });
+  }
 }
 
-class _PathPainter extends CustomPainter {
+// Tamil watermark background
+class _TamilWatermark extends StatelessWidget {
+  const _TamilWatermark();
+
+  @override
+  Widget build(BuildContext context) {
+    const letters = [
+      'அ', 'ஆ', 'இ', 'ஈ', 'உ', 'ஊ', 'எ', 'ஏ', 'ஐ', 'ஒ', 'ஓ', 'ஔ',
+      'க', 'ச', 'ட', 'த', 'ப', 'ற'
+    ];
+    final random = math.Random(42); // Seed for consistent scattered layout
+
+    return Positioned.fill(
+      child: IgnorePointer(
+        child: Stack(
+          children: List.generate(20, (index) {
+            final top = random.nextDouble() * 2000; // Scatters across long map
+            final left = random.nextDouble() * MediaQuery.of(context).size.width;
+            final letter = letters[random.nextInt(letters.length)];
+            final rotation = (random.nextDouble() - 0.5) * 0.5;
+            final size = 40.0 + random.nextDouble() * 40.0;
+
+            return Positioned(
+              top: top,
+              left: left,
+              child: Transform.rotate(
+                angle: rotation,
+                child: Opacity(
+                  opacity: 0.04,
+                  child: Text(
+                    letter,
+                    style: GoogleFonts.notoSansTamil(
+                      fontSize: size,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.brown[400],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }),
+        ),
+      ),
+    );
+  }
+}
+
+// Custom painter for connecting path lines between level nodes
+class _PathLinePainter extends CustomPainter {
+  final double startX, startY, endX, endY;
+  final Color color;
+
+  _PathLinePainter({
+    required this.startX,
+    required this.startY,
+    required this.endX,
+    required this.endY,
+    required this.color,
+  });
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppTheme.primary.withOpacity(0.12)
+      ..color = color
+      ..strokeWidth = 4
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 4.0
       ..strokeCap = StrokeCap.round;
 
-    final w = size.width;
     final path = Path();
-    
-    // Centers mapped to node positions
-    final points = [
-      Offset(w * 0.5, 936),
-      Offset(w * 0.85, 766),
-      Offset(w * 0.15, 596),
-      Offset(w * 0.85, 426),
-      Offset(w * 0.5, 256),
-    ];
-    
-    path.moveTo(points[0].dx, points[0].dy);
-    for (int i = 0; i < points.length - 1; i++) {
-      final p1 = points[i];
-      final p2 = points[i + 1];
-      final ctrl1 = Offset(p1.dx, p1.dy - 100);
-      final ctrl2 = Offset(p2.dx, p2.dy + 100);
-      path.cubicTo(ctrl1.dx, ctrl1.dy, ctrl2.dx, ctrl2.dy, p2.dx, p2.dy);
-    }
+    path.moveTo(startX, startY);
 
+    // Smooth S-curve between nodes
+    final midY = (startY + endY) / 2;
+    path.cubicTo(startX, midY, endX, midY, endX, endY);
+
+    // Draw dashed
     final dashPath = Path();
-    const dashWidth = 12.0;
-    const dashSpace = 8.0;
-    double distance = 0.0;
-    for (final pathMetric in path.computeMetrics()) {
-      while (distance < pathMetric.length) {
+    const dashLen = 8.0;
+    const gapLen = 6.0;
+    for (final metric in path.computeMetrics()) {
+      double dist = 0;
+      while (dist < metric.length) {
         dashPath.addPath(
-          pathMetric.extractPath(distance, distance + dashWidth),
-          Offset.zero,
-        );
-        distance += dashWidth + dashSpace;
+            metric.extractPath(dist, dist + dashLen), Offset.zero);
+        dist += dashLen + gapLen;
       }
     }
 
@@ -407,33 +1033,3 @@ class _PathPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
-
-
-class _BackgroundDecorations extends StatelessWidget {
-  const _BackgroundDecorations();
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: Opacity(
-        opacity: 0.04,
-        child: Stack(
-          children: [
-            Positioned(top: 100, left: 20, child: _bgText('அ')),
-            Positioned(top: 400, right: 30, child: _bgText('ஆ')),
-            Positioned(bottom: 300, left: 40, child: _bgText('இ')),
-            Positioned(bottom: 100, right: 10, child: _bgText('ஈ')),
-          ],
-        ),
-      ),
-    );
-  }
-  
-  Widget _bgText(String text) {
-    return Text(
-      text,
-      style: GoogleFonts.notoSansTamil(fontSize: 160, fontWeight: FontWeight.bold),
-    );
-  }
-}
-

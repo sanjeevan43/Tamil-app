@@ -387,5 +387,35 @@ class TamilData {
         {'question': 'காகம் என்ன குடத்தில் போட்டது?', 'options': ['மணல்', 'இலைகள்', 'கற்கள்', 'பூக்கள்'], 'correct': 2},
       ],
     },
+    {
+      'title': 'புத்திசாலி குருவி',
+      'englishTitle': 'The Clever Sparrow',
+      'moral': 'புத்திசாலித்தனம் பலத்தை விட சிறந்தது.',
+      'scenes': [
+        {'content': 'ஒரு குருவி ஒரு மரத்தில் கூடு கட்டி வாழ்ந்தது.', 'englishContent': 'A sparrow lived in a nest on a tree.', 'image': 'story_sparrow_nest'},
+        {'content': 'ஒரு பாம்பு குருவியின் முட்டைகளைத் தின்ன வந்தது.', 'englishContent': 'A snake came to eat the sparrow\'s eggs.', 'image': 'story_snake_eggs'},
+        {'content': 'குருவி ஒரு திட்டம் போட்டது.', 'englishContent': 'The sparrow made a plan.', 'image': 'story_sparrow_plan'},
+        {'content': 'குருவி ஒரு கழுகை அழைத்து வந்தது. பாம்பு பயந்து ஓடிவிட்டது!', 'englishContent': 'The sparrow brought an eagle. The snake ran away in fear!', 'image': 'story_eagle_save'},
+      ],
+      'questions': [
+        {'question': 'குருவி எங்கே வாழ்ந்தது?', 'options': ['நிலத்தில்', 'மரத்தில்', 'மலையில்', 'நீரில்'], 'correct': 1},
+        {'question': 'பாம்பை ஓட்டியது யார்?', 'options': ['நாய்', 'பூனை', 'கழுகு', 'குருவி'], 'correct': 2},
+      ],
+    },
+    {
+      'title': 'மாய மரம்',
+      'englishTitle': 'The Magic Tree',
+      'moral': 'நன்மை செய்தால் நன்மை கிடைக்கும்.',
+      'scenes': [
+        {'content': 'ஒரு ஏழை சிறுவன் காட்டில் ஒரு மரத்தைக் கண்டான்.', 'englishContent': 'A poor boy found a tree in the forest.', 'image': 'story_magic_tree_1'},
+        {'content': 'அது ஒரு மாய மரம். தினமும் ஒரு பழம் கொடுக்கும்.', 'englishContent': 'It was a magic tree. It gave one fruit every day.', 'image': 'story_magic_tree_2'},
+        {'content': 'சிறுவன் அந்த பழங்களை ஊர் மக்களுக்குக் கொடுத்தான்.', 'englishContent': 'The boy gave the fruits to the village people.', 'image': 'story_magic_tree_3'},
+        {'content': 'மரம் மகிழ்ச்சியடைந்து, இன்னும் அதிக பழங்கள் கொடுத்தது!', 'englishContent': 'The tree was happy and gave even more fruits!', 'image': 'story_magic_tree_4'},
+      ],
+      'questions': [
+        {'question': 'மரம் எங்கே இருந்தது?', 'options': ['ஊரில்', 'வீட்டில்', 'காட்டில்', 'பள்ளியில்'], 'correct': 2},
+        {'question': 'சிறுவன் பழங்களை என்ன செய்தான்?', 'options': ['விற்றான்', 'சாப்பிட்டான்', 'எறிந்தான்', 'ஊர் மக்களுக்கு கொடுத்தான்'], 'correct': 3},
+      ],
+    },
   ];
 }

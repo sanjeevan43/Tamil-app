@@ -51,6 +51,32 @@ class ParentDashboardScreen extends StatelessWidget {
             const SizedBox(height: 32),
             
             Text(
+              'WEEKLY REPORT',
+              style: GoogleFonts.outfit(
+                fontSize: 11,
+                fontWeight: FontWeight.w900,
+                color: AppTheme.primary,
+                letterSpacing: 1.5,
+              ),
+            ),
+            const SizedBox(height: 16),
+            _buildWeeklyReport(progress),
+            const SizedBox(height: 32),
+
+            Text(
+              'SKILL BREAKDOWN',
+              style: GoogleFonts.outfit(
+                fontSize: 11,
+                fontWeight: FontWeight.w900,
+                color: AppTheme.primary,
+                letterSpacing: 1.5,
+              ),
+            ),
+            const SizedBox(height: 16),
+            _buildSkillBreakdown(progress),
+            const SizedBox(height: 32),
+            
+            Text(
               'Teaching Tools',
               style: GoogleFonts.lexend(
                 fontSize: 18,
@@ -277,6 +303,112 @@ class ParentDashboardScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildWeeklyReport(EnhancedProgressProvider progress) {
+    final days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    final values = [0.6, 0.8, 0.4, 0.9, 0.7, 0.3, 0.5]; // Mocked
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: AppTheme.whiteCard(radius: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('This Week', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w800, color: AppTheme.secondary)),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(color: Colors.green.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+                child: Text('Active', style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.green)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: List.generate(7, (i) => _buildDayBar(days[i], values[i], i == DateTime.now().weekday - 1)),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Total Stars: ${progress.totalStars}', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w700, color: AppTheme.primary)),
+              Text('Letters: ${progress.totalLettersLearned}', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w700, color: AppTheme.textGray)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDayBar(String day, double value, bool isToday) {
+    return Column(
+      children: [
+        Container(
+          width: 28,
+          height: 80 * value,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: isToday
+                  ? [AppTheme.primary, AppTheme.primary.withOpacity(0.7)]
+                  : [AppTheme.topoSilver, AppTheme.topoLight],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(day, style: GoogleFonts.outfit(fontSize: 10, fontWeight: isToday ? FontWeight.w900 : FontWeight.w600, color: isToday ? AppTheme.primary : AppTheme.textGray)),
+      ],
+    );
+  }
+
+  Widget _buildSkillBreakdown(EnhancedProgressProvider progress) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: AppTheme.whiteCard(radius: 24),
+      child: Column(
+        children: [
+          _buildSkillRow('Reading', 0.75, Colors.blue),
+          const SizedBox(height: 16),
+          _buildSkillRow('Writing', 0.45, Colors.green),
+          const SizedBox(height: 16),
+          _buildSkillRow('Listening', 0.60, Colors.orange),
+          const SizedBox(height: 16),
+          _buildSkillRow('Speaking', 0.30, Colors.purple),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSkillRow(String skill, double value, Color color) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(skill, style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w700, color: AppTheme.secondary)),
+            Text('${(value * 100).toInt()}%', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w800, color: color)),
+          ],
+        ),
+        const SizedBox(height: 8),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+          child: LinearProgressIndicator(
+            value: value,
+            minHeight: 8,
+            backgroundColor: color.withOpacity(0.1),
+            valueColor: AlwaysStoppedAnimation(color),
+          ),
+        ),
+      ],
     );
   }
 

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:characters/characters.dart';
 import '../services/dictionary_db_service.dart';
 import '../constants/app_theme.dart';
 import 'word_detail_screen.dart';
@@ -14,11 +16,12 @@ class OfflineDictionaryScreen extends StatefulWidget {
   State<OfflineDictionaryScreen> createState() => _OfflineDictionaryScreenState();
 }
 
-class _OfflineDictionaryScreenState extends State<OfflineDictionaryScreen> {
+class _OfflineDictionaryScreenState extends State<OfflineDictionaryScreen> with SingleTickerProviderStateMixin {
   final DictionaryDbService _dbService = DictionaryDbService();
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final FlutterTts flutterTts = FlutterTts();
+  late AnimationController _animationController;
 
   List<Map<String, dynamic>> _words = [];
   bool _isLoading = false;
@@ -51,14 +54,18 @@ class _OfflineDictionaryScreenState extends State<OfflineDictionaryScreen> {
   @override
   void initState() {
     super.initState();
+    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    
     _searchFocusNode.addListener(() {
       setState(() {
         _showRecentSearches = _searchFocusNode.hasFocus && _searchQuery.isEmpty;
       });
     });
+    
     _loadFilters();
     _loadRecentSearches(); 
     _fetchWords(reset: true);
+    _syncWithCloud(); // Proactively sync new words from Firebase
     
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
@@ -69,14 +76,46 @@ class _OfflineDictionaryScreenState extends State<OfflineDictionaryScreen> {
     });
   }
 
+  Future<void> _syncWithCloud() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance.collection('dictionary').get();
+      if (snapshot.docs.isNotEmpty) {
+        final db = await _dbService.database;
+        Batch batch = db.batch();
+        for (var doc in snapshot.docs) {
+          final data = doc.data();
+          String w = data['word'] ?? '';
+          String alphabet = '';
+          try {
+            alphabet = Characters(w).first;
+          } catch(_) { alphabet = w.substring(0, 1); }
+
+          batch.insert('words', {
+            'word': w,
+            'english_meaning': data['english_meaning'],
+            'tamil_meaning': data['tamil_meaning'],
+            'type_id': 100, // General
+            'category_id': 100, // Common
+            'alphabet_start': alphabet,
+            'is_common': 1
+          }, conflictAlgorithm: ConflictAlgorithm.ignore);
+        }
+        await batch.commit(noResult: true);
+        debugPrint("Synced ${snapshot.docs.length} words from Cloud.");
+      }
+    } catch (e) {
+      debugPrint("Cloud sync failed: $e");
+    }
+  }
+
   Future<void> _loadFilters() async {
     try {
       final types = await _dbService.getWordTypes();
       final categories = await _dbService.getCategories();
       if (mounted) {
         setState(() {
-          _types.addAll(types);
-          _categories.addAll(categories);
+          _types = ['All', ...types];
+          _categories = ['All', ...categories];
         });
       }
     } catch(e) {
@@ -149,6 +188,7 @@ class _OfflineDictionaryScreenState extends State<OfflineDictionaryScreen> {
     _searchController.dispose();
     _scrollController.dispose();
     _searchFocusNode.dispose();
+    _animationController.dispose();
     _debounce?.cancel();
     flutterTts.stop();
     super.dispose();
@@ -187,25 +227,23 @@ class _OfflineDictionaryScreenState extends State<OfflineDictionaryScreen> {
         margin: const EdgeInsets.symmetric(horizontal: 4),
         padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.white.withOpacity(0.1),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey[200]!),
+          border: Border.all(color: Colors.white24),
         ),
         child: DropdownButtonHideUnderline(
           child: DropdownButton<String>(
             isExpanded: true,
             value: value,
-            icon: const Icon(Icons.keyboard_arrow_down, color: AppTheme.primary),
+            dropdownColor: AppTheme.primary,
+            icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white70),
             borderRadius: BorderRadius.circular(12),
-            style: GoogleFonts.poppins(color: AppTheme.textDark, fontSize: 13),
+            style: GoogleFonts.poppins(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
             onChanged: onChanged,
             items: items.toSet().toList().map<DropdownMenuItem<String>>((String val) {
               return DropdownMenuItem<String>(
                 value: val,
-                child: Text(
-                  val,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                child: Text(val, overflow: TextOverflow.ellipsis),
               );
             }).toList(),
           ),
@@ -214,324 +252,283 @@ class _OfflineDictionaryScreenState extends State<OfflineDictionaryScreen> {
     );
   }
 
-  Widget _buildTag(String? text, MaterialColor color) {
-    if (text == null || text.isEmpty) return const SizedBox.shrink();
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.shade50,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.shade200),
-      ),
-      child: Text(
-        text,
-        style: GoogleFonts.poppins(fontSize: 10, fontWeight: FontWeight.bold, color: color.shade700),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.backgroundLight,
-      appBar: AppBar(
-        title: Text('Tamil Dictionary', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, color: Colors.white)),
-        backgroundColor: AppTheme.primary,
-        iconTheme: const IconThemeData(color: Colors.white),
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: Icon(_showFavorites ? Icons.favorite : Icons.favorite_border, color: _showFavorites ? Colors.redAccent : Colors.white),
-            onPressed: () {
-              setState(() {
-                _showFavorites = !_showFavorites;
-                _fetchWords(reset: true);
-              });
-            },
-          )
+      body: CustomScrollView(
+        controller: _scrollController,
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          _buildSliverAppBar(),
+          _buildSearchAndFilters(),
+          _buildRecentSearchesSection(),
+          _buildWordsList(),
         ],
       ),
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              color: AppTheme.primary,
-              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(24), bottomRight: Radius.circular(24)),
-            ),
-            child: Column(
-              children: [
-                TextField(
-                  controller: _searchController,
-                  focusNode: _searchFocusNode,
-                  style: GoogleFonts.poppins(color: AppTheme.textDark),
-                  decoration: InputDecoration(
-                    hintText: 'Search meaning or word...',
-                    prefixIcon: const Icon(Icons.search, color: AppTheme.primary),
-                    suffixIcon: _searchQuery.isNotEmpty 
-                      ? IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () {
-                            _searchController.clear();
-                            setState(() {
-                              _searchQuery = '';
-                              _showRecentSearches = _searchFocusNode.hasFocus;
-                            });
-                            _fetchWords(reset: true);
-                          },
-                        )
-                      : null,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                    fillColor: Colors.grey[100],
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      _searchQuery = value;
-                      _showRecentSearches = _searchFocusNode.hasFocus && _searchQuery.isEmpty;
-                    });
-                    if (_debounce?.isActive ?? false) _debounce!.cancel();
-                    _debounce = Timer(const Duration(milliseconds: 500), () {
-                      _fetchWords(reset: true);
-                    });
-                  },
-                  onSubmitted: (value) {
-                    _addRecentSearch(value);
-                  },
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    _buildDropdown('Type', _selectedType, _types, (val) {
-                      setState(() => _selectedType = val!);
-                      _fetchWords(reset: true);
-                    }),
-                    _buildDropdown('Category', _selectedCategory, _categories, (val) {
-                      setState(() => _selectedCategory = val!);
-                      _fetchWords(reset: true);
-                    }),
-                  ],
-                ),
-              ],
+    );
+  }
+
+  Widget _buildSliverAppBar() {
+    return SliverAppBar(
+      expandedHeight: 120.0,
+      floating: false,
+      pinned: true,
+      elevation: 0,
+      backgroundColor: AppTheme.primary,
+      flexibleSpace: FlexibleSpaceBar(
+        titlePadding: const EdgeInsets.only(left: 56, bottom: 16),
+        title: Text(
+          ' அகராதி',
+          style: GoogleFonts.notoSansTamil(
+            fontWeight: FontWeight.black,
+            color: Colors.white,
+            fontSize: 20,
+          ),
+        ),
+        background: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppTheme.primary, AppTheme.accent],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
           ),
-          const SizedBox(height: 16),
-          
-          if (_showRecentSearches && _recentSearches.isNotEmpty)
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4)),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Recent Searches', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey[600])),
-                        GestureDetector(
-                          onTap: _clearRecentSearches,
-                          child: Text('Clear', style: GoogleFonts.poppins(fontSize: 14, color: AppTheme.primary)),
-                        )
-                      ],
-                    ),
-                  ),
-                  const Divider(height: 1),
-                  ..._recentSearches.map((query) => ListTile(
-                    leading: const Icon(Icons.history, color: Colors.grey),
-                    title: Text(query, style: GoogleFonts.poppins(fontSize: 15)),
-                    onTap: () {
-                      _searchController.text = query;
-                      _searchFocusNode.unfocus();
-                      setState(() {
-                        _searchQuery = query;
-                        _showRecentSearches = false;
-                      });
-                      _fetchWords(reset: true);
-                      _addRecentSearch(query);
-                    },
-                  )).toList(),
-                ],
-              ),
-            ),
+        ),
+      ),
+      actions: [
+        IconButton(
+          icon: Icon(_showFavorites ? Icons.favorite : Icons.favorite_border, 
+                color: _showFavorites ? Colors.redAccent : Colors.white),
+          onPressed: () {
+            setState(() {
+              _showFavorites = !_showFavorites;
+              _fetchWords(reset: true);
+            });
+          },
+        ),
+        const SizedBox(width: 8),
+      ],
+    );
+  }
 
-          if (!_showRecentSearches || _recentSearches.isEmpty)
-            Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _words.isEmpty && !_isLoading
-                        ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.search_off_rounded, size: 80, color: Colors.grey[400]),
-                                const SizedBox(height: 16),
-                                Text(
-                                  _showFavorites ? 'No favorites yet' : 'No words found',
-                                  style: GoogleFonts.poppins(fontSize: 18, color: Colors.grey[600]),
-                                ),
-                              ],
-                            ),
-                          )
-                        : ListView.builder(
-                            controller: _scrollController,
-                            padding: const EdgeInsets.all(16),
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: _words.length + (_hasMore ? 1 : 0),
-                            itemBuilder: (context, index) {
-                              if (index == _words.length) {
-                                return const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 24.0),
-                                  child: Center(child: CircularProgressIndicator()),
-                                );
-                              }
-
-                              final entry = _words[index];
-                              final isFav = entry['is_favorite'] == 1;
-
-                              return GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => WordDetailScreen(
-                                        wordId: entry['id'],
-                                        basicWord: entry['word'],
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: Card(
-                                  elevation: 2,
-                                  margin: const EdgeInsets.only(bottom: 16),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Hero(
-                                                    tag: 'word_${entry['id']}',
-                                                    child: Material(
-                                                      color: Colors.transparent,
-                                                      child: Text(
-                                                        entry['word'],
-                                                        style: GoogleFonts.notoSansTamil(
-                                                          fontSize: 24,
-                                                          fontWeight: FontWeight.bold,
-                                                          color: AppTheme.primary,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 4),
-                                                  Text(
-                                                    entry['tamil_meaning']?.toString() ?? 'No meaning',
-                                                    style: GoogleFonts.poppins(
-                                                      fontSize: 14,
-                                                      fontWeight: FontWeight.w500,
-                                                      color: Colors.black87,
-                                                    ),
-                                                    maxLines: 2,
-                                                    overflow: TextOverflow.ellipsis,
-                                                  ),
-                                                  const SizedBox(height: 6),
-                                                  Wrap(
-                                                    spacing: 6,
-                                                    children: [
-                                                      _buildTag(entry['type_name'], Colors.blue),
-                                                      _buildTag(entry['category_name'], Colors.orange),
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                            Column(
-                                              children: [
-                                                IconButton(
-                                                  icon: Icon(
-                                                    isFav ? Icons.favorite : Icons.favorite_border,
-                                                    color: isFav ? Colors.red : Colors.grey,
-                                                  ),
-                                                  onPressed: () => _toggleFavorite(index),
-                                                ),
-                                                IconButton(
-                                                  icon: const Icon(Icons.volume_up, color: AppTheme.accent),
-                                                  onPressed: () => _speak(entry['word']),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                  ),
-                  
-                  // Alphabet Navigator
-                  Container(
-                    width: 30,
-                    color: Colors.white,
-                    child: ListView.builder(
-                      itemCount: _alphabets.length,
-                      itemBuilder: (context, index) {
-                        final alpha = _alphabets[index];
-                        final isSelected = _selectedAlphabet == alpha;
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _selectedAlphabet = alpha;
-                              _fetchWords(reset: true);
-                            });
-                          },
-                          child: Container(
-                            height: 25,
-                            margin: const EdgeInsets.symmetric(vertical: 2),
-                            decoration: BoxDecoration(
-                              color: isSelected ? AppTheme.primary : Colors.transparent,
-                              shape: BoxShape.circle,
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              alpha == 'All' ? '*' : alpha,
-                              style: GoogleFonts.notoSansTamil(
-                                fontSize: 10,
-                                fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                                color: isSelected ? Colors.white : AppTheme.primary,
-                              ),
-                            ),
-                          ),
-                        );
+  Widget _buildSearchAndFilters() {
+    return SliverToBoxAdapter(
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        decoration: const BoxDecoration(
+          color: AppTheme.primary,
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(32),
+            bottomRight: Radius.circular(32),
+          ),
+        ),
+        child: Column(
+          children: [
+            TextField(
+              controller: _searchController,
+              focusNode: _searchFocusNode,
+              style: GoogleFonts.poppins(color: AppTheme.textDark, fontWeight: FontWeight.w500),
+              decoration: InputDecoration(
+                hintText: 'Search meaning or word...',
+                hintStyle: GoogleFonts.poppins(color: Colors.grey[400]),
+                prefixIcon: const Icon(Icons.search, color: AppTheme.primary),
+                suffixIcon: _searchQuery.isNotEmpty 
+                  ? IconButton(
+                      icon: const Icon(Icons.clear, color: Colors.grey),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() { _searchQuery = ''; _showRecentSearches = _searchFocusNode.hasFocus; });
+                        _fetchWords(reset: true);
                       },
-                    ),
-                  ),
-                ],
+                    )
+                  : null,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              onChanged: (value) {
+                setState(() { _searchQuery = value; _showRecentSearches = _searchFocusNode.hasFocus && _searchQuery.isEmpty; });
+                if (_debounce?.isActive ?? false) _debounce!.cancel();
+                _debounce = Timer(const Duration(milliseconds: 500), () => _fetchWords(reset: true));
+              },
+              onSubmitted: (value) => _addRecentSearch(value),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                _buildDropdown('Type', _selectedType, _types, (val) {
+                  setState(() => _selectedType = val!);
+                  _fetchWords(reset: true);
+                }),
+                _buildDropdown('Category', _selectedCategory, _categories, (val) {
+                  setState(() => _selectedCategory = val!);
+                  _fetchWords(reset: true);
+                }),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecentSearchesSection() {
+    if (!_showRecentSearches || _recentSearches.isEmpty) return const SliverToBoxAdapter(child: SizedBox.shrink());
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 8))],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Recent Searches', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.black, color: AppTheme.textDark)),
+                GestureDetector(
+                  onTap: _clearRecentSearches,
+                  child: Text('Clear All', style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.bold, color: AppTheme.accent)),
+                )
+              ],
+            ),
+            const Divider(height: 24),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: _recentSearches.take(5).map((q) => ActionChip(
+                label: Text(q, style: GoogleFonts.poppins(fontSize: 12, color: Colors.white)),
+                backgroundColor: AppTheme.primary.withOpacity(0.8),
+                onPressed: () {
+                  _searchController.text = q;
+                  setState(() { _searchQuery = q; _showRecentSearches = false; });
+                  _fetchWords(reset: true);
+                },
+              )).toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWordsList() {
+    if (_words.isEmpty && !_isLoading) {
+      return SliverFillRemaining(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.auto_stories_rounded, size: 80, color: Colors.grey[200]),
+              const SizedBox(height: 16),
+              Text('No real words found here.', style: GoogleFonts.poppins(color: Colors.grey[400], fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              Text('Try searching something else!', style: GoogleFonts.poppins(color: Colors.grey[400], fontSize: 12)),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            if (index == _words.length) {
+              return Center(child: Padding(padding: const EdgeInsets.all(32), child: CircularProgressIndicator(color: AppTheme.accent)));
+            }
+            final word = _words[index];
+            return _buildWordCard(word, index);
+          },
+          childCount: _words.length + (_hasMore ? 1 : 0),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWordCard(Map<String, dynamic> word, int index) {
+    bool isCommon = (word['is_common'] ?? 0) == 1;
+    
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4))],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          onTap: () {
+             _addRecentSearch(word['word']);
+             Navigator.push(context, MaterialPageRoute(builder: (c) => WordDetailScreen(wordId: word['id'])));
+          },
+          leading: Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: isCommon ? [Colors.amber.shade400, Colors.orange.shade600] : [AppTheme.primary.withOpacity(0.1), AppTheme.primary.withOpacity(0.2)],
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Center(
+              child: Text(
+                word['word'][0],
+                style: GoogleFonts.notoSansTamil(
+                  fontSize: 22, 
+                  fontWeight: FontWeight.black,
+                  color: isCommon ? Colors.white : AppTheme.primary
+                ),
               ),
             ),
-        ],
+          ),
+          title: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  word['word'],
+                  style: GoogleFonts.notoSansTamil(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textDark),
+                ),
+              ),
+              if (isCommon) 
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(color: Colors.amber.shade100, borderRadius: BorderRadius.circular(4)),
+                  child: Text('STAR', style: GoogleFonts.poppins(fontSize: 8, fontWeight: FontWeight.black, color: Colors.orange.shade900)),
+                ),
+            ],
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 4),
+              Text(
+                word['english_meaning'] ?? 'Tamil Word',
+                style: GoogleFonts.poppins(fontSize: 14, color: AppTheme.accent, fontWeight: FontWeight.w600),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
+                word['tamil_meaning']?.replaceAll(RegExp(r'\(.*\)'), '').trim() ?? '',
+                style: GoogleFonts.notoSansTamil(fontSize: 12, color: Colors.grey[500]),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+          trailing: IconButton(
+            icon: Icon(word['is_favorite'] == 1 ? Icons.favorite : Icons.favorite_border, color: word['is_favorite'] == 1 ? Colors.redAccent : Colors.grey[300]),
+            onPressed: () => _toggleFavorite(index),
+          ),
+        ),
       ),
     );
   }

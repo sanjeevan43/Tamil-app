@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../constants/app_theme.dart';
 import '../providers/enhanced_progress_provider.dart';
 import '../services/auth_service.dart';
@@ -14,7 +15,8 @@ import 'pronunciation_practice_game.dart';
 import 'offline_dictionary_screen.dart';
 import 'daily_word_screen.dart';
 import 'admin_control_screen.dart';
-import 'student_classrooms_screen.dart';
+import 'leaderboard_screen.dart';
+import 'community_forum_screen.dart';
 
 class EnhancedHomeScreen extends StatefulWidget {
   const EnhancedHomeScreen({super.key});
@@ -24,6 +26,14 @@ class EnhancedHomeScreen extends StatefulWidget {
 }
 
 class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     final progress = Provider.of<EnhancedProgressProvider>(context);
@@ -61,48 +71,112 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: _buildHeader(context, progress),
                   ),
-                  const SizedBox(height: 20),
-                  _buildQuickStats(progress),
                   const SizedBox(height: 24),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildSectionHeader('Daily Goal', Icons.auto_awesome_rounded),
-                        const SizedBox(height: 16),
-                        _buildDailyMission(context),
-                        const SizedBox(height: 32),
-                        _buildSectionHeader('Learning Journey', Icons.map_rounded),
-                        const SizedBox(height: 16),
-                        _buildMainPath(context),
-                        const SizedBox(height: 32),
-                        _buildSectionHeader('Fun & Games', Icons.sports_esports_rounded),
-                        const SizedBox(height: 16),
-                        _buildFastAccessGrid(context),
-                        const SizedBox(height: 32),
-                        _buildSectionHeader('Community & Stories', Icons.library_books_rounded),
-                        const SizedBox(height: 16),
-                        _buildStoriesCard(context),
-                        const SizedBox(height: 12),
-                        _buildConnectCard(context),
-                        const SizedBox(height: 32),
-                        _buildSectionHeader('Your Progress', Icons.insights_rounded),
-                        const SizedBox(height: 16),
-                        _buildLevelSection(progress),
-                        const SizedBox(height: 32),
-                        _buildSectionHeader('Events', Icons.event_note_rounded),
-                        const SizedBox(height: 16),
-                        _buildWeekendChallenge(context),
-                        const SizedBox(height: 48),
-                      ],
-                    ),
+                    child: _buildSearchBar(),
                   ),
+                  const SizedBox(height: 24),
+                  if (_searchQuery.isNotEmpty)
+                    _buildSearchResults()
+                  else ...[
+                    _buildQuickStats(progress),
+                    const SizedBox(height: 24),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 24),
+                          _buildDailyMission(context),
+                          const SizedBox(height: 32),
+                          _buildSectionHeader('Leaderboard', Icons.leaderboard_rounded),
+                          const SizedBox(height: 16),
+                          _buildLeaderboardPreview(context, progress),
+                          const SizedBox(height: 32),
+                          _buildSectionHeader('Learning Journey', Icons.map_rounded),
+                          const SizedBox(height: 16),
+                          _buildMainPath(context),
+                          const SizedBox(height: 32),
+                          _buildSectionHeader('Fun & Games', Icons.sports_esports_rounded),
+                          const SizedBox(height: 16),
+                          _buildFastAccessGrid(context),
+                          const SizedBox(height: 32),
+                          _buildSectionHeader('Community & Stories', Icons.library_books_rounded),
+                          const SizedBox(height: 16),
+                          _buildStoriesCard(context),
+                          const SizedBox(height: 12),
+                          _buildConnectCard(context),
+                          const SizedBox(height: 32),
+                          _buildSectionHeader('Your Achievements', Icons.emoji_events_rounded),
+                          const SizedBox(height: 16),
+                          _buildAchievementGallery(progress),
+                          const SizedBox(height: 32),
+                          _buildSectionHeader('Your Progress', Icons.insights_rounded),
+                          const SizedBox(height: 16),
+                          _buildLevelSection(progress),
+                          const SizedBox(height: 32),
+                          _buildSectionHeader('Events', Icons.event_note_rounded),
+                          const SizedBox(height: 16),
+                          _buildWeekendChallenge(context),
+                          const SizedBox(height: 48),
+                        ],
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: AppTheme.topoSilver.withOpacity(0.5), width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: _searchController,
+        onChanged: (value) => setState(() => _searchQuery = value),
+        decoration: InputDecoration(
+          hintText: 'Search letters, stories, rhymes...',
+          hintStyle: GoogleFonts.outfit(
+            color: AppTheme.textGray.withOpacity(0.6),
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+          ),
+          border: InputBorder.none,
+          icon: const Icon(Icons.search_rounded, color: AppTheme.primary, size: 22),
+          suffixIcon: _searchQuery.isNotEmpty 
+            ? IconButton(
+                icon: const Icon(Icons.close_rounded, size: 18),
+                onPressed: () {
+                  _searchController.clear();
+                  setState(() => _searchQuery = '');
+                },
+              )
+            : Container(
+                margin: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: AppTheme.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.tune_rounded, color: AppTheme.primary, size: 16),
+              ),
+        ),
       ),
     );
   }
@@ -146,6 +220,8 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
               ),
               Text(
                 progress.userName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.outfit(
                   fontSize: 24,
                   fontWeight: FontWeight.w900,
@@ -234,7 +310,7 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
       crossAxisCount: 2,
       mainAxisSpacing: 16,
       crossAxisSpacing: 16,
-      childAspectRatio: 1.3,
+      childAspectRatio: 1.05,
       children: [
         _fastItem(context, 'Letters', 'Basic sounds', Icons.translate_rounded, const Color(0xFFE3F2FD), Colors.blue,
             () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TamilLettersScreen()))),
@@ -246,8 +322,10 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
             () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PronunciationPracticeGame()))),
         _fastItem(context, 'Daily Word', 'Power word', Icons.wb_sunny_rounded, const Color(0xFFFFFDE7), Colors.amber,
             () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DailyTamilPowerWordScreen()))),
+        _fastItem(context, 'Q&A Forum', 'Ask others', Icons.forum_rounded, const Color(0xFFF1F8E9), Colors.teal,
+            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CommunityForumScreen()))),
         _fastItem(context, 'Classrooms', 'Learn together', Icons.school_rounded, const Color(0xFFE8EAF6), Colors.indigo,
-            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const StudentClassroomsScreen()))),
+            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ClassroomConnectScreen()))),
         if (Provider.of<AuthService>(context, listen: false).userRole == 'admin')
           _fastItem(context, 'Admin', 'Manage app', Icons.admin_panel_settings_rounded, const Color(0xFFFFEBEE), AppTheme.primary,
               () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminControlScreen()))),
@@ -259,7 +337,7 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
@@ -270,16 +348,15 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
               decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(14)),
               padding: const EdgeInsets.all(10),
-              child: Icon(icon, color: color, size: 24),
+              child: Icon(icon, color: color, size: 22),
             ),
-            const SizedBox(height: 12),
-            Text(title, style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w800, color: AppTheme.secondary)),
-            Text(sub, style: GoogleFonts.outfit(fontSize: 11, color: AppTheme.textGray, fontWeight: FontWeight.w500)),
+            const Spacer(),
+            Text(title, style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w800, color: AppTheme.secondary), maxLines: 1, overflow: TextOverflow.ellipsis),
+            Text(sub, style: GoogleFonts.outfit(fontSize: 10, color: AppTheme.textGray, fontWeight: FontWeight.w500), maxLines: 1, overflow: TextOverflow.ellipsis),
           ],
         ),
       ),
@@ -288,24 +365,21 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
 
   Widget _buildSectionHeader(String title, IconData icon) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(color: AppTheme.secondary.withOpacity(0.05), borderRadius: BorderRadius.circular(14)),
-              child: Icon(icon, color: AppTheme.secondary, size: 20),
-            ),
-            const SizedBox(width: 14),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(_getTamilTitle(title), style: GoogleFonts.notoSansTamil(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.secondary)),
-                Text(title.toUpperCase(), style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.textGray, letterSpacing: 1.5)),
-              ],
-            ),
-          ],
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(color: AppTheme.secondary.withOpacity(0.05), borderRadius: BorderRadius.circular(14)),
+          child: Icon(icon, color: AppTheme.secondary, size: 20),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(_getTamilTitle(title), style: GoogleFonts.notoSansTamil(fontSize: 15, fontWeight: FontWeight.bold, color: AppTheme.secondary), maxLines: 1, overflow: TextOverflow.ellipsis),
+              Text(title.toUpperCase(), style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.textGray, letterSpacing: 1.5)),
+            ],
+          ),
         ),
         const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: AppTheme.topoSilver),
       ],
@@ -340,7 +414,12 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
                   children: [
                     Text('CORE CHALLENGE', style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.white.withOpacity(0.6), letterSpacing: 2)),
                     const SizedBox(height: 4),
-                    Text(mission['title'], style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.white)),
+                    Text(
+                      mission['title'], 
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.white),
+                    ),
                   ],
                 ),
               ),
@@ -573,16 +652,232 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
     );
   }
 
+  Widget _buildLeaderboardPreview(BuildContext context, EnhancedProgressProvider progress) {
+    return GestureDetector(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LeaderboardScreen())),
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(color: AppTheme.topoSilver, width: 1.5),
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('GLOBAL RANKING', style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.textGray, letterSpacing: 1)),
+                      Text('Top Performers', style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w800, color: AppTheme.secondary)),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  decoration: BoxDecoration(color: Colors.amber.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.stars_rounded, color: Colors.amber, size: 16),
+                      const SizedBox(width: 4),
+                      Text('${progress.totalStars}', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.secondary)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .orderBy('progress.totalStars', descending: true)
+                  .limit(4)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+                final topUsers = snapshot.data!.docs;
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List.generate(topUsers.length, (index) {
+                    final userData = topUsers[index].data() as Map<String, dynamic>;
+                    final userProgress = userData['progress'] as Map<String, dynamic>?;
+                    final totalStars = userProgress?['totalStars'] ?? 0;
+                    final displayName = userData['displayName'] ?? 'User';
+                    final isMe = topUsers[index].id == progress.userId;
+                    
+                    return _miniRank(
+                      '${index + 1}',
+                      userData['photoURL'] != null && userData['photoURL'].isNotEmpty ? userData['photoURL'] : (isMe ? progress.avatar : '👤'),
+                      displayName,
+                      isMe: isMe,
+                    );
+                  }),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _miniRank(String rank, String avatar, String name, {bool isMe = false}) {
+    bool isUrl = avatar.startsWith('http');
+    
+    return Column(
+      children: [
+        Stack(
+          alignment: Alignment.topRight,
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: isMe ? AppTheme.primary : AppTheme.topoLight,
+                shape: BoxShape.circle,
+                border: Border.all(color: isMe ? AppTheme.primary : AppTheme.topoSilver, width: 2),
+              ),
+              child: ClipOval(
+                child: Center(
+                  child: isUrl 
+                    ? Image.network(
+                        avatar, 
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => const Text('👤', style: TextStyle(fontSize: 20)),
+                      )
+                    : Text(avatar, style: const TextStyle(fontSize: 20)),
+                ),
+              ),
+            ),
+            if (isMe)
+              Container(
+                padding: const EdgeInsets.all(3),
+                decoration: const BoxDecoration(color: Colors.amber, shape: BoxShape.circle),
+                child: const Icon(Icons.check, size: 8, color: Colors.white),
+              ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        SizedBox(
+          width: 70,
+          child: Text(
+            name, 
+            textAlign: TextAlign.center,
+            style: GoogleFonts.outfit(fontSize: 10, fontWeight: isMe ? FontWeight.w900 : FontWeight.w600, color: isMe ? AppTheme.primary : AppTheme.secondary),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        Text('#$rank', style: GoogleFonts.outfit(fontSize: 9, fontWeight: FontWeight.w800, color: AppTheme.textGray)),
+      ],
+    );
+  }
+
+  Widget _buildAchievementGallery(EnhancedProgressProvider progress) {
+    final List<String> badges = ['🏆', '🏅', '🌟', '🎯', '🔥', '📚'];
+    return SizedBox(
+      height: 100,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        itemCount: badges.length,
+        itemBuilder: (context, index) {
+          final isUnlocked = index < 3; // Mocking first 3 as unlocked
+          return Container(
+            width: 80,
+            margin: const EdgeInsets.only(right: 16),
+            decoration: BoxDecoration(
+              color: isUnlocked ? Colors.white : AppTheme.topoLight,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: isUnlocked ? AppTheme.primary.withOpacity(0.2) : Colors.transparent, width: 1.5),
+              boxShadow: isUnlocked ? [BoxShadow(color: AppTheme.primary.withOpacity(0.05), blurRadius: 10)] : null,
+            ),
+            child: Center(
+              child: Opacity(
+                opacity: isUnlocked ? 1.0 : 0.4,
+                child: Text(badges[index], style: const TextStyle(fontSize: 32)),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+
+  Widget _buildCompanion(EnhancedProgressProvider progress) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [AppTheme.primary, AppTheme.primary.withOpacity(0.8)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(color: AppTheme.primary.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 10)),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+            child: const CircleAvatar(
+              radius: 30,
+              backgroundColor: Color(0xFFFFEBEE),
+              child: Text('👋', style: TextStyle(fontSize: 32)),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'TAMIL BUDDY',
+                  style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.white.withOpacity(0.8), letterSpacing: 1.5),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _getCompanionMessage(progress),
+                  style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white, height: 1.3),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getCompanionMessage(EnhancedProgressProvider progress) {
+    if (progress.streakDays == 0) return "Vanakkam! Let's start your learning journey today!";
+    if (progress.streakDays > 5) return "You're on fire! ${progress.streakDays} days in a row. Amazing!";
+    return "Great to see you again! Ready to earn some stars?";
+  }
+
+
+
   String _getTamilTitle(String title) {
     switch (title) {
       case 'Daily Goal':
         return 'தினசரி பணி';
+      case 'Leaderboard':
+        return 'முன்னணியில் உள்ளவர்கள்';
       case 'Learning Journey':
         return 'கற்றல் வழிகள்';
       case 'Fun & Games':
         return 'விளையாட்டுகள்';
       case 'Community & Stories':
         return 'சமூகம்';
+      case 'Your Achievements':
+        return 'வெற்றிகள்';
       case 'Events':
         return 'நிகழ்வுகள்';
       case 'Your Progress':
@@ -590,5 +885,48 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
       default:
         return title;
     }
+  }
+
+  Widget _buildSearchResults() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Results for "${_searchQuery}"',
+            style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.secondary),
+          ),
+          const SizedBox(height: 20),
+          _buildSearchItem('Stories', Icons.auto_stories_rounded, AppTheme.primary, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const StoriesScreen()))),
+          _buildSearchItem('Rhymes', Icons.music_note_rounded, Colors.pink, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RhymesScreen()))),
+          _buildSearchItem('Games Hub', Icons.sports_esports_rounded, Colors.orange, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GamesHubScreen()))),
+          _buildSearchItem('Tamil Letters', Icons.translate_rounded, Colors.blue, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TamilLettersScreen()))),
+          _buildSearchItem('Daily Word', Icons.wb_sunny_rounded, Colors.amber, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DailyTamilPowerWordScreen()))),
+          _buildSearchItem('Leaderboard', Icons.leaderboard_rounded, Colors.deepPurple, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LeaderboardScreen()))),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchItem(String title, IconData icon, Color color, VoidCallback onTap) {
+    if (!title.toLowerCase().contains(_searchQuery.toLowerCase())) return const SizedBox.shrink();
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20), border: Border.all(color: color.withOpacity(0.1))),
+        child: Row(
+          children: [
+            Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withOpacity(0.1), shape: BoxShape.circle), child: Icon(icon, color: color, size: 20)),
+            const SizedBox(width: 16),
+            Text(title, style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: AppTheme.secondary)),
+            const Spacer(),
+            const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: AppTheme.topoSilver),
+          ],
+        ),
+      ),
+    );
   }
 }

@@ -211,4 +211,100 @@ class FirestoreService {
   Future<void> deleteClassroomPost(String classroomId, String postId) async {
     await _db.collection('classrooms').doc(classroomId).collection('posts').doc(postId).delete();
   }
+
+  // --- Classroom Members ---
+  Stream<QuerySnapshot> getClassroomMembersStream() {
+    return _db.collection('classroom_members').orderBy('joinedAt', descending: true).snapshots();
+  }
+
+  Future<void> addClassroomMember(String email, String name, String role) async {
+    await _db.collection('classroom_members').add({
+      'email': email,
+      'name': name,
+      'role': role,
+      'joinedAt': FieldValue.serverTimestamp(),
+      'isOnline': true,
+    });
+  }
+
+  Future<void> removeClassroomMember(String memberId) async {
+    await _db.collection('classroom_members').doc(memberId).delete();
+  }
+
+  // --- Classroom Announcements ---
+  Stream<QuerySnapshot> getAnnouncementsStream() {
+    return _db.collection('announcements').orderBy('createdAt', descending: true).snapshots();
+  }
+
+  Future<void> addAnnouncement(String title, String message, String sender) async {
+    await _db.collection('announcements').add({
+      'title': title,
+      'message': message,
+      'sender': sender,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> deleteAnnouncement(String id) async {
+    await _db.collection('announcements').doc(id).delete();
+  }
+
+  // --- Community Forum (Q&A) ---
+  Stream<QuerySnapshot> getQuestionsStream() {
+    return _db.collection('forum_questions').orderBy('createdAt', descending: true).snapshots();
+  }
+
+  Future<void> addQuestion(String title, String content, String userId, String userName) async {
+    await _db.collection('forum_questions').add({
+      'title': title,
+      'content': content,
+      'userId': userId,
+      'userName': userName,
+      'createdAt': FieldValue.serverTimestamp(),
+      'answersCount': 0,
+      'upvotes': 0,
+    });
+  }
+
+  Stream<QuerySnapshot> getAnswersStream(String questionId) {
+    return _db
+        .collection('forum_questions')
+        .doc(questionId)
+        .collection('answers')
+        .orderBy('createdAt', descending: false)
+        .snapshots();
+  }
+
+  Future<void> addAnswer(String questionId, String content, String userId, String userName) async {
+    final batch = _db.batch();
+    
+    final answerRef = _db
+        .collection('forum_questions')
+        .doc(questionId)
+        .collection('answers')
+        .doc();
+    
+    batch.set(answerRef, {
+      'content': content,
+      'userId': userId,
+      'userName': userName,
+      'createdAt': FieldValue.serverTimestamp(),
+      'upvotes': 0,
+    });
+    
+    final questionRef = _db.collection('forum_questions').doc(questionId);
+    batch.update(questionRef, {'answersCount': FieldValue.increment(1)});
+    
+    await batch.commit();
+  }
+
+  // --- Content Streams ---
+  Stream<QuerySnapshot> getStoriesStream() {
+    return _db.collection('stories').orderBy('createdAt', descending: true).snapshots();
+  }
+
+  Stream<QuerySnapshot> getRhymesStream() {
+    return _db.collection('rhymes').orderBy('createdAt', descending: true).snapshots();
+  }
 }
+// Community methods updated.

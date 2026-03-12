@@ -28,50 +28,57 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       duration: const Duration(seconds: 2),
       vsync: this,
     )..repeat(reverse: true);
-    
-    Future.delayed(const Duration(seconds: 4), () async {
-      if (mounted) {
-        final authService = Provider.of<AuthService>(context, listen: false);
-        final progress = Provider.of<EnhancedProgressProvider>(context, listen: false);
-        
-        if (authService.isAuthenticated) {
-          await progress.initializeProgress(uid: authService.user?.uid);
-        }
+    // Start initialization immediately
+    _initialize();
+  }
 
-        Widget nextScreen;
-        if (authService.isAuthenticated) {
-          final role = authService.userRole;
-          switch (role) {
-            case 'admin':
-              nextScreen = const AdminControlScreen();
-              break;
-            case 'teacher':
-              nextScreen = TeacherDashboardScreen();
-              break;
-            case 'parent':
-              nextScreen = const ParentDashboardScreen();
-              break;
-            default:
-              nextScreen = const EnhancedHomeScreen();
-          }
-        } else {
-          nextScreen = const LoginScreen();
-        }
+  Future<void> _initialize() async {
+    final startTime = DateTime.now();
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final progress = Provider.of<EnhancedProgressProvider>(context, listen: false);
 
-        if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (_, __, ___) => nextScreen,
-              transitionsBuilder: (_, animation, __, child) {
-                return FadeTransition(opacity: animation, child: child);
-              },
-              transitionDuration: const Duration(milliseconds: 1000),
-            ),
-          );
-        }
+    // Run heavy initialization tasks in parallel
+    await Future.wait([
+      if (authService.isAuthenticated)
+        progress.initializeProgress(uid: authService.user?.uid),
+      // Ensure at least 1.5 - 2 seconds for branding, but no more than 4
+      Future.delayed(const Duration(milliseconds: 2000)),
+    ]);
+
+    if (!mounted) return;
+
+    Widget nextScreen;
+    if (authService.isAuthenticated) {
+      final role = authService.userRole;
+      switch (role) {
+        case 'admin':
+          nextScreen = const AdminControlScreen();
+          break;
+        case 'teacher':
+          nextScreen = TeacherDashboardScreen();
+          break;
+        case 'parent':
+          nextScreen = const ParentDashboardScreen();
+          break;
+        default:
+          nextScreen = const EnhancedHomeScreen();
       }
-    });
+    } else {
+      nextScreen = const LoginScreen();
+    }
+
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (_, __, ___) => nextScreen,
+          transitionsBuilder: (_, animation, __, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+          transitionDuration: const Duration(milliseconds: 800),
+        ),
+      );
+    }
   }
 
   @override

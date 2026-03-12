@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/firestore_service.dart';
+import '../data/reading_journey_data.dart';
 
 class EnhancedProgressProvider extends ChangeNotifier {
   final FirestoreService _firestore = FirestoreService();
@@ -23,6 +24,7 @@ class EnhancedProgressProvider extends ChangeNotifier {
   List<int> _unlockedLessons = [1, 2, 3];
   Map<int, int> _lessonProgress = {};
   Map<String, int> _storyQuizScores = {};
+  Map<String, bool> _completedTasks = {};
   
   // Teacher Mode
   bool _isTeacherMode = false;
@@ -30,6 +32,8 @@ class EnhancedProgressProvider extends ChangeNotifier {
   List<Map<String, String>> _discussions = [];
   List<Map<String, dynamic>> _assignedQuizzes = [];
   String _globalNotice = 'Welcome to அகரவளம்!';
+  List<String> _streakHistory = [];
+  String _lastRewardDate = '';
   
   // Daily Missions
   List<Map<String, dynamic>> _dailyMissions = [
@@ -53,12 +57,16 @@ class EnhancedProgressProvider extends ChangeNotifier {
   List<int> get unlockedLessons => _unlockedLessons;
   Map<int, int> get lessonProgress => _lessonProgress;
   Map<String, int> get storyQuizScores => _storyQuizScores;
+  Map<String, bool> get completedTasks => _completedTasks;
   bool get isTeacherMode => _isTeacherMode;
   List<String> get assignedHomework => _assignedHomework;
   List<Map<String, String>> get discussions => _discussions;
   List<Map<String, dynamic>> get assignedQuizzes => _assignedQuizzes;
   String get globalNotice => _globalNotice;
   List<Map<String, dynamic>> get dailyMissions => _dailyMissions;
+  List<String> get streakHistory => _streakHistory;
+  String get lastRewardDate => _lastRewardDate;
+  String? get userId => _userId;
 
   Future<void> initializeProgress({String? uid}) async {
     _userId = uid;
@@ -80,6 +88,7 @@ class EnhancedProgressProvider extends ChangeNotifier {
       }
       
       await _updateStreak();
+      await _loadLevelStars();
       notifyListeners();
     } catch (e) {
       debugPrint('Error initializing progress: $e');
@@ -130,6 +139,14 @@ class EnhancedProgressProvider extends ChangeNotifier {
         if (e.contains(':'))
           e.split(':')[0]: int.parse(e.split(':')[1])
     };
+
+    final taskCompList = prefs.getStringList('completedTasksMap') ?? [];
+    _completedTasks = {
+      for (var e in taskCompList)
+        if (e.contains(':'))
+          e.split(':')[0]: e.split(':')[1] == 'true'
+    };
+    _streakHistory = prefs.getStringList('streakHistory') ?? [];
   }
 
   void _loadFromMap(Map<String, dynamic> data) {
@@ -151,6 +168,9 @@ class EnhancedProgressProvider extends ChangeNotifier {
     }
     if (data['storyQuizScores'] != null) {
       _storyQuizScores = (data['storyQuizScores'] as Map).map((k, v) => MapEntry(k.toString(), int.parse(v.toString())));
+    }
+    if (data['completedTasks'] != null) {
+      _completedTasks = (data['completedTasks'] as Map).map((k, v) => MapEntry(k.toString(), v as bool));
     }
   }
 
@@ -174,6 +194,10 @@ class EnhancedProgressProvider extends ChangeNotifier {
     
     List<String> storyScoreList = _storyQuizScores.entries.map((e) => '${e.key}:${e.value}').toList();
     await prefs.setStringList('storyScoresMap', storyScoreList);
+
+    List<String> taskCompList = _completedTasks.entries.map((e) => '${e.key}:${e.value}').toList();
+    await prefs.setStringList('completedTasksMap', taskCompList);
+    await prefs.setStringList('streakHistory', _streakHistory);
   }
 
   Future<void> syncToCloud() async {
@@ -194,6 +218,8 @@ class EnhancedProgressProvider extends ChangeNotifier {
       'unlockedLessons': _unlockedLessons,
       'lessonProgress': _lessonProgress.map((k, v) => MapEntry(k.toString(), v)),
       'storyQuizScores': _storyQuizScores,
+      'completedTasks': _completedTasks,
+      'streakHistory': _streakHistory,
     };
     
     await _firestore.saveProgress(_userId!, progressMap);
@@ -218,6 +244,13 @@ class EnhancedProgressProvider extends ChangeNotifier {
       _streakDays = 1;
     }
     
+    final todayStr = now.toIso8601String().split('T').first;
+    if (!_streakHistory.contains(todayStr)) {
+      _streakHistory.add(todayStr);
+      if (_streakHistory.length > 7) _streakHistory.removeAt(0);
+    }
+    
+    await prefs.setStringList('streakHistory', _streakHistory);
     await prefs.setString('lastLoginDate', now.toIso8601String());
     await prefs.setInt('streakDays', _streakDays);
     await syncToCloud();
@@ -319,6 +352,12 @@ class EnhancedProgressProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> addStars(int amount) async {
+    await _addStars(amount);
+    await syncToCloud();
+    notifyListeners();
+  }
+
   Future<void> _addStars(int amount) async {
     _totalStars += amount;
     final prefs = await SharedPreferences.getInstance();
@@ -401,6 +440,126 @@ class EnhancedProgressProvider extends ChangeNotifier {
     
     await syncToCloud();
     notifyListeners();
+  }
+
+  // --- Candy Crush Level Map Methods ---
+  // Map of levelId -> stars earned (0 = not completed, 1-3 = star rating)
+  Map<int, int> _levelStars = {};
+  Map<int, int> get levelStars => _levelStars;
+  int _xpPoints = 0;
+  int get xpPoints => _xpPoints;
+
+  /// Complete a level with a star rating (1-3)
+  Future<void> completeLevel(int levelId, int starsEarned) async {
+    // Only update if new stars are higher
+    final currentStars = _levelStars[levelId] ?? 0;
+    if (starsEarned <= currentStars) return;
+
+    _levelStars[levelId] = starsEarned;
+
+    // Award rewards
+    final levelData = ReadingJourneyData.levels.firstWhere((l) => l['id'] == levelId, orElse: () => {});
+    final xp = (levelData['xp'] ?? 10) as int;
+    _xpPoints += xp;
+    await _addStars(starsEarned);
+    await _addCoins(starsEarned * 10);
+
+    // Unlock next level
+    if (_level == levelId && levelId < ReadingJourneyData.levels.length) {
+      _level = levelId + 1;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('level', _level);
+    }
+
+    await _saveLevelStars();
+    await _saveToLocal();
+    await syncToCloud();
+    notifyListeners();
+  }
+
+  /// Get star rating for a level (0 if not completed)
+  int getLevelStarRating(int levelId) {
+    return _levelStars[levelId] ?? 0;
+  }
+
+  /// Check if a level is unlocked
+  bool isLevelUnlocked(int levelId) {
+    return levelId <= _level;
+  }
+
+  /// Check if a level is completed
+  bool isLevelCompleted(int levelId) {
+    return (_levelStars[levelId] ?? 0) > 0;
+  }
+
+  /// Get total stars earned across all levels
+  int get totalLevelStars {
+    int total = 0;
+    for (var stars in _levelStars.values) {
+      total += stars;
+    }
+    return total;
+  }
+
+  /// Get stage progress (0.0 to 1.0) based on completed levels in that stage
+  double getStageProgress(int stageId) {
+    final stageLevels = ReadingJourneyData.getLevelsForStage(stageId);
+    if (stageLevels.isEmpty) return 0.0;
+    int completed = 0;
+    for (var level in stageLevels) {
+      if (isLevelCompleted(level['id'])) completed++;
+    }
+    return completed / stageLevels.length;
+  }
+
+  Future<void> _saveLevelStars() async {
+    final prefs = await SharedPreferences.getInstance();
+    final entries = _levelStars.entries.map((e) => '${e.key}:${e.value}').toList();
+    await prefs.setStringList('levelStars', entries);
+    await prefs.setInt('xpPoints', _xpPoints);
+  }
+
+  Future<void> _loadLevelStars() async {
+    final prefs = await SharedPreferences.getInstance();
+    final entries = prefs.getStringList('levelStars') ?? [];
+    _levelStars = {};
+    for (var entry in entries) {
+      final parts = entry.split(':');
+      if (parts.length == 2) {
+        _levelStars[int.parse(parts[0])] = int.parse(parts[1]);
+      }
+    }
+    _xpPoints = prefs.getInt('xpPoints') ?? 0;
+  }
+
+  // Keep old methods for backward compatibility
+  Future<void> completeTask(String taskId, int levelId, int points) async {
+    if (_completedTasks[taskId] == true) return;
+    _completedTasks[taskId] = true;
+    await _addStars(points);
+    await _addCoins(points * 2);
+
+    // Auto complete the level if it's the current one
+    if (_level == levelId) {
+      _level++;
+      await _addCoins(100);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('level', _level);
+    }
+
+    await _saveToLocal();
+    await syncToCloud();
+    notifyListeners();
+  }
+
+  double getLevelProgress(int levelId) {
+    if (levelId < _level) return 1.0;
+    if (levelId > _level) return 0.0;
+    return 0.5; // Current level is in progress
+  }
+
+  int getCompletedTasksCount(int levelId) {
+    return isLevelCompleted(levelId) ? 1 : 0;
   }
 
   Future<void> toggleTeacherModeOnly() async {

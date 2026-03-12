@@ -5,6 +5,8 @@ import '../constants/app_theme.dart';
 import '../constants/tamil_data.dart';
 import '../providers/enhanced_progress_provider.dart';
 import '../widgets/safe_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../services/firestore_service.dart';
 import 'story_detail_screen.dart';
 import 'story_quiz_screen.dart';
 
@@ -16,6 +18,7 @@ class StoriesScreen extends StatefulWidget {
 }
 
 class _StoriesScreenState extends State<StoriesScreen> {
+  final FirestoreService _firestore = FirestoreService();
   String _selectedFilter = 'All Stories'; // 'All Stories' or 'My Favorites'
 
   @override
@@ -77,58 +80,98 @@ class _StoriesScreenState extends State<StoriesScreen> {
           ),
 
           // Content
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildFilterToggle(),
-                  const SizedBox(height: 32),
+          StreamBuilder<QuerySnapshot>(
+            stream: _firestore.getStoriesStream(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const SliverFillRemaining(child: Center(child: CircularProgressIndicator()));
+              }
 
-                  Text(
-                    'FEATURED STORY',
-                    style: GoogleFonts.inter(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w900,
-                      color: AppTheme.primary,
-                      letterSpacing: 1.5,
-                    ),
+              final stories = snapshot.data?.docs ?? [];
+              
+              return SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildFilterToggle(),
+                      const SizedBox(height: 32),
+
+                      Text(
+                        'FEATURED STORY',
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w900,
+                          color: AppTheme.primary,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Featured Story
+                      if (stories.isNotEmpty)
+                        _buildFeaturedStoryCard(context, stories[0].data() as Map<String, dynamic>)
+                      else if (!snapshot.hasData || stories.isEmpty)
+                         _buildEmptyBox('No stories found. Add some from Admin Panel!'),
+
+                      const SizedBox(height: 32),
+
+                      Text(
+                        'DISCOVER MORE',
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w900,
+                          color: AppTheme.primary,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Story List
+                      if (stories.length > 1)
+                        ...stories.skip(1).map((doc) => 
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: _buildStoryCard(context, doc.data() as Map<String, dynamic>),
+                          )
+                        ).toList(),
+                        
+                      _buildLockedStoryCard(),
+                      const SizedBox(height: 40),
+                      Text(
+                        'WORLD OF TAMIL',
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w900,
+                          color: AppTheme.primary,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      _buildWorldMapSection(),
+                      const SizedBox(height: 40),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-
-                  // Featured Story
-                  if (TamilData.tamilStories.isNotEmpty)
-                    _buildFeaturedStoryCard(context, TamilData.tamilStories[0]),
-
-                  const SizedBox(height: 32),
-
-                  Text(
-                    'DISCOVER MORE',
-                    style: GoogleFonts.inter(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w900,
-                      color: AppTheme.primary,
-                      letterSpacing: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Story List
-                  if (TamilData.tamilStories.length > 1)
-                    ...TamilData.tamilStories.skip(1).map((story) => 
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 20),
-                        child: _buildStoryCard(context, story),
-                      )
-                    ).toList(),
-                    
-                  _buildLockedStoryCard(),
-                  const SizedBox(height: 40),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyBox(String message) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(40),
+      decoration: BoxDecoration(color: AppTheme.offWhite, borderRadius: BorderRadius.circular(24)),
+      child: Column(
+        children: [
+          const Icon(Icons.auto_stories_rounded, size: 48, color: AppTheme.borderLight),
+          const SizedBox(height: 16),
+          Text(message, textAlign: TextAlign.center, style: GoogleFonts.inter(color: AppTheme.textGray)),
         ],
       ),
     );
@@ -375,20 +418,23 @@ class _StoriesScreenState extends State<StoriesScreen> {
         decoration: AppTheme.whiteCard(radius: 24),
         child: Row(
           children: [
-            Container(
-              width: 90,
-              height: 90,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: AppTheme.offWhite,
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: SafeImage(
-                  assetPath: (story['scenes'] != null && (story['scenes'] as List).isNotEmpty)
-                      ? 'assets/images/${story['scenes'][0]['image']}.png'
-                      : 'assets/images/placeholder.png',
-                  fit: BoxFit.cover,
+            Hero(
+              tag: 'story_${story['id'] ?? story['title']}',
+              child: Container(
+                width: 90,
+                height: 90,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: AppTheme.offWhite,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: SafeImage(
+                    assetPath: (story['scenes'] != null && (story['scenes'] as List).isNotEmpty)
+                        ? 'assets/images/${story['scenes'][0]['image']}.png'
+                        : 'assets/images/placeholder.png',
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
@@ -398,7 +444,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    story['title'],
+                    story['title'] ?? 'Tamil Story',
                     style: GoogleFonts.notoSansTamil(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
@@ -414,14 +460,15 @@ class _StoriesScreenState extends State<StoriesScreen> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    story['moral'],
-                    style: GoogleFonts.inter(
-                      fontSize: 12,
-                      color: AppTheme.primary,
-                      fontWeight: FontWeight.w600,
+                  if (story['moral'] != null)
+                    Text(
+                      story['moral'],
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        color: AppTheme.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
                   const SizedBox(height: 12),
                   Row(
                     children: [
@@ -499,6 +546,60 @@ class _StoriesScreenState extends State<StoriesScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildWorldMapSection() {
+    return SizedBox(
+      height: 180,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        itemCount: TamilData.globalFacts.length,
+        itemBuilder: (context, index) {
+          final fact = TamilData.globalFacts[index];
+          return _buildWorldCityCard(fact);
+        },
+      ),
+    );
+  }
+
+  Widget _buildWorldCityCard(Map<String, String> data) {
+    return Container(
+      width: 200,
+      margin: const EdgeInsets.only(right: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppTheme.topoSilver, width: 1.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(data['flag'] ?? '📍', style: const TextStyle(fontSize: 24)),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  data['country'] ?? 'Unknown',
+                  style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w900, color: AppTheme.secondary),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            data['fact'] ?? '',
+            style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w500, color: AppTheme.textSlate, height: 1.4),
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }

@@ -5,9 +5,18 @@ import '../constants/app_theme.dart';
 import '../constants/tamil_data.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/safe_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../services/firestore_service.dart';
 
-class RhymesScreen extends StatelessWidget {
+class RhymesScreen extends StatefulWidget {
   const RhymesScreen({super.key});
+
+  @override
+  State<RhymesScreen> createState() => _RhymesScreenState();
+}
+
+class _RhymesScreenState extends State<RhymesScreen> {
+  final FirestoreService _firestore = FirestoreService();
 
   @override
   Widget build(BuildContext context) {
@@ -18,12 +27,36 @@ class RhymesScreen extends StatelessWidget {
           children: [
             _buildHeader(context),
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.all(20),
-                itemCount: TamilData.tamilRhymes.length,
-                itemBuilder: (context, index) {
-                  final rhyme = TamilData.tamilRhymes[index];
-                  return _buildRhymeCard(context, rhyme);
+              child: StreamBuilder<QuerySnapshot>(
+                stream: _firestore.getRhymesStream(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  
+                  final rhymes = snapshot.data?.docs ?? [];
+                  
+                  if (rhymes.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.music_note_rounded, size: 48, color: AppTheme.borderLight),
+                          const SizedBox(height: 16),
+                          Text('No rhymes found.', style: GoogleFonts.lexend(color: AppTheme.textGray)),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(20),
+                    itemCount: rhymes.length,
+                    itemBuilder: (context, index) {
+                      final rhyme = rhymes[index].data() as Map<String, dynamic>;
+                      return _buildRhymeCard(context, rhyme);
+                    },
+                  );
                 },
               ),
             ),
@@ -119,18 +152,21 @@ class RhymesScreen extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             child: Row(
               children: [
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    color: AppTheme.primaryRed.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: SafeImage(
-                      assetPath: 'assets/images/${rhyme["image"] ?? "music_placeholder"}.png', 
-                      fit: BoxFit.cover,
+                Hero(
+                  tag: 'rhyme_${rhyme['id'] ?? rhyme['title']}',
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryRed.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: SafeImage(
+                        assetPath: 'assets/images/${rhyme["image"] ?? "music_placeholder"}.png', 
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
@@ -140,7 +176,7 @@ class RhymesScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        rhyme['title'],
+                        rhyme['title'] ?? 'Tamil Rhyme',
                         style: GoogleFonts.notoSansTamil(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,

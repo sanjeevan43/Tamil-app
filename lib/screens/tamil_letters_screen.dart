@@ -98,29 +98,42 @@ class _LetterCard extends StatelessWidget {
           ],
           border: Border.all(color: AppTheme.primary.withOpacity(0.1), width: 1.5),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              letter,
-              style: GoogleFonts.notoSansTamil(
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.primary,
-              ),
-            ),
-            if (subtitle != null) ...{
-              const SizedBox(height: 6),
-              Text(
-                subtitle!,
-                style: GoogleFonts.outfit(
-                  fontSize: 11,
-                  color: AppTheme.textGray,
-                  fontWeight: FontWeight.w600,
+        child: Padding(
+          padding: const EdgeInsets.all(4),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Center(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      letter,
+                      style: GoogleFonts.notoSansTamil(
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.primary,
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            },
-          ],
+              if (subtitle != null) ...{
+                const SizedBox(height: 2),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    subtitle!,
+                    style: GoogleFonts.outfit(
+                      fontSize: 11,
+                      color: AppTheme.textGray,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              },
+            ],
+          ),
         ),
       ),
     );

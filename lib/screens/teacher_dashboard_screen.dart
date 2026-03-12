@@ -260,20 +260,49 @@ class TeacherDashboardScreen extends StatelessWidget {
   Widget _buildStudentOverview(EnhancedProgressProvider progress) {
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: AppTheme.premiumCard(),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF1A237E), Color(0xFF3949AB)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(color: Colors.indigo.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 10)),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'மாணவர் விவரம் (Student Overview)',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.white),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'UNIFIED CLASSROOM',
+                style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.white.withOpacity(0.6), letterSpacing: 2),
+              ),
+              const Icon(Icons.hub_rounded, color: Colors.white, size: 16),
+            ],
           ),
-          const SizedBox(height: 16),
-          _buildInfoRow('பெயர் (Name)', progress.userName),
-          _buildInfoRow('நிலை (Level)', '${progress.level}'),
-          _buildInfoRow('நட்சத்திரங்கள் (Stars)', '${progress.totalStars}'),
-          _buildInfoRow('தொடர் நாட்கள் (Streak)', '${progress.streakDays}'),
-          _buildInfoRow('கற்ற எழுத்துக்கள் (Letters)', '${progress.totalLettersLearned}'),
+          const SizedBox(height: 8),
+          Text(
+            'Global Students Hub',
+            style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.white),
+          ),
+          const SizedBox(height: 20),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
+            child: Column(
+              children: [
+                _buildInfoRow('Active Student', progress.userName),
+                const Divider(color: Colors.white24),
+                _buildInfoRow('Class Average Level', '${progress.level}'),
+                const Divider(color: Colors.white24),
+                _buildInfoRow('Total Letters Taught', '${progress.totalLettersLearned}'),
+              ],
+            ),
+          ),
         ],
       ),
     );

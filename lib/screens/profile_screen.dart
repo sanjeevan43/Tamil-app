@@ -36,6 +36,10 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 32),
             _buildStatsGrid(progress),
             const SizedBox(height: 32),
+            _buildStreakCalendar(progress),
+            const SizedBox(height: 32),
+            _buildXPProgress(progress),
+            const SizedBox(height: 32),
             _buildAchievements(progress),
             const SizedBox(height: 32),
             _buildActions(context, progress),
@@ -136,6 +140,139 @@ class ProfileScreen extends StatelessWidget {
             label, 
             textAlign: TextAlign.center,
             style: GoogleFonts.outfit(fontSize: 9, fontWeight: FontWeight.w800, color: AppTheme.textGray, letterSpacing: 1),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStreakCalendar(EnhancedProgressProvider progress) {
+    final days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    final today = DateTime.now().weekday - 1;
+    final streakHist = progress.streakHistory;
+    
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(28),
+      decoration: AppTheme.whiteCard(radius: 32).copyWith(
+        border: Border.all(color: AppTheme.topoSilver, width: 1.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(color: Colors.orange.withOpacity(0.1), borderRadius: BorderRadius.circular(14)),
+                child: const Icon(Icons.local_fire_department_rounded, color: Colors.orange, size: 22),
+              ),
+              const SizedBox(width: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('STREAK CALENDAR', style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w900, color: AppTheme.secondary, letterSpacing: 1)),
+                  Text('${progress.streakDays} day streak', style: GoogleFonts.outfit(fontSize: 12, color: AppTheme.textGray)),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: List.generate(7, (index) {
+              final isCurrent = index == today;
+              final isDone = index <= today;
+              return Column(
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      gradient: isDone
+                          ? LinearGradient(colors: [Colors.orange, Colors.orange.shade700])
+                          : null,
+                      color: isDone ? null : AppTheme.topoLight,
+                      shape: BoxShape.circle,
+                      border: isCurrent ? Border.all(color: Colors.orange, width: 3) : null,
+                      boxShadow: isDone
+                          ? [BoxShadow(color: Colors.orange.withOpacity(0.3), blurRadius: 8)]
+                          : null,
+                    ),
+                    child: Center(
+                      child: isDone
+                          ? const Icon(Icons.check_rounded, color: Colors.white, size: 18)
+                          : Text(days[index], style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w800, color: AppTheme.textGray)),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(days[index], style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w700, color: isDone ? Colors.orange : AppTheme.textGray)),
+                ],
+              );
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildXPProgress(EnhancedProgressProvider progress) {
+    int currentXP = progress.totalStars * 10;
+    int nextLevelXP = progress.level * 1000;
+    double xpPercent = (currentXP % nextLevelXP) / nextLevelXP;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [const Color(0xFF6200EA), const Color(0xFF6200EA).withOpacity(0.85)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: [
+          BoxShadow(color: const Color(0xFF6200EA).withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 10)),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('LEVEL ${progress.level}', style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.white.withOpacity(0.7), letterSpacing: 2)),
+                  const SizedBox(height: 4),
+                  Text('XP Progress', style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.white)),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(color: Colors.white.withOpacity(0.15), shape: BoxShape.circle),
+                child: Text('⚡', style: const TextStyle(fontSize: 24)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: LinearProgressIndicator(
+              value: xpPercent.clamp(0.0, 1.0),
+              minHeight: 14,
+              backgroundColor: Colors.white.withOpacity(0.15),
+              valueColor: const AlwaysStoppedAnimation(Colors.amber),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('${currentXP % nextLevelXP} XP', style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w800, color: Colors.amber)),
+              Text('$nextLevelXP XP to Level ${progress.level + 1}', style: GoogleFonts.outfit(fontSize: 11, color: Colors.white.withOpacity(0.7))),
+            ],
           ),
         ],
       ),

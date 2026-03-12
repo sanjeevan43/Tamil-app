@@ -16,6 +16,11 @@ class AuthService extends ChangeNotifier {
   String get userRole => _userProfile?['role'] ?? 'student';
 
   AuthService() {
+    _user = _auth.currentUser;
+    if (_user != null) {
+      _fetchUserProfile(_user!.uid);
+    }
+    
     _auth.authStateChanges().listen((User? user) async {
       _user = user;
       if (user != null) {

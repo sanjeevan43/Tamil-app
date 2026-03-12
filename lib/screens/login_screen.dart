@@ -24,6 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   bool _isLogin = true;
   String _selectedRole = 'student';
+  final _adminKeyController = TextEditingController();
   bool _obscurePassword = true;
   bool _rememberMe = false;
 
@@ -54,6 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _adminKeyController.dispose();
     super.dispose();
   }
 
@@ -103,6 +105,18 @@ class _LoginScreenState extends State<LoginScreen> {
         _passwordController.text.trim(),
       );
     } else {
+      // Check for secret admin key
+      if (_selectedRole == 'admin' && _adminKeyController.text != 'TAMIL_ADMIN_2024') {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Invalid Admin Secret Key!'),
+            backgroundColor: AppTheme.error,
+          ),
+        );
+        return;
+      }
+
       error = await authService.registerWithEmail(
         _emailController.text.trim(),
         _passwordController.text.trim(),
@@ -324,6 +338,24 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onChanged: (val) => setState(() => _selectedRole = val!),
                                 ),
                                 const SizedBox(height: 14),
+                                if (_selectedRole == 'admin') ...[
+                                  TextFormField(
+                                    controller: _adminKeyController,
+                                    decoration: InputDecoration(
+                                      hintText: 'Admin Secret Key',
+                                      prefixIcon: const Icon(Icons.vpn_key_outlined, size: 20),
+                                      filled: true,
+                                      fillColor: AppTheme.topoLight,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(18),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                    ),
+                                    obscureText: true,
+                                    validator: (val) => val == null || val.isEmpty ? 'Secret Key required' : null,
+                                  ),
+                                  const SizedBox(height: 14),
+                                ],
                               },
 
                               // Remember Me Checkbox (Login only)
