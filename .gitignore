@@ -1,5 +1,17 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Web
+admin_panel/node_modules/
+admin_panel/dist/
+admin_panel/.env
+admin_panel/.env.local
+
 # Miscellaneous
 *.class
+
 *.log
 *.pyc
 *.swp
