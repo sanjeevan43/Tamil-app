@@ -81,20 +81,11 @@ class FirestoreService {
     await _db.collection('daily_words').add(wordData);
   }
 
-  // --- Stories ---
-  Stream<QuerySnapshot> getStoriesStream() {
-    return _db.collection('stories').snapshots();
-  }
-
   Future<void> addStory(Map<String, dynamic> storyData) async {
     await _db.collection('stories').add(storyData);
   }
 
   // --- Rhymes ---
-  Stream<QuerySnapshot> getRhymesStream() {
-    return _db.collection('rhymes').snapshots();
-  }
-
   Future<void> addRhyme(Map<String, dynamic> rhymeData) async {
     await _db.collection('rhymes').add(rhymeData);
   }

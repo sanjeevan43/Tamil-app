@@ -16,6 +16,9 @@ import 'offline_dictionary_screen.dart';
 import 'daily_word_screen.dart';
 import 'admin_control_screen.dart';
 import 'leaderboard_screen.dart';
+import '../services/thirukkural_service.dart';
+import '../services/proverb_service.dart';
+import 'rhymes_screen.dart';
 import 'community_forum_screen.dart';
 
 class EnhancedHomeScreen extends StatefulWidget {
@@ -28,6 +31,35 @@ class EnhancedHomeScreen extends StatefulWidget {
 class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
+  Thirukkural? _dailyKural;
+  bool _isLoadingKural = true;
+  TamilProverb? _dailyProverb;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchKural();
+    _fetchProverb();
+  }
+
+  Future<void> _fetchProverb() async {
+    final proverb = await ProverbService.getDailyProverb();
+    if (mounted) {
+      setState(() {
+        _dailyProverb = proverb;
+      });
+    }
+  }
+
+  Future<void> _fetchKural() async {
+    final kural = await ThirukkuralService.fetchDailyKural();
+    if (mounted) {
+      setState(() {
+        _dailyKural = kural;
+        _isLoadingKural = false;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -71,6 +103,8 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: _buildHeader(context, progress),
                   ),
+                  _buildDailyProverbSection(),
+                  _buildDailyKuralSection(),
                   const SizedBox(height: 24),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -926,6 +960,173 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
             const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: AppTheme.topoSilver),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildDailyProverbSection() {
+    if (_dailyProverb == null) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 16.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.amber.shade50, Colors.white],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.amber.withOpacity(0.2), width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.amber.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.amber.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Text('💡', style: TextStyle(fontSize: 16)),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'இன்றைய பழமொழி',
+                    style: GoogleFonts.notoSansTamil(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.amber.shade900,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    _dailyProverb!.proverb,
+                    style: GoogleFonts.notoSansTamil(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.secondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDailyKuralSection() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 16.0),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppTheme.primary.withOpacity(0.1), width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.primary.withOpacity(0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: _isLoadingKural 
+          ? const Center(child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+            ))
+          : _dailyKural == null
+              ? Text(
+                  'Today\'s Thirukkural is not available.',
+                  style: GoogleFonts.notoSansTamil(
+                    fontSize: 14,
+                    color: AppTheme.textGray,
+                  ),
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Thirukkural #${_dailyKural!.number}',
+                          style: GoogleFonts.outfit(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                            color: AppTheme.primary,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                        const Icon(Icons.auto_awesome_rounded, size: 16, color: AppTheme.primary),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _dailyKural!.line1,
+                      style: GoogleFonts.notoSansTamil(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.secondary,
+                      ),
+                    ),
+                    Text(
+                      _dailyKural!.line2,
+                      style: GoogleFonts.notoSansTamil(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.secondary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Theme(
+                      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                      child: ExpansionTile(
+                        title: Text(
+                          'Show Tamil Explanation',
+                          style: GoogleFonts.outfit(
+                            fontSize: 12,
+                            color: AppTheme.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        tilePadding: EdgeInsets.zero,
+                        childrenPadding: EdgeInsets.zero,
+                        collapsedIconColor: AppTheme.primary,
+                        iconColor: AppTheme.primary,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Text(
+                              _dailyKural!.explanation,
+                              style: GoogleFonts.notoSansTamil(
+                                fontSize: 13,
+                                color: AppTheme.textGray,
+                                height: 1.5,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
       ),
     );
   }

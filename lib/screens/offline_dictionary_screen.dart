@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -281,7 +282,7 @@ class _OfflineDictionaryScreenState extends State<OfflineDictionaryScreen> with 
         title: Text(
           ' அகராதி',
           style: GoogleFonts.notoSansTamil(
-            fontWeight: FontWeight.black,
+            fontWeight: FontWeight.w900,
             color: Colors.white,
             fontSize: 20,
           ),
@@ -390,7 +391,7 @@ class _OfflineDictionaryScreenState extends State<OfflineDictionaryScreen> with 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Recent Searches', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.black, color: AppTheme.textDark)),
+                Text('Recent Searches', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w900, color: AppTheme.textDark)),
                 GestureDetector(
                   onTap: _clearRecentSearches,
                   child: Text('Clear All', style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.bold, color: AppTheme.accent)),
@@ -468,7 +469,7 @@ class _OfflineDictionaryScreenState extends State<OfflineDictionaryScreen> with 
           contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           onTap: () {
              _addRecentSearch(word['word']);
-             Navigator.push(context, MaterialPageRoute(builder: (c) => WordDetailScreen(wordId: word['id'])));
+             Navigator.push(context, MaterialPageRoute(builder: (c) => WordDetailScreen(wordId: word['id'], basicWord: word['word'])));
           },
           leading: Container(
             width: 50,
@@ -484,7 +485,7 @@ class _OfflineDictionaryScreenState extends State<OfflineDictionaryScreen> with 
                 word['word'][0],
                 style: GoogleFonts.notoSansTamil(
                   fontSize: 22, 
-                  fontWeight: FontWeight.black,
+                  fontWeight: FontWeight.w900,
                   color: isCommon ? Colors.white : AppTheme.primary
                 ),
               ),
@@ -502,7 +503,7 @@ class _OfflineDictionaryScreenState extends State<OfflineDictionaryScreen> with 
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(color: Colors.amber.shade100, borderRadius: BorderRadius.circular(4)),
-                  child: Text('STAR', style: GoogleFonts.poppins(fontSize: 8, fontWeight: FontWeight.black, color: Colors.orange.shade900)),
+                  child: Text('STAR', style: GoogleFonts.poppins(fontSize: 8, fontWeight: FontWeight.w900, color: Colors.orange.shade900)),
                 ),
             ],
           ),

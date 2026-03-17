@@ -1,0 +1,121 @@
+﻿Launching lib\main.dart on Chrome in debug mode...
+Waiting for connection from debug service on Chrome...          
+flutter : 
+lib/services/firestore_service.dart:302:25: 
+Error: 'getStoriesStream' is already 
+declared in this scope.
+At line:1 char:1
++ flutter run -d chrome 
+--dart-define-from-file=.env --web-renderer 
+htm ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: 
+    (lib/services/fi... in this scope.:Str  
+  ing) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommand 
+   Error
+ 
+  Stream<QuerySnapshot> getStoriesStream() {
+                        ^^^^^^^^^^^^^^^^
+lib/services/firestore_service.dart:85:25: 
+Context: Previous declaration of 
+'getStoriesStream'.
+  Stream<QuerySnapshot> getStoriesStream() {
+                        ^^^^^^^^^^^^^^^^
+lib/services/firestore_service.dart:306:25: 
+Error: 'getRhymesStream' is already 
+declared in this scope.
+  Stream<QuerySnapshot> getRhymesStream() {
+                        ^^^^^^^^^^^^^^^
+lib/services/firestore_service.dart:94:25: 
+Context: Previous declaration of 
+'getRhymesStream'.
+  Stream<QuerySnapshot> getRhymesStream() {
+                        ^^^^^^^^^^^^^^^
+lib/screens/enhanced_home_screen.dart:359:83
+: Error: Couldn't find constructor 
+'CommunityForumScreen'.
+            () => Navigator.push(context, 
+MaterialPageRoute(builder: (_) => const 
+CommunityForumScreen()))),
+                                            
+                                      
+^^^^^^^^^^^^^^^^^^^^
+lib/screens/enhanced_home_screen.dart:1112:2
+5: Error: No named parameter with the name 
+'visualDensity'.
+                        visualDensity: 
+VisualDensity.compact,
+                        ^^^^^^^^^^^^^
+/C:/Users/Sanjeev/New%20folder/flutter_windo
+ws_3.16.0-stable/flutter/packages/flutter/li
+b/src/material/expansion_tile.dart:226:9: 
+Context: Found this candidate, but the 
+arguments don't match.
+  const ExpansionTile({
+        ^^^^^^^^^^^^^
+lib/screens/offline_dictionary_screen.dart:8
+4:9: Error: 'Batch' isn't a type.
+        Batch batch = db.batch();
+        ^^^^^
+lib/screens/offline_dictionary_screen.dart:1
+01:33: Error: The getter 
+'ConflictAlgorithm' isn't defined for the 
+class '_OfflineDictionaryScreenState'.
+ - '_OfflineDictionaryScreenState' is from '
+package:tamil_app/screens/offline_dictionary
+_screen.dart' ('lib/screens/offline_dictiona
+ry_screen.dart').
+Try correcting the name to the name of an 
+existing getter, or defining a getter or 
+field named 'ConflictAlgorithm'.
+          }, conflictAlgorithm: 
+ConflictAlgorithm.ignore);
+                                
+^^^^^^^^^^^^^^^^^
+lib/screens/offline_dictionary_screen.dart:2
+84:36: Error: Member not found: 'black'.
+            fontWeight: FontWeight.black,
+                                   ^^^^^
+lib/screens/offline_dictionary_screen.dart:3
+93:105: Error: Member not found: 'black'.
+                Text('Recent Searches', 
+style: GoogleFonts.poppins(fontSize: 14, 
+fontWeight: FontWeight.black, color: 
+AppTheme.textDark)),
+                                            
+                                            
+  ^^^^^
+lib/screens/offline_dictionary_screen.dart:4
+71:88: Error: Required named parameter 
+'basicWord' must be provided.
+             Navigator.push(context, 
+MaterialPageRoute(builder: (c) => 
+WordDetailScreen(wordId: word['id'])));
+                                            
+                                           ^
+lib/screens/word_detail_screen.dart:10:9: 
+Context: Found this candidate, but the 
+arguments don't match.
+  const WordDetailScreen({super.key, 
+required this.wordId, required 
+this.basicWord});
+        ^^^^^^^^^^^^^^^^
+lib/screens/offline_dictionary_screen.dart:4
+87:42: Error: Member not found: 'black'.
+                  fontWeight: 
+FontWeight.black,
+                                         
+^^^^^
+lib/screens/offline_dictionary_screen.dart:5
+05:102: Error: Member not found: 'black'.
+                  child: Text('STAR', 
+style: GoogleFonts.poppins(fontSize: 8, 
+fontWeight: FontWeight.black, color: 
+Colors.orange.shade900)),
+                                            
+                                            
+  ^^^^^
+Waiting for connection from debug service on Chrome...            102.9s
+Failed to compile application.
