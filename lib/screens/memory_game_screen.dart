@@ -59,6 +59,7 @@ class _MemoryGameScreenState extends State<MemoryGameScreen>
     if (_revealed[index]) return;
     if (_matched[index]) return;
     if (_selectedIndices.length >= 2) return;
+    if (_selectedIndices.contains(index)) return; // Prevent tapping same card twice
 
     setState(() {
       _revealed[index] = true;
@@ -73,22 +74,26 @@ class _MemoryGameScreenState extends State<MemoryGameScreen>
 
       if (_cards[_selectedIndices[0]] == _cards[_selectedIndices[1]]) {
         // Match found
-        setState(() {
-          _matched[_selectedIndices[0]] = true;
-          _matched[_selectedIndices[1]] = true;
-          _matches++;
-          _selectedIndices.clear();
-          _isChecking = false;
-        });
+        Future.delayed(const Duration(milliseconds: 600), () {
+          if (mounted) {
+            setState(() {
+              _matched[_selectedIndices[0]] = true;
+              _matched[_selectedIndices[1]] = true;
+              _matches++;
+              _selectedIndices.clear();
+              _isChecking = false;
+            });
 
-        if (_matches == _cards.length ~/ 2) {
-          Future.delayed(const Duration(milliseconds: 500), () {
-            if (mounted) _showWinDialog();
-          });
-        }
+            if (_matches == _cards.length ~/ 2) {
+              Future.delayed(const Duration(milliseconds: 500), () {
+                if (mounted) _showWinDialog();
+              });
+            }
+          }
+        });
       } else {
         // No match - flip back after delay
-        Future.delayed(const Duration(milliseconds: 1000), () {
+        Future.delayed(const Duration(milliseconds: 1200), () {
           if (mounted) {
             setState(() {
               _revealed[_selectedIndices[0]] = false;

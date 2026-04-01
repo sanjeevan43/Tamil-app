@@ -20,6 +20,7 @@ import '../services/thirukkural_service.dart';
 import '../services/proverb_service.dart';
 import 'rhymes_screen.dart';
 import 'community_forum_screen.dart';
+import 'lesson_screen.dart';
 
 class EnhancedHomeScreen extends StatefulWidget {
   const EnhancedHomeScreen({super.key});
@@ -52,12 +53,21 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
   }
 
   Future<void> _fetchKural() async {
-    final kural = await ThirukkuralService.fetchDailyKural();
-    if (mounted) {
-      setState(() {
-        _dailyKural = kural;
-        _isLoadingKural = false;
-      });
+    try {
+      final kural = await ThirukkuralService.fetchDailyKural();
+      if (mounted) {
+        setState(() {
+          _dailyKural = kural;
+          _isLoadingKural = false;
+        });
+      }
+    } catch (e) {
+      print('HomeScreen: Error fetching Kural: $e');
+      if (mounted) {
+        setState(() {
+          _isLoadingKural = false;
+        });
+      }
     }
   }
 
@@ -99,12 +109,13 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 16),
+                  _buildDailyKuralSection(),
+                  _buildDailyProverbSection(),
+                  const SizedBox(height: 8),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: _buildHeader(context, progress),
                   ),
-                  _buildDailyProverbSection(),
-                  _buildDailyKuralSection(),
                   const SizedBox(height: 24),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -358,6 +369,8 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
             () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DailyTamilPowerWordScreen()))),
         _fastItem(context, 'Q&A Forum', 'Ask others', Icons.forum_rounded, const Color(0xFFF1F8E9), Colors.teal,
             () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CommunityForumScreen()))),
+        _fastItem(context, 'Learn English', 'Duolingo style', Icons.language_rounded, const Color(0xFFE0F7FA), Colors.cyan,
+            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LessonScreen(lessonId: 'animals_1')))),
         _fastItem(context, 'Classrooms', 'Learn together', Icons.school_rounded, const Color(0xFFE8EAF6), Colors.indigo,
             () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ClassroomConnectScreen()))),
         if (Provider.of<AuthService>(context, listen: false).userRole == 'admin')
@@ -1097,30 +1110,61 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
                     const SizedBox(height: 8),
                     Theme(
                       data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-                      child: ExpansionTile(
-                        title: Text(
-                          'Show Tamil Explanation',
-                          style: GoogleFonts.outfit(
-                            fontSize: 12,
-                            color: AppTheme.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        tilePadding: EdgeInsets.zero,
-                        childrenPadding: EdgeInsets.zero,
-                        collapsedIconColor: AppTheme.primary,
-                        iconColor: AppTheme.primary,
+                      child: Column(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4.0),
-                            child: Text(
-                              _dailyKural!.explanation,
-                              style: GoogleFonts.notoSansTamil(
-                                fontSize: 13,
-                                color: AppTheme.textGray,
-                                height: 1.5,
+                          ExpansionTile(
+                            title: Text(
+                              'Show Tamil Explanation',
+                              style: GoogleFonts.outfit(
+                                fontSize: 12,
+                                color: AppTheme.primary,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
+                            tilePadding: EdgeInsets.zero,
+                            childrenPadding: EdgeInsets.zero,
+                            collapsedIconColor: AppTheme.primary,
+                            iconColor: AppTheme.primary,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4.0),
+                                child: Text(
+                                  _dailyKural!.explanation,
+                                  style: GoogleFonts.notoSansTamil(
+                                    fontSize: 13,
+                                    color: AppTheme.textGray,
+                                    height: 1.5,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          ExpansionTile(
+                            title: Text(
+                              'Show English Meaning',
+                              style: GoogleFonts.outfit(
+                                fontSize: 12,
+                                color: Colors.blue,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            tilePadding: EdgeInsets.zero,
+                            childrenPadding: EdgeInsets.zero,
+                            collapsedIconColor: Colors.blue,
+                            iconColor: Colors.blue,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4.0),
+                                child: Text(
+                                  _dailyKural!.englishMeaning,
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 13,
+                                    color: AppTheme.textGray,
+                                    height: 1.5,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),

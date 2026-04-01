@@ -15,6 +15,8 @@ class _SentenceBuilderGameState extends State<SentenceBuilderGame> {
   late Map<String, dynamic> _currentRound;
   List<String> _userSentence = [];
   int _score = 0;
+  int _round = 1;
+  final int _maxRounds = 8;
 
   @override
   void initState() {
@@ -29,6 +31,8 @@ class _SentenceBuilderGameState extends State<SentenceBuilderGame> {
   }
 
   void _addWord(String word, int index) {
+    if (_userSentence.length >= (_currentRound['correctOrder'] as List).length) return;
+    
     setState(() {
       _userSentence.add(word);
       (_currentRound['words'] as List).removeAt(index);
@@ -56,6 +60,7 @@ class _SentenceBuilderGameState extends State<SentenceBuilderGame> {
   void _showSuccess() {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         content: Column(
@@ -68,9 +73,59 @@ class _SentenceBuilderGameState extends State<SentenceBuilderGame> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
-                _generateSentence();
+                if (_round < _maxRounds) {
+                  setState(() => _round++);
+                  _generateSentence();
+                } else {
+                  _showResults();
+                }
               },
               child: const Text('Next Sentence'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showResults() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.emoji_events, color: AppTheme.warning, size: 80),
+            const SizedBox(height: 16),
+            const Text('Game Complete!', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppTheme.primaryRed)),
+            const SizedBox(height: 16),
+            Text('Score: $_score/${_maxRounds * 25}', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    setState(() {
+                      _score = 0;
+                      _round = 1;
+                      _generateSentence();
+                    });
+                  },
+                  child: const Text('Play Again'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: AppTheme.darkRed),
+                  child: const Text('Exit'),
+                ),
+              ],
             ),
           ],
         ),

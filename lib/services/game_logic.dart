@@ -159,4 +159,112 @@ class GameLogic {
     if (word.length <= 2) return word;
     return word[0] + '*' * (word.length - 2) + word[word.length - 1];
   }
+
+  // Sound Match Game
+  static Map<String, dynamic> generateSoundMatchRound() {
+    final allWords = <Map<String, String>>[];
+    TamilData.wordCategories.values.forEach((cat) => allWords.addAll(cat));
+    
+    final correctWord = allWords[_random.nextInt(allWords.length)];
+    final options = [correctWord];
+    
+    while (options.length < 4) {
+      final word = allWords[_random.nextInt(allWords.length)];
+      if (!options.any((w) => w['tamil'] == word['tamil'])) {
+        options.add(word);
+      }
+    }
+    options.shuffle();
+    
+    return {
+      'correctWord': correctWord['tamil'],
+      'options': options.map((w) => w['tamil']).toList(),
+      'english': correctWord['english'],
+      'emoji': correctWord['emoji'],
+      'correctIndex': options.indexWhere((w) => w['tamil'] == correctWord['tamil']),
+    };
+  }
+
+  // Word Search Game
+  static Map<String, dynamic> generateWordSearchRound() {
+    final categories = TamilData.wordCategories.values.toList();
+    final words = categories[_random.nextInt(categories.length)];
+    final selectedWords = <Map<String, String>>[];
+    
+    while (selectedWords.length < 5) {
+      final word = words[_random.nextInt(words.length)];
+      if (!selectedWords.any((w) => w['tamil'] == word['tamil'])) {
+        selectedWords.add(word);
+      }
+    }
+    
+    return {
+      'words': selectedWords,
+      'gridSize': 8,
+    };
+  }
+
+  // Word Scramble Game
+  static Map<String, dynamic> generateWordScrambleRound() {
+    final categories = TamilData.wordCategories.values.toList();
+    final words = categories[_random.nextInt(categories.length)];
+    final wordData = words[_random.nextInt(words.length)];
+    final word = wordData['tamil']!;
+    final scrambled = word.split('')..shuffle();
+    
+    return {
+      'word': word,
+      'scrambled': scrambled.join(''),
+      'english': wordData['english'],
+      'emoji': wordData['emoji'],
+      'hint': getHint(word),
+    };
+  }
+
+  // Letter Hunt Game with difficulty
+  static Map<String, dynamic> generateLetterHuntRoundWithDifficulty(String difficulty) {
+    List<String> letterPool;
+    
+    if (difficulty == 'Easy') {
+      letterPool = TamilData.uyirEzhuthukkal;
+    } else if (difficulty == 'Medium') {
+      letterPool = [...TamilData.uyirEzhuthukkal, ...TamilData.meiEzhuthukkal];
+    } else {
+      letterPool = [...TamilData.uyirEzhuthukkal, ...TamilData.meiEzhuthukkal, ...TamilData.aayudhaEzhuthu];
+    }
+    
+    final targetLetter = letterPool[_random.nextInt(letterPool.length)];
+    final options = [targetLetter];
+    
+    while (options.length < 6) {
+      final letter = letterPool[_random.nextInt(letterPool.length)];
+      if (!options.contains(letter)) options.add(letter);
+    }
+    options.shuffle();
+    
+    return {
+      'targetLetter': targetLetter,
+      'options': options,
+      'correctIndex': options.indexOf(targetLetter),
+      'difficulty': difficulty,
+    };
+  }
+
+  // Calculate streak bonus
+  static int getStreakBonus(int streakDays) {
+    if (streakDays >= 30) return 50;
+    if (streakDays >= 7) return 25;
+    if (streakDays >= 3) return 10;
+    return 0;
+  }
+
+  // Get level from XP
+  static int getLevelFromXP(int xp) {
+    return (xp ~/ 100) + 1;
+  }
+
+  // Get next level XP requirement
+  static int getNextLevelXP(int currentLevel) {
+    return currentLevel * 100;
+  }
 }

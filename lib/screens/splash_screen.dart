@@ -37,13 +37,19 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     final authService = Provider.of<AuthService>(context, listen: false);
     final progress = Provider.of<EnhancedProgressProvider>(context, listen: false);
 
-    // Run heavy initialization tasks in parallel
-    await Future.wait([
-      if (authService.isAuthenticated)
-        progress.initializeProgress(uid: authService.user?.uid),
-      // Ensure at least 1.5 - 2 seconds for branding, but no more than 4
-      Future.delayed(const Duration(milliseconds: 2000)),
-    ]);
+    // Run heavy initialization tasks in parallel with a safety timeout
+    print("SplashScreen: Starting initialization...");
+    try {
+      await Future.wait([
+        if (authService.isAuthenticated)
+          progress.initializeProgress(uid: authService.user?.uid).then((_) => print("SplashScreen: Progress initialized")).catchError((e) => print("SplashScreen: Progress error: $e")),
+        // Ensure at least 2 seconds for branding
+        Future.delayed(const Duration(milliseconds: 2000)),
+      ]).timeout(const Duration(seconds: 8)); // Safety timeout of 8 seconds
+      print("SplashScreen: Initialization complete or timed out");
+    } catch (e) {
+      print("SplashScreen: Error during initialization: $e");
+    }
 
     if (!mounted) return;
 

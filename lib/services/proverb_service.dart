@@ -41,7 +41,15 @@ class ProverbService {
       return proverbs[index];
     } catch (e) {
       print('Error loading proverbs: $e');
-      return null;
+      return _getFallbackProverb();
     }
+  }
+
+  static TamilProverb _getFallbackProverb() {
+    return TamilProverb(
+      id: 1,
+      proverb: 'முயற்சி திருவினையாக்கும்.',
+      meaning: 'Effort leads to success.',
+    );
   }
 }

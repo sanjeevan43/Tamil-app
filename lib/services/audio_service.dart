@@ -51,4 +51,25 @@ class AudioService {
   static Future<void> stop() async {
     await _flutterTts.stop();
   }
+
+  static Future<void> pause() async {
+    await _flutterTts.pause();
+  }
+
+  static Future<void> resume() async {
+    await _flutterTts.speak('');
+  }
+
+  static Future<void> setSpeechRate(double rate) async {
+    await _flutterTts.setSpeechRate(rate);
+  }
+
+  static Future<void> setVolume(double volume) async {
+    await _flutterTts.setVolume(volume);
+  }
+
+  static Future<void> setPitch(double pitch) async {
+    await _flutterTts.setPitch(pitch);
+  }
+
 }

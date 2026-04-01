@@ -83,4 +83,109 @@ class DatabaseService {
         .snapshots();
   }
 
+  // Get a specific classroom
+  Future<DocumentSnapshot?> getClassroom(String classroomId) async {
+    try {
+      return await _db.collection('classrooms').doc(classroomId).get();
+    } catch (e) {
+      print('Error getting classroom: $e');
+      return null;
+    }
+  }
+
+  // Get students in a classroom
+  Future<List<String>> getClassroomStudents(String classroomId) async {
+    try {
+      DocumentSnapshot doc = await _db.collection('classrooms').doc(classroomId).get();
+      if (doc.exists) {
+        List<dynamic> students = doc['students'] ?? [];
+        return students.cast<String>();
+      }
+      return [];
+    } catch (e) {
+      print('Error getting classroom students: $e');
+      return [];
+    }
+  }
+
+  // Remove student from classroom
+  Future<void> removeStudentFromClassroom(String classroomId, String studentId) async {
+    try {
+      await _db.collection('classrooms').doc(classroomId).update({
+        'students': FieldValue.arrayRemove([studentId])
+      });
+    } catch (e) {
+      print('Error removing student from classroom: $e');
+      rethrow;
+    }
+  }
+
+  // --- Progress Tracking ---
+  Future<void> saveProgress(String userId, Map<String, dynamic> progressData) async {
+    try {
+      await _db.collection('users').doc(userId).update({
+        'progress': progressData,
+        'lastUpdated': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      print('Error saving progress: $e');
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>?> getProgress(String userId) async {
+    try {
+      DocumentSnapshot doc = await _db.collection('users').doc(userId).get();
+      if (doc.exists && doc['progress'] != null) {
+        return doc['progress'] as Map<String, dynamic>;
+      }
+      return null;
+    } catch (e) {
+      print('Error getting progress: $e');
+      return null;
+    }
+  }
+
+  // --- Assignments ---
+  Future<void> assignHomework(String classroomId, String title, String description, DateTime dueDate) async {
+    try {
+      await _db.collection('classrooms').doc(classroomId).collection('assignments').add({
+        'title': title,
+        'description': description,
+        'dueDate': dueDate,
+        'createdAt': FieldValue.serverTimestamp(),
+        'type': 'homework',
+      });
+    } catch (e) {
+      print('Error assigning homework: $e');
+      rethrow;
+    }
+  }
+
+  Stream<QuerySnapshot> getAssignments(String classroomId) {
+    return _db
+        .collection('classrooms')
+        .doc(classroomId)
+        .collection('assignments')
+        .orderBy('dueDate', descending: false)
+        .snapshots();
+  }
+
+  // --- Leaderboard ---
+  Future<List<Map<String, dynamic>>> getLeaderboard(String classroomId, {int limit = 10}) async {
+    try {
+      QuerySnapshot snapshot = await _db
+          .collection('users')
+          .where('classrooms', arrayContains: classroomId)
+          .orderBy('totalStars', descending: true)
+          .limit(limit)
+          .get();
+      
+      return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+    } catch (e) {
+      print('Error getting leaderboard: $e');
+      return [];
+    }
+  }
+
 }

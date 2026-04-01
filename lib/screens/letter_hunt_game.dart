@@ -38,7 +38,8 @@ class _LetterHuntGameState extends State<LetterHuntGame> {
     
     if (selectedIndex == _currentRound['correctIndex']) {
       setState(() => _score += 10);
-      Future.delayed(const Duration(milliseconds: 500), () {
+      Provider.of<EnhancedProgressProvider>(context, listen: false).addQuizScore(10);
+      Future.delayed(const Duration(milliseconds: 1000), () {
         if (!mounted) return;
         if (_round < _maxRounds) {
           setState(() {
@@ -50,7 +51,17 @@ class _LetterHuntGameState extends State<LetterHuntGame> {
         }
       });
     } else {
-      Future.delayed(const Duration(milliseconds: 500), () {
+      // Show wrong answer feedback
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Not correct, try again!'),
+          backgroundColor: AppTheme.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          duration: const Duration(seconds: 1),
+        ),
+      );
+      Future.delayed(const Duration(milliseconds: 1500), () {
         if (mounted) setState(() => _isAnswered = false);
       });
     }

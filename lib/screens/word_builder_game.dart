@@ -56,6 +56,8 @@ class _WordBuilderGameState extends State<WordBuilderGame> {
 
   void _addLetter(String letter, int index) {
     if (_showingResult) return;
+    if (_userAnswer.length >= _targetWord.characters.length) return; // Prevent adding more letters than needed
+    
     setState(() {
       _userAnswer.add(letter);
       _scrambledLetters.removeAt(index);

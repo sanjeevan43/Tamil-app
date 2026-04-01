@@ -25,7 +25,7 @@ class DictionaryDbService {
 
     return await openDatabase(
       path,
-      version: 5, // Bumped to 5 to force re-seed with better common words + examples
+      version: 6, // Bumped to 6 to force re-seed with 50,000+ words
       onUpgrade: (db, oldVersion, newVersion) async {
         await _dropTables(db);
         await _createTables(db);
@@ -120,6 +120,9 @@ class DictionaryDbService {
   static Map<String, dynamic> _parseJson(String jsonStr) {
     return json.decode(jsonStr) as Map<String, dynamic>;
   }
+  static List<dynamic> _parseJsonList(String jsonStr) {
+    return json.decode(jsonStr) as List<dynamic>;
+  }
 
   Future<void> _seedCommonData(Database db) async {
     final commonList = DictionaryData.commonWords;
@@ -147,7 +150,7 @@ class DictionaryDbService {
 
     try {
       final jsonStr = await rootBundle.loadString('assets/data/tamil_dictionary.json');
-      final List<dynamic> localDict = json.decode(jsonStr);
+      final List<dynamic> localDict = await compute(_parseJsonList, jsonStr);
       for (var item in localDict) {
         String w = item['word'] ?? '';
         String alphabet = '';

@@ -15,6 +15,8 @@ class _FillBlanksGameState extends State<FillBlanksGame> {
   late Map<String, dynamic> _currentRound;
   int _score = 0;
   bool _answered = false;
+  int _round = 1;
+  final int _maxRounds = 10;
 
   @override
   void initState() {
@@ -45,6 +47,7 @@ class _FillBlanksGameState extends State<FillBlanksGame> {
       if (!mounted) return;
       showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (context) => AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           content: Column(
@@ -61,19 +64,77 @@ class _FillBlanksGameState extends State<FillBlanksGame> {
                 ),
               ),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  if (correct) _generateQuestion();
-                  else setState(() => _answered = false);
-                },
-                child: Text(correct ? 'Next' : 'OK'),
-              ),
+              if (correct)
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    if (_round < _maxRounds) {
+                      setState(() => _round++);
+                      _generateQuestion();
+                    } else {
+                      _showResults();
+                    }
+                  },
+                  child: const Text('Next'),
+                )
+              else
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    setState(() => _answered = false);
+                  },
+                  child: const Text('Try Again'),
+                ),
             ],
           ),
         ),
       );
     });
+  }
+
+  void _showResults() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.emoji_events, color: AppTheme.warning, size: 80),
+            const SizedBox(height: 16),
+            const Text('Game Complete!', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppTheme.primaryRed)),
+            const SizedBox(height: 16),
+            Text('Score: $_score/${_maxRounds * 15}', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    setState(() {
+                      _score = 0;
+                      _round = 1;
+                      _generateQuestion();
+                    });
+                  },
+                  child: const Text('Play Again'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: AppTheme.darkRed),
+                  child: const Text('Exit'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override

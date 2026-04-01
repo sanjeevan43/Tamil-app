@@ -26,6 +26,7 @@ class _QuizScreenState extends State<QuizScreen> {
 
   void _checkAnswer(int selected) {
     if (_answered) return;
+    if (_selectedAnswer != null) return; // Double-check to prevent multiple selections
 
     setState(() {
       _selectedAnswer = selected;
