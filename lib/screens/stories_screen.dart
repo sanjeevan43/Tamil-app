@@ -39,14 +39,14 @@ class _StoriesScreenState extends State<StoriesScreen> {
               icon: const Icon(Icons.arrow_back_rounded, color: AppTheme.textDark),
               onPressed: () => Navigator.pop(context),
               style: IconButton.styleFrom(
-                backgroundColor: Colors.white,
+                backgroundColor: AppTheme.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
             centerTitle: true,
             title: Text(
               'MORAL STORIES',
-              style: GoogleFonts.inter(
+              style: GoogleFonts.outfit(
                 color: AppTheme.textDark,
                 fontWeight: FontWeight.w900,
                 fontSize: 14,
@@ -63,11 +63,11 @@ class _StoriesScreenState extends State<StoriesScreen> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.stars_rounded, color: Colors.amber, size: 18),
+                    const Icon(Icons.stars_rounded, color: AppTheme.warning, size: 18),
                     const SizedBox(width: 8),
                     Text(
                       '${progress.totalStars}',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.outfit(
                         color: AppTheme.primary,
                         fontWeight: FontWeight.w900,
                         fontSize: 14,
@@ -100,7 +100,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
 
                       Text(
                         'FEATURED STORY',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.outfit(
                           fontSize: 11,
                           fontWeight: FontWeight.w900,
                           color: AppTheme.primary,
@@ -119,7 +119,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
 
                       Text(
                         'DISCOVER MORE',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.outfit(
                           fontSize: 11,
                           fontWeight: FontWeight.w900,
                           color: AppTheme.primary,
@@ -135,13 +135,13 @@ class _StoriesScreenState extends State<StoriesScreen> {
                             padding: const EdgeInsets.only(bottom: 20),
                             child: _buildStoryCard(context, doc.data() as Map<String, dynamic>),
                           )
-                        ).toList(),
+                        ),
                         
                       _buildLockedStoryCard(),
                       const SizedBox(height: 40),
                       Text(
                         'WORLD OF TAMIL',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.outfit(
                           fontSize: 11,
                           fontWeight: FontWeight.w900,
                           color: AppTheme.primary,
@@ -171,7 +171,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
         children: [
           const Icon(Icons.auto_stories_rounded, size: 48, color: AppTheme.borderLight),
           const SizedBox(height: 16),
-          Text(message, textAlign: TextAlign.center, style: GoogleFonts.inter(color: AppTheme.textGray)),
+          Text(message, textAlign: TextAlign.center, style: GoogleFonts.outfit(color: AppTheme.textGray)),
         ],
       ),
     );
@@ -207,7 +207,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: AppTheme.textDark.withOpacity(0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     )
@@ -217,7 +217,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
           child: Text(
             text,
             textAlign: TextAlign.center,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.outfit(
               fontSize: 13,
               fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
               color: isSelected ? AppTheme.primary : AppTheme.textSlate,
@@ -237,7 +237,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
         children: [
           Stack(
             children: [
-              Container(
+              const SizedBox(
                 height: 240,
                 width: double.infinity,
                 child: SafeImage(
@@ -251,12 +251,12 @@ class _StoriesScreenState extends State<StoriesScreen> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
+                    color: AppTheme.white.withOpacity(0.9),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
                     'BILINGUAL',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.outfit(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       color: AppTheme.primary,
@@ -283,9 +283,9 @@ class _StoriesScreenState extends State<StoriesScreen> {
                           offset: const Offset(0, 8),
                         ),
                       ],
-                      border: Border.all(color: Colors.white, width: 3),
+                      border: Border.all(color: AppTheme.white, width: 3),
                     ),
-                    child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 40),
+                    child: const Icon(Icons.play_arrow_rounded, color: AppTheme.white, size: 40),
                   ),
                 ),
               ),
@@ -314,7 +314,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
                           ),
                           Text(
                             story['englishTitle'] ?? '',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.outfit(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
                               color: AppTheme.textSlate,
@@ -329,7 +329,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
                             ),
                             child: Text(
                               'Moral: ${story['moral']}',
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.outfit(
                                 fontSize: 12,
                                 color: AppTheme.primary,
                                 fontWeight: FontWeight.w700,
@@ -349,7 +349,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
                 const SizedBox(height: 20),
                 Text(
                   'A timeless classic that teaches essential life values while improving your Tamil reading skills.',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.outfit(
                     fontSize: 14,
                     color: AppTheme.textSlate,
                     height: 1.6,
@@ -366,17 +366,17 @@ class _StoriesScreenState extends State<StoriesScreen> {
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(10),
-                            child: LinearProgressIndicator(
+                            child: const LinearProgressIndicator(
                               value: 0.65,
                               minHeight: 8,
                               backgroundColor: AppTheme.offWhite,
-                              valueColor: const AlwaysStoppedAnimation(AppTheme.primary),
+                              valueColor: AlwaysStoppedAnimation(AppTheme.primary),
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             'Reading Progress: 65%',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.outfit(
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
                               color: AppTheme.textGray,
@@ -453,7 +453,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
                   ),
                   Text(
                     story['englishTitle'] ?? '',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.outfit(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: AppTheme.textSlate,
@@ -463,7 +463,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
                   if (story['moral'] != null)
                     Text(
                       story['moral'],
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.outfit(
                         fontSize: 12,
                         color: AppTheme.primary,
                         fontWeight: FontWeight.w600,
@@ -474,7 +474,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
                     children: [
                       _buildMetaTag(Icons.timer_outlined, '4 min'),
                       const SizedBox(width: 16),
-                      _buildMetaTag(Icons.star_outline_rounded, 'Level 1', color: Colors.amber),
+                      _buildMetaTag(Icons.star_outline_rounded, 'Level 1', color: AppTheme.warning),
                     ],
                   ),
                 ],
@@ -533,7 +533,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
                     ),
                     child: Text(
                       'UNLOCK FOR 50 STARS',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.outfit(
                         fontSize: 9,
                         fontWeight: FontWeight.w900,
                         color: AppTheme.primary,
@@ -571,7 +571,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
       margin: const EdgeInsets.only(right: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.white,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: AppTheme.topoSilver, width: 1.5),
       ),
@@ -585,7 +585,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
               Expanded(
                 child: Text(
                   data['country'] ?? 'Unknown',
-                  style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w900, color: AppTheme.secondary),
+                  style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w900, color: AppTheme.secondary),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -595,7 +595,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
           const SizedBox(height: 12),
           Text(
             data['fact'] ?? '',
-            style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w500, color: AppTheme.textSlate, height: 1.4),
+            style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w500, color: AppTheme.textSlate, height: 1.4),
             maxLines: 4,
             overflow: TextOverflow.ellipsis,
           ),
@@ -611,7 +611,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
         const SizedBox(width: 6),
         Text(
           text,
-          style: GoogleFonts.inter(
+          style: GoogleFonts.outfit(
             fontSize: 10,
             fontWeight: FontWeight.w800,
             color: color,

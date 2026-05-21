@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import '../constants/app_theme.dart';
-import '../constants/tamil_data.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/safe_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -43,7 +42,7 @@ class _RhymesScreenState extends State<RhymesScreen> {
                         children: [
                           const Icon(Icons.music_note_rounded, size: 48, color: AppTheme.borderLight),
                           const SizedBox(height: 16),
-                          Text('No rhymes found.', style: GoogleFonts.lexend(color: AppTheme.textGray)),
+                          Text('No rhymes found.', style: GoogleFonts.outfit(color: AppTheme.textGray)),
                         ],
                       ),
                     );
@@ -83,7 +82,7 @@ class _RhymesScreenState extends State<RhymesScreen> {
             children: [
               Text(
                 'SING ALONG',
-                style: GoogleFonts.lexend(
+                style: GoogleFonts.outfit(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: AppTheme.primaryRed.withOpacity(0.8),
@@ -125,12 +124,12 @@ class _RhymesScreenState extends State<RhymesScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.white,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: AppTheme.primaryRed.withOpacity(0.1)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: AppTheme.textDark.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -185,7 +184,7 @@ class _RhymesScreenState extends State<RhymesScreen> {
                       ),
                       Text(
                         rhyme['englishTitle'] ?? '',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.outfit(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                           color: AppTheme.textSlate,
@@ -200,7 +199,7 @@ class _RhymesScreenState extends State<RhymesScreen> {
                         ),
                         child: Text(
                           '${(rhyme['lines'] as List).length} Lines',
-                          style: GoogleFonts.lexend(
+                          style: GoogleFonts.outfit(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
                             color: AppTheme.primaryRed,
@@ -224,7 +223,7 @@ class _RhymesScreenState extends State<RhymesScreen> {
                       ),
                     ],
                   ),
-                  child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 30),
+                  child: const Icon(Icons.play_arrow_rounded, color: AppTheme.white, size: 30),
                 ),
               ],
             ),
@@ -256,7 +255,7 @@ class _RhymePlayerScreenState extends State<RhymePlayerScreen> {
   }
 
   void _initTts() async {
-    await flutterTts.setLanguage("ta-IN");
+    await flutterTts.setLanguage('ta-IN');
     await flutterTts.setPitch(1.0);
     await flutterTts.setSpeechRate(0.3);
   }
@@ -358,11 +357,11 @@ class _RhymePlayerScreenState extends State<RhymePlayerScreen> {
             Container(
               padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 30),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppTheme.white,
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: AppTheme.textDark.withOpacity(0.05),
                     blurRadius: 20,
                     offset: const Offset(0, -5),
                   ),
@@ -375,7 +374,7 @@ class _RhymePlayerScreenState extends State<RhymePlayerScreen> {
                   IconButton(
                     iconSize: 40,
                     icon: const Icon(Icons.skip_previous_rounded),
-                    color: _lineIndex > 0 ? AppTheme.textSlate : Colors.grey[200],
+                    color: _lineIndex > 0 ? AppTheme.textSlate : AppTheme.topoSilver,
                     onPressed: _lineIndex > 0 ? () {
                       _stop();
                       setState(() => _lineIndex--);
@@ -401,7 +400,7 @@ class _RhymePlayerScreenState extends State<RhymePlayerScreen> {
                       ),
                       child: Icon(
                         _isPlaying ? Icons.stop_rounded : Icons.play_arrow_rounded,
-                        color: Colors.white,
+                        color: AppTheme.white,
                         size: 40,
                       ),
                     ),
@@ -411,7 +410,7 @@ class _RhymePlayerScreenState extends State<RhymePlayerScreen> {
                   IconButton(
                     iconSize: 40,
                     icon: const Icon(Icons.skip_next_rounded),
-                    color: _lineIndex < _lines.length - 1 ? AppTheme.textSlate : Colors.grey[200],
+                    color: _lineIndex < _lines.length - 1 ? AppTheme.textSlate : AppTheme.topoSilver,
                     onPressed: _lineIndex < _lines.length - 1 ? () {
                       _stop();
                       setState(() => _lineIndex++);

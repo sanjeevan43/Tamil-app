@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class SpeechRecognitionService {
@@ -20,12 +21,12 @@ class SpeechRecognitionService {
   Future<bool> initialize() async {
     try {
       bool available = await _speechToText.initialize(
-        onError: (error) => print('Error: $error'),
-        onStatus: (status) => print('Status: $status'),
+        onError: (error) => debugPrint('Error: $error'),
+        onStatus: (status) => debugPrint('Status: $status'),
       );
       return available;
     } catch (e) {
-      print('Error initializing speech recognition: $e');
+      debugPrint('Error initializing speech recognition: $e');
       return false;
     }
   }
@@ -63,8 +64,8 @@ class SpeechRecognitionService {
     return _speechToText.isAvailable;
   }
 
-  List<LocaleName> getLocales() {
-    return _speechToText.locales;
+  Future<List<stt.LocaleName>> getLocales() async {
+    return _speechToText.locales();
   }
 
   Future<double> getSimilarity(String text1, String text2) async {

@@ -123,13 +123,7 @@ class _StoryQuizScreenState extends State<StoryQuizScreen> {
             // Question Card
             Container(
               padding: const EdgeInsets.all(30),
-              decoration: BoxDecoration(
-                color: AppTheme.white,
-                borderRadius: BorderRadius.circular(25),
-                boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20),
-                ],
-              ),
+              decoration: AppTheme.whiteCard(),
               child: Text(
                 question['question'],
                 style: GoogleFonts.notoSansTamil(

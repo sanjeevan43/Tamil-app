@@ -86,11 +86,11 @@ class LessonProvider with ChangeNotifier {
     if (selectedAnswer.trim().toLowerCase() == currentQuestion.correctAnswer.trim().toLowerCase()) {
       _isCorrect = true;
       _xpEarned += 10;
-      _feedbackMessage = "அற்புதம்! (Excellent!)";
+      _feedbackMessage = 'அற்புதம்! (Excellent!)';
     } else {
       _isCorrect = false;
       _heartsCount--;
-      _feedbackMessage = "தவறு. (Wrong.) சரியான விடை: ${currentQuestion.correctAnswer}";
+      _feedbackMessage = 'தவறு. (Wrong.) சரியான விடை: ${currentQuestion.correctAnswer}';
     }
     notifyListeners();
   }

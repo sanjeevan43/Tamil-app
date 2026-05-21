@@ -16,7 +16,7 @@ class TamilLettersScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: AppTheme.backgroundLight,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: AppTheme.white,
           elevation: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.secondary, size: 20),
@@ -73,7 +73,7 @@ class _LetterCard extends StatelessWidget {
           SnackBar(
             content: Row(
               children: [
-                const Icon(Icons.volume_up, color: Colors.white),
+                const Icon(Icons.volume_up, color: AppTheme.white),
                 const SizedBox(width: 10),
                 Text('Playing $letter', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
               ],
@@ -87,7 +87,7 @@ class _LetterCard extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -149,7 +149,7 @@ class _VowelsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final letters = TamilData.uyirEzhuthukkal;
+    const letters = TamilData.uyirEzhuthukkal;
     return GridView.builder(
       padding: const EdgeInsets.all(20),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -179,7 +179,7 @@ class _ConsonantsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final letters = TamilData.meiEzhuthukkal;
+    const letters = TamilData.meiEzhuthukkal;
     return GridView.builder(
       padding: const EdgeInsets.all(20),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -204,8 +204,8 @@ class _CombinedList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final baseCon = TamilData.uyirMeiBase;
-    final combinations = TamilData.uyirMeiEzhuthukkal;
+    const baseCon = TamilData.uyirMeiBase;
+    const combinations = TamilData.uyirMeiEzhuthukkal;
 
     return ListView.builder(
       padding: const EdgeInsets.all(16),
@@ -215,7 +215,7 @@ class _CombinedList extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 16),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           elevation: 0,
-          color: Colors.white,
+          color: AppTheme.white,
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
@@ -264,7 +264,7 @@ class _SpecialGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final letters = TamilData.aayudhaEzhuthu;
+    const letters = TamilData.aayudhaEzhuthu;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),

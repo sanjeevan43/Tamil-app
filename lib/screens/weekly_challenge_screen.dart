@@ -24,13 +24,13 @@ class WeeklyChallengeScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Weekly Challenge',
-          style: GoogleFonts.lexend(fontWeight: FontWeight.bold),
+          style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
-        elevation: 0,
+        
         centerTitle: true,
         iconTheme: const IconThemeData(color: AppTheme.textDark),
-        titleTextStyle: GoogleFonts.lexend(
+        titleTextStyle: GoogleFonts.outfit(
           color: AppTheme.textDark,
           fontSize: 20,
           fontWeight: FontWeight.bold,
@@ -63,8 +63,8 @@ class WeeklyChallengeScreen extends StatelessWidget {
         children: [
           Text(
             'TIME REMAINING',
-            style: GoogleFonts.lexend(
-              color: Colors.white.withOpacity(0.8),
+            style: GoogleFonts.outfit(
+              color: AppTheme.white.withOpacity(0.8),
               letterSpacing: 2,
               fontSize: 12,
               fontWeight: FontWeight.w600,
@@ -73,8 +73,8 @@ class WeeklyChallengeScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             '4 Days : 12 Hrs',
-            style: GoogleFonts.lexend(
-              color: Colors.white,
+            style: GoogleFonts.outfit(
+              color: AppTheme.white,
               fontSize: 32,
               fontWeight: FontWeight.bold,
             ),
@@ -85,7 +85,7 @@ class WeeklyChallengeScreen extends StatelessWidget {
             child: LinearProgressIndicator(
               value: 0.45,
               minHeight: 12,
-              backgroundColor: Colors.white.withOpacity(0.2),
+              backgroundColor: AppTheme.white.withOpacity(0.2),
               valueColor: const AlwaysStoppedAnimation(AppTheme.gold),
             ),
           ),
@@ -123,7 +123,7 @@ class WeeklyChallengeScreen extends StatelessWidget {
               children: [
                 Text(
                   challenge['title'] as String,
-                  style: GoogleFonts.lexend(
+                  style: GoogleFonts.outfit(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                     color: AppTheme.textDark,
@@ -131,7 +131,7 @@ class WeeklyChallengeScreen extends StatelessWidget {
                 ),
                 Text(
                   challenge['desc'] as String,
-                  style: GoogleFonts.lexend(
+                  style: GoogleFonts.outfit(
                     color: AppTheme.textSlate,
                     fontSize: 13,
                   ),
@@ -142,7 +142,7 @@ class WeeklyChallengeScreen extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: percent,
                     minHeight: 8,
-                    backgroundColor: Colors.grey[100],
+                    backgroundColor: AppTheme.topoLight,
                     valueColor: AlwaysStoppedAnimation(isDone ? AppTheme.success : AppTheme.primaryRed),
                   ),
                 ),
@@ -157,7 +157,7 @@ class WeeklyChallengeScreen extends StatelessWidget {
               else
                 Text(
                   '${challenge['current']}/${challenge['goal']}',
-                  style: GoogleFonts.lexend(
+                  style: GoogleFonts.outfit(
                     fontWeight: FontWeight.bold,
                     color: AppTheme.primaryRed,
                     fontSize: 16,

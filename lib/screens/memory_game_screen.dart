@@ -240,7 +240,7 @@ class _MemoryGameScreenState extends State<MemoryGameScreen>
                 value: _cards.isEmpty
                     ? 0
                     : _matches / (_cards.length ~/ 2),
-                backgroundColor: Colors.grey.shade300,
+                backgroundColor: AppTheme.textGray.withOpacity(0.3),
                 color: AppTheme.success,
                 minHeight: 8,
               ),

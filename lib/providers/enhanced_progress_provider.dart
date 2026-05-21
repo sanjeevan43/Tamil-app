@@ -4,8 +4,11 @@ import '../services/firestore_service.dart';
 import '../data/reading_journey_data.dart';
 
 class EnhancedProgressProvider extends ChangeNotifier {
-  final FirestoreService _firestore = FirestoreService();
+  final FirestoreService _firestore;
   String? _userId;
+
+  EnhancedProgressProvider({FirestoreService? firestore}) 
+      : _firestore = firestore ?? FirestoreService();
 
   // Student Data
   String _userName = 'Student';
@@ -28,12 +31,12 @@ class EnhancedProgressProvider extends ChangeNotifier {
   
   // Teacher Mode
   bool _isTeacherMode = false;
-  List<String> _assignedHomework = [];
-  List<Map<String, String>> _discussions = [];
-  List<Map<String, dynamic>> _assignedQuizzes = [];
+  final List<String> _assignedHomework = [];
+  final List<Map<String, String>> _discussions = [];
+  final List<Map<String, dynamic>> _assignedQuizzes = [];
   String _globalNotice = 'Welcome to அகரவளம்!';
   List<String> _streakHistory = [];
-  String _lastRewardDate = '';
+  final String _lastRewardDate = '';
   
   // Daily Missions
   List<Map<String, dynamic>> _dailyMissions = [

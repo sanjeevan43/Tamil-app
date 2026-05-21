@@ -22,7 +22,7 @@ class GamesHubScreen extends StatelessWidget {
     final games = [
       {'name': 'Letter Hunt', 'tamil': 'எழுத்து வேட்டை', 'icon': '🎯', 'description': 'Find the correct letter', 'color': const Color(0xFFFF7043), 'screen': const LetterHuntGame()},
       {'name': 'Word Builder', 'tamil': 'சொல் கட்டுதல்', 'icon': '🔨', 'description': 'Build Tamil words', 'color': const Color(0xFF42A5F5), 'screen': const WordBuilderGame()},
-      {'name': 'Memory Match', 'tamil': 'நினைவக போட்டி', 'icon': '🧠', 'description': 'Match Tamil letters', 'color': const Color(0xFF66BB6A), 'screen': const MemoryGameScreen()},
+      {'name': 'Memory Match', 'tamil': 'நினைவக போட்டி', 'icon': '🧠', 'description': 'Match Tamil letters', 'color': AppTheme.success, 'screen': const MemoryGameScreen()},
       {'name': 'Quiz', 'tamil': 'வினாடி வினா', 'icon': '❓', 'description': 'Answer questions', 'color': const Color(0xFFAB47BC), 'screen': const QuizScreen()},
       {'name': 'Fill Blanks', 'tamil': 'இடம் நிரப்பு', 'icon': '📝', 'description': 'Complete the word', 'color': const Color(0xFFEF5350), 'screen': const FillBlanksGame()},
       {'name': 'Sentence Builder', 'tamil': 'வாக்கிய அமைப்பு', 'icon': '📚', 'description': 'Form sentences', 'color': const Color(0xFF26A69A), 'screen': const SentenceBuilderGame()},
@@ -50,9 +50,9 @@ class GamesHubScreen extends StatelessWidget {
                 onTap: () => Navigator.pop(context),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppTheme.white,
                     shape: BoxShape.circle,
-                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 8)],
+                    boxShadow: [BoxShadow(color: AppTheme.textDark.withOpacity(0.08), blurRadius: 8)],
                   ),
                   child: const Icon(Icons.arrow_back_rounded, color: AppTheme.secondary),
                 ),
@@ -62,7 +62,7 @@ class GamesHubScreen extends StatelessWidget {
               background: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [AppTheme.secondary, const Color(0xFF2C2C2E)],
+                    colors: [AppTheme.secondary, AppTheme.secondary.withOpacity(0.85)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -77,11 +77,11 @@ class GamesHubScreen extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(color: AppTheme.primary, borderRadius: BorderRadius.circular(8)),
-                          child: Text('${games.length} GAMES', style: GoogleFonts.outfit(fontSize: 9, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1)),
+                          child: Text('${games.length} GAMES', style: GoogleFonts.outfit(fontSize: 9, fontWeight: FontWeight.w900, color: AppTheme.white, letterSpacing: 1)),
                         ),
                         const SizedBox(height: 12),
-                        Text('விளையாட்டு அரங்கம்', style: GoogleFonts.notoSansTamil(fontSize: 28, fontWeight: FontWeight.w900, color: Colors.white)),
-                        Text('Games Arena', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white.withOpacity(0.6))),
+                        Text('விளையாட்டு அரங்கம்', style: GoogleFonts.notoSansTamil(fontSize: 28, fontWeight: FontWeight.w900, color: AppTheme.white)),
+                        Text('Games Arena', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.white.withOpacity(0.6))),
                       ],
                     ),
                   ),
@@ -164,8 +164,8 @@ class GamesHubScreen extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(game['name'] as String, style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w900, color: Colors.white)),
-                Text(game['tamil'] as String, style: GoogleFonts.notoSansTamil(fontSize: 11, color: Colors.white.withOpacity(0.8))),
+                Text(game['name'] as String, style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w900, color: AppTheme.white)),
+                Text(game['tamil'] as String, style: GoogleFonts.notoSansTamil(fontSize: 11, color: AppTheme.white.withOpacity(0.8))),
               ],
             ),
           ],
@@ -180,7 +180,7 @@ class GamesHubScreen extends StatelessWidget {
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => game['screen'] as Widget)),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.white,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(color: color.withOpacity(0.15), width: 1.5),
           boxShadow: [

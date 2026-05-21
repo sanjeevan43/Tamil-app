@@ -99,7 +99,7 @@ class AnalyticsService {
     if (docs.isEmpty) return 0.0;
     int total = 0;
     for (var doc in docs) {
-      total += doc['score'] ?? 0;
+      total += (doc['score'] as num?)?.toInt() ?? 0;
     }
     return total / docs.length;
   }
@@ -107,10 +107,10 @@ class AnalyticsService {
   int _calculateTotalTime(List<QueryDocumentSnapshot> gameScores, List<QueryDocumentSnapshot> lessons) {
     int total = 0;
     for (var doc in gameScores) {
-      total += doc['timeSpent'] ?? 0;
+      total += (doc['timeSpent'] as num?)?.toInt() ?? 0;
     }
     for (var doc in lessons) {
-      total += doc['timeSpent'] ?? 0;
+      total += (doc['timeSpent'] as num?)?.toInt() ?? 0;
     }
     return total;
   }
@@ -124,7 +124,7 @@ class AnalyticsService {
           .get();
 
       return snapshot.docs
-          .map((doc) => doc.data() as Map<String, dynamic>)
+          .map((doc) => doc.data())
           .toList();
     } catch (e) {
       print('Error getting top players: $e');
@@ -142,7 +142,7 @@ class AnalyticsService {
           .get();
 
       return snapshot.docs
-          .map((doc) => doc.data() as Map<String, dynamic>)
+          .map((doc) => doc.data())
           .toList();
     } catch (e) {
       print('Error getting game statistics: $e');

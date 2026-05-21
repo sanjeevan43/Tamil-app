@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../providers/enhanced_progress_provider.dart';
 import '../services/auth_service.dart';
+import 'avatar_shop_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -51,53 +52,65 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildAvatarSection(BuildContext context, EnhancedProgressProvider progress) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(32),
-      decoration: AppTheme.premiumCard(radius: 40),
-      child: Column(
-        children: [
-          Container(
-            width: 130,
-            height: 130,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 30, offset: const Offset(0, 15)),
-              ],
-              border: Border.all(color: Colors.white.withOpacity(0.3), width: 8),
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const AvatarShopScreen()),
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(32),
+        decoration: AppTheme.premiumCard(radius: 40),
+        child: Column(
+          children: [
+            Container(
+              width: 130,
+              height: 130,
+              decoration: BoxDecoration(
+                color: AppTheme.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(color: AppTheme.textDark.withOpacity(0.3), blurRadius: 30, offset: const Offset(0, 15)),
+                ],
+                border: Border.all(color: AppTheme.white.withOpacity(0.3), width: 8),
+              ),
+              child: Center(
+                child: Text(progress.avatar, style: const TextStyle(fontSize: 70)),
+              ),
             ),
-            child: Center(
-              child: Text(progress.avatar, style: const TextStyle(fontSize: 70)),
+            const SizedBox(height: 24),
+            Text(
+              progress.userName,
+              style: GoogleFonts.outfit(fontSize: 32, fontWeight: FontWeight.w900, color: AppTheme.white, letterSpacing: -0.5),
             ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            progress.userName,
-            style: GoogleFonts.outfit(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -0.5),
-          ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
+            const SizedBox(height: 8),
+            Text(
+              'Tap avatar to customize style 🛍️',
+              style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.white.withOpacity(0.8)),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.shield_rounded, color: Colors.white, size: 18),
-                const SizedBox(width: 8),
-                Text(
-                  'LVL ${progress.level} TAMIL SCHOLAR',
-                  style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1.5),
-                ),
-              ],
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: AppTheme.white.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: AppTheme.white.withOpacity(0.1)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.shield_rounded, color: AppTheme.white, size: 18),
+                  const SizedBox(width: 8),
+                  Text(
+                    'LVL ${progress.level} TAMIL SCHOLAR',
+                    style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w900, color: AppTheme.white, letterSpacing: 1.5),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -111,10 +124,10 @@ class ProfileScreen extends StatelessWidget {
       mainAxisSpacing: 16,
       childAspectRatio: 1.1,
       children: [
-        _buildStatCard('🎯', '${progress.totalStars}', 'STARS HELD', const Color(0xFF6200EA)),
-        _buildStatCard('🔥', '${progress.streakDays}', 'DAY STREAK', AppTheme.primary),
-        _buildStatCard('💎', '${progress.totalCoins}', 'TOTAL COINS', const Color(0xFF00B0FF)),
-        _buildStatCard('🏆', '${progress.achievementBadges.length}', 'BADGES WON', const Color(0xFF00C853)),
+        _buildStatCard('🎯', '${progress.totalStars}', 'STARS HELD', AppTheme.primary),
+        _buildStatCard('🔥', '${progress.streakDays}', 'DAY STREAK', AppTheme.warning),
+        _buildStatCard('💎', '${progress.totalCoins}', 'TOTAL COINS', AppTheme.info),
+        _buildStatCard('🏆', '${progress.achievementBadges.length}', 'BADGES WON', AppTheme.success),
       ],
     );
   }
@@ -149,7 +162,6 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildStreakCalendar(EnhancedProgressProvider progress) {
     final days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
     final today = DateTime.now().weekday - 1;
-    final streakHist = progress.streakHistory;
     
     return Container(
       width: double.infinity,
@@ -164,8 +176,8 @@ class ProfileScreen extends StatelessWidget {
             children: [
               Container(
                 padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(color: Colors.orange.withOpacity(0.1), borderRadius: BorderRadius.circular(14)),
-                child: const Icon(Icons.local_fire_department_rounded, color: Colors.orange, size: 22),
+                decoration: BoxDecoration(color: AppTheme.warning.withOpacity(0.1), borderRadius: BorderRadius.circular(14)),
+                child: const Icon(Icons.local_fire_department_rounded, color: AppTheme.warning, size: 22),
               ),
               const SizedBox(width: 16),
               Column(
@@ -191,23 +203,23 @@ class ProfileScreen extends StatelessWidget {
                     height: 38,
                     decoration: BoxDecoration(
                       gradient: isDone
-                          ? LinearGradient(colors: [Colors.orange, Colors.orange.shade700])
+                          ? LinearGradient(colors: [AppTheme.warning, AppTheme.warning.withOpacity(0.7)])
                           : null,
                       color: isDone ? null : AppTheme.topoLight,
                       shape: BoxShape.circle,
-                      border: isCurrent ? Border.all(color: Colors.orange, width: 3) : null,
+                      border: isCurrent ? Border.all(color: AppTheme.warning, width: 3) : null,
                       boxShadow: isDone
-                          ? [BoxShadow(color: Colors.orange.withOpacity(0.3), blurRadius: 8)]
+                          ? [BoxShadow(color: AppTheme.warning.withOpacity(0.3), blurRadius: 8)]
                           : null,
                     ),
                     child: Center(
                       child: isDone
-                          ? const Icon(Icons.check_rounded, color: Colors.white, size: 18)
+                          ? const Icon(Icons.check_rounded, color: AppTheme.white, size: 18)
                           : Text(days[index], style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w800, color: AppTheme.textGray)),
                     ),
                   ),
                   const SizedBox(height: 6),
-                  Text(days[index], style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w700, color: isDone ? Colors.orange : AppTheme.textGray)),
+                  Text(days[index], style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w700, color: isDone ? AppTheme.warning : AppTheme.textGray)),
                 ],
               );
             }),
@@ -226,14 +238,14 @@ class ProfileScreen extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [const Color(0xFF6200EA), const Color(0xFF6200EA).withOpacity(0.85)],
+        gradient: const LinearGradient(
+          colors: [AppTheme.secondary, AppTheme.primaryDark],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
-          BoxShadow(color: const Color(0xFF6200EA).withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 10)),
+          BoxShadow(color: AppTheme.primary.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 10)),
         ],
       ),
       child: Column(
@@ -244,15 +256,15 @@ class ProfileScreen extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('LEVEL ${progress.level}', style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.white.withOpacity(0.7), letterSpacing: 2)),
+                  Text('LEVEL ${progress.level}', style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.white.withOpacity(0.7), letterSpacing: 2)),
                   const SizedBox(height: 4),
-                  Text('XP Progress', style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.white)),
+                  Text('XP Progress', style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w900, color: AppTheme.white)),
                 ],
               ),
               Container(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(color: Colors.white.withOpacity(0.15), shape: BoxShape.circle),
-                child: Text('⚡', style: const TextStyle(fontSize: 24)),
+                decoration: BoxDecoration(color: AppTheme.white.withOpacity(0.15), shape: BoxShape.circle),
+                child: const Text('⚡', style: TextStyle(fontSize: 24)),
               ),
             ],
           ),
@@ -262,16 +274,16 @@ class ProfileScreen extends StatelessWidget {
             child: LinearProgressIndicator(
               value: xpPercent.clamp(0.0, 1.0),
               minHeight: 14,
-              backgroundColor: Colors.white.withOpacity(0.15),
-              valueColor: const AlwaysStoppedAnimation(Colors.amber),
+              backgroundColor: AppTheme.white.withOpacity(0.15),
+              valueColor: const AlwaysStoppedAnimation(AppTheme.warning),
             ),
           ),
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('${currentXP % nextLevelXP} XP', style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w800, color: Colors.amber)),
-              Text('$nextLevelXP XP to Level ${progress.level + 1}', style: GoogleFonts.outfit(fontSize: 11, color: Colors.white.withOpacity(0.7))),
+              Text('${currentXP % nextLevelXP} XP', style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w800, color: AppTheme.warning)),
+              Text('$nextLevelXP XP to Level ${progress.level + 1}', style: GoogleFonts.outfit(fontSize: 11, color: AppTheme.white.withOpacity(0.7))),
             ],
           ),
         ],
@@ -331,7 +343,7 @@ class ProfileScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: AppTheme.topoSilver),
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4)),
+                      BoxShadow(color: AppTheme.textDark.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4)),
                     ],
                   ),
                   child: Row(
@@ -356,6 +368,17 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildActions(BuildContext context, EnhancedProgressProvider progress) {
     return Column(
       children: [
+        _profileAction(
+          icon: Icons.storefront_rounded,
+          label: 'Visit Avatar Shop',
+          color: AppTheme.info,
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const AvatarShopScreen()),
+            );
+          },
+        ),
+        const SizedBox(height: 16),
         _profileAction(
           icon: Icons.badge_rounded,
           label: 'Edit Profile Name',
@@ -453,7 +476,7 @@ class ProfileScreen extends StatelessWidget {
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppTheme.secondary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
-            child: Text('UPDATE', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: Colors.white)),
+            child: Text('UPDATE', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.white)),
           ),
         ],
       ),
@@ -481,7 +504,7 @@ class ProfileScreen extends StatelessWidget {
               Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
-            child: Text('ERASE ALL', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: Colors.white)),
+            child: Text('ERASE ALL', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.white)),
           ),
         ],
       ),

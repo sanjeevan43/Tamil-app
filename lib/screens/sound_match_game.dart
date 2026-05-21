@@ -35,7 +35,7 @@ class _SoundMatchGameState extends State<SoundMatchGame> {
   }
 
   void _initTts() async {
-    await _flutterTts.setLanguage("ta-IN");
+    await _flutterTts.setLanguage('ta-IN');
     await _flutterTts.setSpeechRate(0.5);
     _playSound();
   }
@@ -85,7 +85,7 @@ class _SoundMatchGameState extends State<SoundMatchGame> {
     return Scaffold(
       backgroundColor: AppTheme.backgroundLight,
       appBar: AppBar(
-        title: Text('Sound Match', style: GoogleFonts.inter(fontWeight: FontWeight.w800)),
+        title: Text('Sound Match', style: GoogleFonts.outfit(fontWeight: FontWeight.w800)),
       ),
       body: SafeArea(
         child: Padding(
@@ -99,7 +99,7 @@ class _SoundMatchGameState extends State<SoundMatchGame> {
                 decoration: AppTheme.whiteCard(radius: 28),
                 child: Column(
                   children: [
-                    Text('LISTEN CAREFULLY', style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.textSlate.withOpacity(0.4), letterSpacing: 2)),
+                    Text('LISTEN CAREFULLY', style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.textSlate.withOpacity(0.4), letterSpacing: 2)),
                     const SizedBox(height: 24),
                     GestureDetector(
                       onTap: _isPlaying ? null : _playSound,
@@ -121,7 +121,7 @@ class _SoundMatchGameState extends State<SoundMatchGame> {
                 ),
               ),
               const Spacer(),
-              Text('WHICH ONE DID YOU HEAR?', style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.textSlate.withOpacity(0.4), letterSpacing: 2)),
+              Text('WHICH ONE DID YOU HEAR?', style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.textSlate.withOpacity(0.4), letterSpacing: 2)),
               const SizedBox(height: 24),
               // Options Grid
               Expanded(
@@ -137,12 +137,12 @@ class _SoundMatchGameState extends State<SoundMatchGame> {
                   itemBuilder: (context, index) {
                     final option = _data[_currentIndex]['options'][index];
                     bool isThisSelected = _selectedOption == option;
-                    Color cardColor = Colors.white;
+                    Color cardColor = AppTheme.white;
                     Color textColor = AppTheme.textDark;
                     
                     if (isThisSelected) {
                       cardColor = _isCorrect! ? AppTheme.success : AppTheme.error;
-                      textColor = Colors.white;
+                      textColor = AppTheme.white;
                     }
 
                     return GestureDetector(
@@ -153,7 +153,7 @@ class _SoundMatchGameState extends State<SoundMatchGame> {
                           borderRadius: BorderRadius.circular(24),
                           boxShadow: [
                             BoxShadow(
-                              color: isThisSelected ? cardColor.withOpacity(0.3) : Colors.black.withOpacity(0.04),
+                              color: isThisSelected ? cardColor.withOpacity(0.3) : AppTheme.textDark.withOpacity(0.04),
                               blurRadius: 12,
                               offset: const Offset(0, 6),
                             ),

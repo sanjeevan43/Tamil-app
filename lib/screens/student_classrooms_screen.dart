@@ -15,9 +15,9 @@ class StudentClassroomsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppTheme.backgroundLight,
       appBar: AppBar(
-        title: Text('Classrooms', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: Colors.white)),
+        title: Text('Classrooms', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: AppTheme.white)),
         backgroundColor: AppTheme.primary,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: AppTheme.white),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: firestore.getClassroomsStream(),
@@ -34,7 +34,7 @@ class StudentClassroomsScreen extends StatelessWidget {
               final data = docs[index].data() as Map<String, dynamic>;
               final id = docs[index].id;
               return Card(
-                elevation: 3,
+                
                 margin: const EdgeInsets.only(bottom: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 child: ListTile(

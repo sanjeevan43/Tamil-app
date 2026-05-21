@@ -125,7 +125,7 @@ class TeachingGuideScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.psychology, color: Colors.white, size: 40),
+              const Icon(Icons.psychology, color: AppTheme.white, size: 40),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
@@ -136,12 +136,12 @@ class TeachingGuideScreen extends StatelessWidget {
                       style: GoogleFonts.notoSansTamil(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: AppTheme.white,
                       ),
                     ),
-                    const Text(
+                    Text(
                       'அறிவியல்பூர்வமான தமிழ் கற்றல் முறை',
-                      style: TextStyle(color: Colors.white70, fontSize: 14),
+                      style: TextStyle(color: AppTheme.white.withOpacity(0.70), fontSize: 14),
                     ),
                   ],
                 ),
@@ -210,7 +210,7 @@ class TeachingGuideScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(color: AppTheme.primaryRed, borderRadius: BorderRadius.circular(8)),
-            child: Text(time, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            child: Text(time, style: const TextStyle(color: AppTheme.white, fontWeight: FontWeight.bold)),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -243,7 +243,7 @@ class TeachingGuideScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          Text(desc, style: const TextStyle(fontSize: 14, color: Colors.black87)),
+          Text(desc, style: const TextStyle(fontSize: 14, color: AppTheme.textDark)),
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(12),
@@ -293,10 +293,10 @@ class TeachingGuideScreen extends StatelessWidget {
       child: Column(
         children: stages.asMap().entries.map((e) => Row(
           children: [
-            CircleAvatar(radius: 12, backgroundColor: AppTheme.primaryRed, child: Text('${e.key + 1}', style: const TextStyle(color: Colors.white, fontSize: 10))),
+            CircleAvatar(radius: 12, backgroundColor: AppTheme.primaryRed, child: Text('${e.key + 1}', style: const TextStyle(color: AppTheme.white, fontSize: 10))),
             const SizedBox(width: 12),
             Text(e.value, style: const TextStyle(fontSize: 14)),
-            if (e.key < stages.length - 1) const Expanded(child: Icon(Icons.arrow_forward, size: 14, color: Colors.grey)),
+            if (e.key < stages.length - 1) const Expanded(child: Icon(Icons.arrow_forward, size: 14, color: AppTheme.textGray)),
           ],
         )).toList(),
       ),
@@ -308,18 +308,18 @@ class TeachingGuideScreen extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.green.shade50,
+        color: AppTheme.success.withOpacity(0.05),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.green.shade200, width: 2),
+        border: Border.all(color: AppTheme.success.withOpacity(0.2), width: 2),
       ),
       child: const Column(
         children: [
-          Text('வெற்றிக்கான சூத்திரம்', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green)),
+          Text('வெற்றிக்கான சூத்திரம்', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.success)),
           SizedBox(height: 8),
           Text(
             'திரும்பச் செய்தல் + கலந்துரையாடல் + ஊக்கம் + குறுகிய பாடங்கள் = பயனுள்ள தமிழ் கற்றல்',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: Colors.green),
+            style: TextStyle(fontSize: 14, color: AppTheme.success),
           ),
         ],
       ),

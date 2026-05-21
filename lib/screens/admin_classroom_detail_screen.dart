@@ -149,9 +149,9 @@ class _AdminClassroomDetailScreenState extends State<AdminClassroomDetailScreen>
     return Scaffold(
       backgroundColor: AppTheme.backgroundLight,
       appBar: AppBar(
-        title: Text(widget.classroomName, style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: Colors.white)),
+        title: Text(widget.classroomName, style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: AppTheme.white)),
         backgroundColor: AppTheme.primary,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: AppTheme.white),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _firestore.getClassroomPostsStream(widget.classroomId),
@@ -174,7 +174,7 @@ class _AdminClassroomDetailScreenState extends State<AdminClassroomDetailScreen>
               final fileType = data['fileType'] as String?;
 
               return Card(
-                elevation: 3,
+                
                 margin: const EdgeInsets.only(bottom: 16),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 child: Padding(
@@ -190,7 +190,7 @@ class _AdminClassroomDetailScreenState extends State<AdminClassroomDetailScreen>
                           ),
                           if (isAdmin)
                             IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
+                              icon: const Icon(Icons.delete, color: AppTheme.primary),
                               onPressed: () => _firestore.deleteClassroomPost(widget.classroomId, id),
                             ),
                         ],
@@ -207,9 +207,9 @@ class _AdminClassroomDetailScreenState extends State<AdminClassroomDetailScreen>
                       if (fileUrl != null && fileType == 'pdf') ...[
                         ElevatedButton.icon(
                           onPressed: () => _launchUrl(fileUrl),
-                          icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
-                          label: const Text('View PDF', style: TextStyle(color: Colors.white)),
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+                          icon: const Icon(Icons.picture_as_pdf, color: AppTheme.white),
+                          label: const Text('View PDF', style: TextStyle(color: AppTheme.white)),
+                          style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primary),
                         ),
                       ],
                     ],
@@ -224,7 +224,7 @@ class _AdminClassroomDetailScreenState extends State<AdminClassroomDetailScreen>
         ? FloatingActionButton(
             backgroundColor: AppTheme.primary,
             onPressed: () => _showAddPostDialog(context),
-            child: const Icon(Icons.add, color: Colors.white),
+            child: const Icon(Icons.add, color: AppTheme.white),
           )
         : null,
     );

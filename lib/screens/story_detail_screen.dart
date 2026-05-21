@@ -125,10 +125,10 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppTheme.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: AppTheme.textDark.withOpacity(0.05),
                   blurRadius: 10,
                   offset: const Offset(0, -5),
                 ),
@@ -190,9 +190,9 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
                       fit: BoxFit.cover,
                     )
                   : Container(
-                      color: Colors.grey[200],
-                      child: Center(
-                        child: Icon(Icons.image, size: 80, color: Colors.grey[400]),
+                      color: AppTheme.topoSilver,
+                      child: const Center(
+                        child: Icon(Icons.image, size: 80, color: AppTheme.textGray),
                       ),
                     ),
             ),
@@ -222,7 +222,7 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
                       Text(
                         scene['englishContent'] ?? '',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.outfit(
                           fontSize: 16,
                           height: 1.4,
                           fontWeight: FontWeight.w500,

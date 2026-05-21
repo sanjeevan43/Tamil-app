@@ -148,7 +148,7 @@ class _QuizBattleGameState extends State<QuizBattleGame> {
             const SizedBox(height: 20),
             LinearProgressIndicator(
               value: (_currentQuestion + 1) / _questions.length,
-              backgroundColor: Colors.grey.shade300,
+              backgroundColor: AppTheme.textGray.withOpacity(0.3),
               color: AppTheme.primaryRed,
               minHeight: 8,
             ),

@@ -6,7 +6,6 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
-import '../widgets/glass_card.dart';
 import '../providers/enhanced_progress_provider.dart';
 
 class ReadingPracticeScreen extends StatefulWidget {
@@ -43,7 +42,7 @@ class _ReadingPracticeScreenState extends State<ReadingPracticeScreen> with Sing
 
   void _initTts() {
     _flutterTts = FlutterTts();
-    _flutterTts.setLanguage("ta-IN");
+    _flutterTts.setLanguage('ta-IN');
     _flutterTts.setPitch(1.0);
     _flutterTts.setSpeechRate(0.5);
   }
@@ -92,7 +91,7 @@ class _ReadingPracticeScreenState extends State<ReadingPracticeScreen> with Sing
               }
             });
           },
-          localeId: "ta_IN",
+          localeId: 'ta_IN',
           listenFor: const Duration(seconds: 10),
           pauseFor: const Duration(seconds: 3),
         );
@@ -161,16 +160,16 @@ class _ReadingPracticeScreenState extends State<ReadingPracticeScreen> with Sing
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.stars_rounded, color: Colors.amber, size: 80),
+            const Icon(Icons.stars_rounded, color: AppTheme.warning, size: 80),
             const SizedBox(height: 16),
             Text(
               'EXCELLENT!',
-              style: GoogleFonts.inter(fontWeight: FontWeight.w900, letterSpacing: 2, fontSize: 12, color: AppTheme.primary),
+              style: GoogleFonts.outfit(fontWeight: FontWeight.w900, letterSpacing: 2, fontSize: 12, color: AppTheme.primary),
             ),
             const SizedBox(height: 8),
             Text(
               'Module Completed',
-              style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.bold),
+              style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
             SizedBox(
@@ -185,7 +184,7 @@ class _ReadingPracticeScreenState extends State<ReadingPracticeScreen> with Sing
                   backgroundColor: AppTheme.primary,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 ),
-                child: Text('CONTINUE', style: GoogleFonts.inter(fontWeight: FontWeight.w800, color: Colors.white)),
+                child: Text('CONTINUE', style: GoogleFonts.outfit(fontWeight: FontWeight.w800, color: AppTheme.white)),
               ),
             ),
           ],
@@ -197,7 +196,7 @@ class _ReadingPracticeScreenState extends State<ReadingPracticeScreen> with Sing
   @override
   Widget build(BuildContext context) {
     List<dynamic> wordsList = widget.levelData['words'] ?? [];
-    if (wordsList.isEmpty) return const Scaffold(body: Center(child: Text("No words in this level")));
+    if (wordsList.isEmpty) return const Scaffold(body: Center(child: Text('No words in this level')));
     
     final currentWordData = wordsList[_currentIndex] as Map<String, dynamic>;
 
@@ -243,16 +242,16 @@ class _ReadingPracticeScreenState extends State<ReadingPracticeScreen> with Sing
             icon: const Icon(Icons.close_rounded),
             onPressed: () => Navigator.pop(context),
             style: IconButton.styleFrom(
-              backgroundColor: Colors.white,
+              backgroundColor: AppTheme.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-              side: BorderSide(color: AppTheme.borderLight),
+              side: const BorderSide(color: AppTheme.borderLight),
             ),
           ),
           Column(
             children: [
               Text(
                 'MASTERY SESSION',
-                style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.primary, letterSpacing: 1.5),
+                style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.primary, letterSpacing: 1.5),
               ),
               Text(
                 widget.levelData['title'],
@@ -276,11 +275,11 @@ class _ReadingPracticeScreenState extends State<ReadingPracticeScreen> with Sing
             children: [
               Text(
                 'PROGRESS', 
-                style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w800, color: AppTheme.textSlate)
+                style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w800, color: AppTheme.textSlate)
               ),
               Text(
                 '${_currentIndex + 1} OF $total', 
-                style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.primary),
+                style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.primary),
               ),
             ],
           ),
@@ -291,7 +290,7 @@ class _ReadingPracticeScreenState extends State<ReadingPracticeScreen> with Sing
               value: (_currentIndex + 1) / total,
               minHeight: 8,
               backgroundColor: AppTheme.primary.withOpacity(0.08),
-              valueColor: AlwaysStoppedAnimation(AppTheme.primary),
+              valueColor: const AlwaysStoppedAnimation(AppTheme.primary),
             ),
           ),
         ],
@@ -304,7 +303,7 @@ class _ReadingPracticeScreenState extends State<ReadingPracticeScreen> with Sing
       children: [
         Text(
           'SPEAK CLEARLY', 
-          style: GoogleFonts.inter(
+          style: GoogleFonts.outfit(
             color: AppTheme.textSlate, 
             fontWeight: FontWeight.w900, 
             letterSpacing: 2.0,
@@ -329,7 +328,7 @@ class _ReadingPracticeScreenState extends State<ReadingPracticeScreen> with Sing
                const SizedBox(height: 16),
                Text(
                  word['pronunciation']!,
-                 style: GoogleFonts.inter(
+                 style: GoogleFonts.outfit(
                    fontSize: 22,
                    fontWeight: FontWeight.w600,
                    color: AppTheme.textSlate,
@@ -337,7 +336,7 @@ class _ReadingPracticeScreenState extends State<ReadingPracticeScreen> with Sing
                ),
                Text(
                  word['meaning']!,
-                 style: GoogleFonts.inter(
+                 style: GoogleFonts.outfit(
                    fontSize: 16,
                    color: AppTheme.textGray,
                  ),
@@ -381,7 +380,7 @@ class _ReadingPracticeScreenState extends State<ReadingPracticeScreen> with Sing
                     const Icon(Icons.volume_up_rounded, size: 28, color: AppTheme.primary),
                     Text(
                       'LISTEN',
-                      style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w800, color: AppTheme.primary),
+                      style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w800, color: AppTheme.primary),
                     ),
                   ],
                 ),
@@ -398,7 +397,7 @@ class _ReadingPracticeScreenState extends State<ReadingPracticeScreen> with Sing
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: _isListening 
-                      ? [Colors.redAccent, Colors.red] 
+                      ? [AppTheme.primary, AppTheme.primary] 
                       : [AppTheme.primary, AppTheme.primary.withOpacity(0.8)],
                   ),
                   borderRadius: BorderRadius.circular(20),
@@ -409,11 +408,11 @@ class _ReadingPracticeScreenState extends State<ReadingPracticeScreen> with Sing
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(_isListening ? Icons.mic_off_rounded : Icons.mic_rounded, color: Colors.white, size: 28),
+                    Icon(_isListening ? Icons.mic_off_rounded : Icons.mic_rounded, color: AppTheme.white, size: 28),
                     const SizedBox(width: 12),
                     Text(
                       _isListening ? 'LISTENING...' : 'TAP TO RECORD',
-                      style: GoogleFonts.inter(fontWeight: FontWeight.w900, color: Colors.white, fontSize: 13),
+                      style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.white, fontSize: 13),
                     ),
                   ],
                 ),
@@ -430,29 +429,29 @@ class _ReadingPracticeScreenState extends State<ReadingPracticeScreen> with Sing
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 20, offset: const Offset(0, -10))],
+        boxShadow: [BoxShadow(color: AppTheme.textDark.withOpacity(0.12), blurRadius: 20, offset: const Offset(0, -10))],
       ),
       child: Column(
         children: [
           Container(
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
             decoration: BoxDecoration(
-              color: _isCorrect ? AppTheme.success.withOpacity(0.08) : Colors.orange.withOpacity(0.08),
+              color: _isCorrect ? AppTheme.success.withOpacity(0.08) : AppTheme.warning.withOpacity(0.08),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
               children: [
                 Icon(
                   _isCorrect ? Icons.check_circle_rounded : Icons.priority_high_rounded,
-                  color: _isCorrect ? AppTheme.success : Colors.orange,
+                  color: _isCorrect ? AppTheme.success : AppTheme.warning,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     _isCorrect ? 'Stunning! Perfect pronunciation.' : 'Close! Let\'s try that again.',
-                    style: GoogleFonts.inter(fontWeight: FontWeight.bold, color: _isCorrect ? AppTheme.success : Colors.orange[800], fontSize: 15),
+                    style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: _isCorrect ? AppTheme.success : AppTheme.warning, fontSize: 15),
                   ),
                 ),
               ],
@@ -471,9 +470,9 @@ class _ReadingPracticeScreenState extends State<ReadingPracticeScreen> with Sing
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('CONTINUE', style: GoogleFonts.inter(fontWeight: FontWeight.w900, fontSize: 16, color: Colors.white)),
+                  Text('CONTINUE', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 16, color: AppTheme.white)),
                   const SizedBox(width: 12),
-                  const Icon(Icons.arrow_forward_rounded, color: Colors.white),
+                  const Icon(Icons.arrow_forward_rounded, color: AppTheme.white),
                 ],
               ),
             ),

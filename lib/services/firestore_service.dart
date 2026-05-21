@@ -1,10 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class FirestoreService {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _db;
+
+  FirestoreService({FirebaseFirestore? firestore}) 
+      : _db = firestore ?? FirebaseFirestore.instance;
 
   // --- Users ---
   Future<void> saveUser(User user, {String role = 'student'}) async {
@@ -33,32 +37,7 @@ class FirestoreService {
     return doc.data();
   }
 
-  // --- Daily Tamil Power Word ---
-  Future<Map<String, dynamic>?> getDailyWord() async {
-    final today = DateTime.now();
-    final dateStr = "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
-    
-    final query = await _db.collection('daily_words')
-        .where('date', isEqualTo: dateStr)
-        .limit(1)
-        .get();
 
-    if (query.docs.isNotEmpty) {
-      return query.docs.first.data();
-    }
-    
-    final fallbackQuery = await _db.collection('daily_words')
-        .orderBy('date', descending: true)
-        .limit(1)
-        .get();
-        
-    if (fallbackQuery.docs.isNotEmpty) {
-      return fallbackQuery.docs.first.data();
-    }
-    
-    return null;
-  }
-  
   // --- Admin Control: Topics ---
   Stream<QuerySnapshot> getTopicsStream() {
     return _db.collection('topics').orderBy('order', descending: false).snapshots();
@@ -76,10 +55,6 @@ class FirestoreService {
     await _db.collection('topics').doc(docId).delete();
   }
   
-  // --- Admin Control: Daily Words ---
-  Future<void> addDailyWord(Map<String, dynamic> wordData) async {
-    await _db.collection('daily_words').add(wordData);
-  }
 
   Future<void> addStory(Map<String, dynamic> storyData) async {
     await _db.collection('stories').add(storyData);
@@ -151,7 +126,7 @@ class FirestoreService {
       final url = await uploadTask.ref.getDownloadURL();
       return url;
     } catch (e) {
-      print('Error uploading file: $e');
+      debugPrint('Error uploading file: $e');
       return null;
     }
   }

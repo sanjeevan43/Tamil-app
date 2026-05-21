@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Thirukkural {
   final int number;
@@ -19,38 +20,57 @@ class Thirukkural {
 
   factory Thirukkural.fromJson(Map<String, dynamic> json) {
     return Thirukkural(
-      number: json['Number'] ?? 0,
-      line1: json['Line1'] ?? '',
-      line2: json['Line2'] ?? '',
-      explanation: json['mv'] ?? json['sp'] ?? json['mk'] ?? '',
-      englishMeaning: json['explanation'] ?? '',
+      number: json['Number'] ?? json['number'] ?? 0,
+      line1: json['Line1'] ?? json['line1'] ?? '',
+      line2: json['Line2'] ?? json['line2'] ?? '',
+      explanation: json['mv'] ?? json['explanation_tamil'] ?? json['explanation'] ?? '',
+      englishMeaning: json['explanation_english'] ?? json['explanation'] ?? '',
     );
   }
 }
 
 class ThirukkuralService {
+  static final FirebaseFirestore _db = FirebaseFirestore.instance;
+
   static Future<Thirukkural?> fetchDailyKural() async {
+    final now = DateTime.now();
+    final dateStr = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+
     try {
-      // Load local JSON from assets
+      // 1. Try to fetch from Firebase first
+      final snapshot = await _db.collection('daily_kurals')
+          .where('date', isEqualTo: dateStr)
+          .limit(1)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        final data = snapshot.docs.first.data();
+        return Thirukkural.fromJson(data);
+      }
+
+      // 2. If not found in FireStore for today, you might want to pick a random one 
+      // from the main 'kurals' collection if you have it.
+      // For now, let's fall back to local as a safety check if Firebase is empty.
+      return _fetchFromLocal(now);
+    } catch (e) {
+      return _fetchFromLocal(now);
+    }
+  }
+
+  static Future<Thirukkural?> _fetchFromLocal(DateTime now) async {
+    try {
       final String jsonString = await rootBundle.loadString('assets/data/v_thirukkural_list.json');
       final Map<String, dynamic> data = json.decode(jsonString);
       final List<dynamic> kuralList = data['kural'];
 
-      if (kuralList.isEmpty) {
-        return _getFallbackKural();
-      }
+      if (kuralList.isEmpty) return _getFallbackKural();
 
-      // Get today's date to use as a seed for the random number
-      final now = DateTime.now();
       final dateValue = now.year * 10000 + now.month * 100 + now.day;
-      
-      // Select a number between 0 and length-1 based on the date
       final random = Random(dateValue);
       final index = random.nextInt(kuralList.length);
 
       return Thirukkural.fromJson(kuralList[index]);
     } catch (e) {
-      print('Error fetching local Thirukkural: $e');
       return _getFallbackKural();
     }
   }

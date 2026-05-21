@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
@@ -183,7 +184,7 @@ class DatabaseService {
       
       return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
     } catch (e) {
-      print('Error getting leaderboard: $e');
+      debugPrint('Error getting leaderboard: $e');
       return [];
     }
   }

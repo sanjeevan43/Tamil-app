@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../services/auth_service.dart';
 import '../constants/app_theme.dart';
 import '../providers/enhanced_progress_provider.dart';
-import 'enhanced_home_screen.dart';
+import 'home_screen.dart';
 import 'admin_control_screen.dart';
 import 'teacher_dashboard_screen.dart';
 import 'parent_dashboard_screen.dart';
@@ -81,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
         nextScreen = const ParentDashboardScreen();
         break;
       default:
-        nextScreen = const EnhancedHomeScreen();
+        nextScreen = const HomeScreen();
     }
 
     if (mounted) {
@@ -150,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (mounted) {
       setState(() => _isLoading = false);
-      if (error != null && error != "Sign in cancelled") {
+      if (error != null && error != 'Sign in cancelled') {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(error), backgroundColor: AppTheme.error),
         );
@@ -185,17 +185,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: const EdgeInsets.all(16),
                       height: 120,
                       width: 120,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(40),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.primary.withOpacity(0.4),
-                            blurRadius: 40,
-                            offset: const Offset(0, 20),
-                          ),
-                        ],
-                      ),
+                      decoration: AppTheme.whiteCard(),
                       child: Image.asset(
                         'assets/images/29099e40-2686-49d2-af50-5d939b785f80.png',
                         fit: BoxFit.contain,
@@ -205,17 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     // Form Card
                     Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(36),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.15),
-                            blurRadius: 50,
-                            offset: const Offset(0, 25),
-                          ),
-                        ],
-                      ),
+                      decoration: AppTheme.whiteCard(),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 32),
                         child: Form(
@@ -253,7 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 decoration: InputDecoration(
                                   hintText: 'Email Address',
                                   hintStyle: GoogleFonts.outfit(color: AppTheme.textGray),
-                                  prefixIcon: Icon(Icons.email_outlined, size: 20, color: AppTheme.textGray),
+                                  prefixIcon: const Icon(Icons.email_outlined, size: 20, color: AppTheme.textGray),
                                   filled: true,
                                   fillColor: AppTheme.topoLight,
                                   border: OutlineInputBorder(
@@ -282,7 +262,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 decoration: InputDecoration(
                                   hintText: 'Password',
                                   hintStyle: GoogleFonts.outfit(color: AppTheme.textGray),
-                                  prefixIcon: Icon(Icons.lock_outline, size: 20, color: AppTheme.textGray),
+                                  prefixIcon: const Icon(Icons.lock_outline, size: 20, color: AppTheme.textGray),
                                   suffixIcon: IconButton(
                                     icon: Icon(
                                       _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
@@ -313,14 +293,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               const SizedBox(height: 14),
 
                               // Role Selector (Register only)
-                              if (!_isLogin) ...{
+                              if (!_isLogin) ...[
                                 DropdownButtonFormField<String>(
                                   value: _selectedRole,
                                   style: GoogleFonts.outfit(fontSize: 15, color: AppTheme.secondary),
                                   decoration: InputDecoration(
                                     hintText: 'I am a...',
                                     hintStyle: GoogleFonts.outfit(color: AppTheme.textGray),
-                                    prefixIcon: Icon(Icons.person_outline, size: 20, color: AppTheme.textGray),
+                                    prefixIcon: const Icon(Icons.person_outline, size: 20, color: AppTheme.textGray),
                                     filled: true,
                                     fillColor: AppTheme.topoLight,
                                     border: OutlineInputBorder(
@@ -356,7 +336,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                   const SizedBox(height: 14),
                                 ],
-                              },
+                              ],
 
                               // Remember Me Checkbox (Login only)
                               if (_isLogin)
@@ -366,7 +346,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       value: _rememberMe,
                                       onChanged: (val) => setState(() => _rememberMe = val ?? false),
                                       activeColor: AppTheme.primary,
-                                      side: BorderSide(color: AppTheme.textGray, width: 1.5),
+                                      side: const BorderSide(color: AppTheme.textGray, width: 1.5),
                                     ),
                                     Text(
                                       'Remember me',
@@ -389,7 +369,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primary),
                                   ),
                                 )
-                              else ...{
+                              else ...[
                                 SizedBox(
                                   width: double.infinity,
                                   height: 58,
@@ -397,8 +377,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     onPressed: _handleSubmit,
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppTheme.primary,
-                                      foregroundColor: Colors.white,
-                                      elevation: 0,
+                                      foregroundColor: AppTheme.white,
+                                      
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(18),
                                       ),
@@ -418,7 +398,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 // OR divider
                                 Row(
                                   children: [
-                                    Expanded(child: Divider(color: Colors.grey.shade300)),
+                                    Expanded(child: Divider(color: AppTheme.textGray.withOpacity(0.3))),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 16),
                                       child: Text(
@@ -430,7 +410,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                       ),
                                     ),
-                                    Expanded(child: Divider(color: Colors.grey.shade300)),
+                                    Expanded(child: Divider(color: AppTheme.textGray.withOpacity(0.3))),
                                   ],
                                 ),
                                 const SizedBox(height: 20),
@@ -441,7 +421,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   height: 58,
                                   child: OutlinedButton.icon(
                                     onPressed: _handleGoogleSignIn,
-                                    icon: const Text('G', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red)),
+                                    icon: const Text('G', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.primary)),
                                     label: Text(
                                       'Continue with Google',
                                       style: GoogleFonts.outfit(
@@ -451,7 +431,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                     ),
                                     style: OutlinedButton.styleFrom(
-                                      side: BorderSide(color: Colors.grey.shade300, width: 1.5),
+                                      side: BorderSide(color: AppTheme.textGray.withOpacity(0.3), width: 1.5),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(18),
                                       ),
@@ -474,10 +454,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                         TextSpan(
                                           text: _isLogin
                                               ? "Don't have an account? "
-                                              : "Already have an account? ",
+                                              : 'Already have an account? ',
                                         ),
                                         TextSpan(
-                                          text: _isLogin ? "Sign Up" : "Login",
+                                          text: _isLogin ? 'Sign Up' : 'Login',
                                           style: GoogleFonts.outfit(
                                             color: AppTheme.primary,
                                             fontWeight: FontWeight.w900,
@@ -487,7 +467,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                   ),
                                 ),
-                              },
+                              ],
                             ],
                           ),
                         ),

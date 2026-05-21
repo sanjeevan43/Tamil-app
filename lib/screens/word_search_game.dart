@@ -105,11 +105,6 @@ class _WordSearchGameState extends State<WordSearchGame> {
     });
   }
 
-  void _clearSelection() {
-    setState(() {
-      _selectedIndices.clear();
-    });
-  }
 
   void _checkSelection() {
     // Check if currently selected letters form any of the words
@@ -143,7 +138,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: AppTheme.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         title: const Center(child: Text('🏆 Victory! 🏆', style: TextStyle(color: AppTheme.success, fontWeight: FontWeight.bold))),
         content: Column(
@@ -181,7 +176,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
     return Column(
       children: [
         Text(emoji, style: const TextStyle(fontSize: 32)),
-        Text(val, style: GoogleFonts.inter(fontWeight: FontWeight.w900, color: AppTheme.textDark)),
+        Text(val, style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.textDark)),
       ],
     );
   }
@@ -191,7 +186,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
     return Scaffold(
       backgroundColor: AppTheme.backgroundLight,
       appBar: AppBar(
-        title: Text('Word Search', style: GoogleFonts.inter(fontWeight: FontWeight.w800)),
+        title: Text('Word Search', style: GoogleFonts.outfit(fontWeight: FontWeight.w800)),
         actions: [
           IconButton(onPressed: _generateGrid, icon: const Icon(Icons.refresh_rounded)),
         ],
@@ -226,7 +221,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         decoration: BoxDecoration(
-                          color: isSelected ? AppTheme.primary : Colors.white,
+                          color: isSelected ? AppTheme.primary : AppTheme.white,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: isSelected ? AppTheme.primary : AppTheme.borderLight,
@@ -239,7 +234,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
                             style: GoogleFonts.notoSansTamil(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: isSelected ? Colors.white : AppTheme.textDark,
+                              color: isSelected ? AppTheme.white : AppTheme.textDark,
                             ),
                           ),
                         ),
@@ -251,7 +246,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
             ),
             const SizedBox(height: 24),
             Text('TAP LETTERS IN ORDER TO SELECT A WORD', 
-                 style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.textSlate.withOpacity(0.4), letterSpacing: 1.5)),
+                 style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.textSlate.withOpacity(0.4), letterSpacing: 1.5)),
           ],
         ),
       ),
@@ -268,7 +263,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: found ? AppTheme.success.withOpacity(0.1) : Colors.white,
+            color: found ? AppTheme.success.withOpacity(0.1) : AppTheme.white,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: found ? AppTheme.success : AppTheme.borderLight),
           ),

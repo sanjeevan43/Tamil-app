@@ -20,13 +20,11 @@ import { db } from './firebase';
 const App = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
     const [searchTerm, setSearchTerm] = useState('');
-    const [stats, setStats] = useState({ users: 0, stories: 0, rhymes: 0, stars: 0, words: 0 });
+    const [stats, setStats] = useState({ users: 0, stories: 0, rhymes: 0, stars: 0 });
     const [users, setUsers] = useState<any[]>([]);
     const [stories, setStories] = useState<any[]>([]);
     const [rhymes, setRhymes] = useState<any[]>([]);
     const [questions, setQuestions] = useState<any[]>([]);
-    const [dailyWords, setDailyWords] = useState<any[]>([]);
-    const [dictionaryWords, setDictionaryWords] = useState<any[]>([]);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     useEffect(() => {
@@ -56,45 +54,16 @@ const App = () => {
             setQuestions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
         });
 
-        // Listen to Daily Words
-        const unsubDaily = onSnapshot(query(collection(db, 'daily_words')), (snapshot) => {
-            setDailyWords(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-        });
-
-        // Listen to Dictionary
-        const unsubDict = onSnapshot(query(collection(db, 'dictionary')), (snapshot) => {
-            setDictionaryWords(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-            setStats(prev => ({ ...prev, words: snapshot.docs.length }));
-        });
-
         return () => {
-            unsubUsers(); unsubStories(); unsubRhymes(); unsubForum(); unsubDaily(); unsubDict();
+            unsubUsers(); unsubStories(); unsubRhymes(); unsubForum();
         };
     }, []);
 
     const handleCreateNew = async (data: any) => {
-       const col = data.type === 'story' ? 'stories' : 
-                   data.type === 'rhyme' ? 'rhymes' : 
-                   data.type === 'daily_word' ? 'daily_words' : 'dictionary';
+       const col = data.type === 'story' ? 'stories' : 'rhymes';
                    
        // Map content structure
        let content = { ...data };
-       if (data.type === 'daily_word') {
-           content = {
-               word: data.title,
-               english: data.englishTitle,
-               date: data.date,
-               sentence: data.sentence || ''
-           };
-       } else if (data.type === 'dictionary_word') {
-           content = {
-               word: data.title,
-               english_meaning: data.englishTitle,
-               tamil_meaning: data.extra,
-               type: 'General',
-               isCommon: true
-           };
-       }
        
        await addDoc(collection(db, col), { ...content, createdAt: serverTimestamp() });
        setIsCreateModalOpen(false);
@@ -125,8 +94,6 @@ const App = () => {
                     <NavItem icon={<Users size={20} />} label="Learners" active={activeTab === 'users'} onClick={() => setActiveTab('users')} />
                     <NavItem icon={<BookOpen size={20} />} label="Stories" active={activeTab === 'stories'} onClick={() => setActiveTab('stories')} />
                     <NavItem icon={<Music size={20} />} label="Rhymes" active={activeTab === 'rhymes'} onClick={() => setActiveTab('rhymes')} />
-                    <NavItem icon={<Star size={20} />} label="Dictionary" active={activeTab === 'dictionary'} onClick={() => setActiveTab('dictionary')} />
-                    <NavItem icon={<Calendar size={20} />} label="Daily Words" active={activeTab === 'daily'} onClick={() => setActiveTab('daily')} />
                     <NavItem icon={<MessageSquare size={20} />} label="Forum" active={activeTab === 'forum'} onClick={() => setActiveTab('forum')} />
                     <NavItem icon={<School size={20} />} label="Classrooms" active={activeTab === 'classrooms'} onClick={() => setActiveTab('classrooms')} />
                 </div>
@@ -172,8 +139,6 @@ const App = () => {
                     {activeTab === 'users' && <UsersView key="users" users={users} onDelete={(id: string) => handleDelete('users', id)} />}
                     {activeTab === 'stories' && <ListView key="stories" items={stories} collection="stories" onDelete={(id: string) => handleDelete('stories', id)} />}
                     {activeTab === 'rhymes' && <ListView key="rhymes" items={rhymes} collection="rhymes" onDelete={(id: string) => handleDelete('rhymes', id)} />}
-                    {activeTab === 'dictionary' && <ListView key="dictionary" items={dictionaryWords} collection="dictionary" onDelete={(id: string) => handleDelete('dictionary', id)} isDictionary />}
-                    {activeTab === 'daily' && <ListView key="daily" items={dailyWords} collection="daily_words" onDelete={(id: string) => handleDelete('daily_words', id)} isDaily />}
                     {activeTab === 'forum' && <ForumView key="forum" items={questions} onDelete={(id: string) => handleDelete('forum_questions', id)} />}
                     {activeTab === 'classrooms' && <ClassroomsView key="classrooms" users={users} />}
                 </AnimatePresence>
@@ -226,22 +191,15 @@ const CreateModal = ({ onClose, onSave }: { onClose: () => void, onSave: (data: 
                     <div>
                         <label className="text-[10px] font-black uppercase text-slate-500 mb-2 block tracking-widest">Content Type</label>
                         <div className="grid grid-cols-2 gap-2">
-                             {['story', 'rhyme', 'daily_word', 'dictionary_word'].map(t => (
+                             {['story', 'rhyme'].map(t => (
                                  <button key={t} onClick={() => setType(t)} className={`py-2 rounded-xl border font-bold text-[10px] uppercase tracking-tighter transition-all ${type === t ? 'bg-pink-600 border-pink-500' : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600'}`}>{t.replace('_', ' ')}</button>
                              ))}
                         </div>
                     </div>
-                    <InputField label={type === 'daily_word' || type === 'dictionary_word' ? "Tamil Word" : "Tamil Title"} value={title} onChange={setTitle} placeholder="e.g. மரம்" />
-                    <InputField label={type === 'daily_word' || type === 'dictionary_word' ? "English Meaning" : "English Title"} value={englishTitle} onChange={setEnglishTitle} placeholder="e.g. Tree" />
+                    <InputField label={type === 'story' ? "Tamil Title" : "Tamil Word"} value={title} onChange={setTitle} placeholder="e.g. மரம்" />
+                    <InputField label={type === 'story' ? "English Title" : "English Meaning"} value={englishTitle} onChange={setEnglishTitle} placeholder="e.g. Tree" />
                     
                     {type === 'story' && <InputField label="Moral" value={extra} onChange={setExtra} placeholder="e.g. Help everyone" />}
-                    {type === 'dictionary_word' && <InputField label="Tamil Meaning" value={extra} onChange={setExtra} placeholder="e.g. கிளைகளுடைய தாவரம்..." />}
-                    {type === 'daily_word' && (
-                        <>
-                            <InputField label="Date (YYYY-MM-DD)" value={extra} onChange={setExtra} placeholder="e.g. 2026-03-13" />
-                            <InputField label="Example Sentence" value={sentence} onChange={setSentence} placeholder="Tamil sentence..." />
-                        </>
-                    )}
                     
                     <button 
                         onClick={() => onSave({ 
@@ -249,7 +207,7 @@ const CreateModal = ({ onClose, onSave }: { onClose: () => void, onSave: (data: 
                             title, 
                             englishTitle, 
                             extra,
-                            ...(type === 'story' ? { moral: extra } : type === 'daily_word' ? { date: extra, sentence } : {}) 
+                            ...(type === 'story' ? { moral: extra } : {}) 
                         })} 
                         className="w-full bg-pink-600 hover:bg-pink-500 text-white font-bold py-4 rounded-2xl shadow-lg shadow-pink-600/20 mt-4 transition-all"
                     >
@@ -291,17 +249,17 @@ const ForumView = ({ items, onDelete }: any) => (
     </div>
 );
 
-const ListView = ({ items, onDelete, isDaily, isDictionary }: any) => (
+const ListView = ({ items, onDelete }: any) => (
    <div className="grid grid-cols-2 gap-6">
-        {items.length === 0 ? <div className="col-span-2"><EmptyState icon={isDaily ? <Calendar /> : isDictionary ? <Star /> : <BookOpen />} label={`No ${isDaily ? 'words' : isDictionary ? 'dictionary terms' : 'content'} found`} /></div> : items.map((item: any) => (
+        {items.length === 0 ? <div className="col-span-2"><EmptyState icon={<BookOpen />} label="No content found" /></div> : items.map((item: any) => (
             <div key={item.id} className="bg-slate-900 p-6 rounded-2xl border border-slate-800 flex justify-between items-center group hover:border-pink-500/30 transition-all">
                 <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center text-2xl shadow-inner font-bold">
-                        {isDictionary ? '📖' : isDaily ? '🅰️' : item.icon || (item.title?.includes('Lion') ? '🦁' : '📖')}
+                        {item.icon || (item.title?.includes('Lion') ? '🦁' : '📖')}
                     </div>
                     <div>
                         <h4 className="font-bold text-slate-100">{item.title || item.word}</h4>
-                        <p className="text-xs text-slate-500 font-medium tracking-tight">{item.englishTitle || item.english || item.english_meaning || item.date}</p>
+                        <p className="text-xs text-slate-500 font-medium tracking-tight">{item.englishTitle || item.english || item.date}</p>
                     </div>
                 </div>
                 <button onClick={() => onDelete(item.id)} className="p-2 opacity-0 group-hover:opacity-100 text-slate-600 hover:text-red-500 transition-all"><Trash2 size={20} /></button>
@@ -312,10 +270,9 @@ const ListView = ({ items, onDelete, isDaily, isDictionary }: any) => (
 
 const DashboardView = ({ stats, users }: any) => (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-        <div className="grid grid-cols-4 gap-6">
+        <div className="grid grid-cols-3 gap-6">
             <StatCard label="Total Learners" value={stats.users} icon={<Users className="text-blue-400" />} />
             <StatCard label="Live Stories" value={stats.stories} icon={<BookOpen className="text-green-400" />} />
-            <StatCard label="Dictionary Terms" value={stats.words} icon={<Star className="text-amber-400" />} />
             <StatCard label="Tamil Rhymes" value={stats.rhymes} icon={<Music className="text-pink-400" />} />
         </div>
         

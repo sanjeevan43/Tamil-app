@@ -17,53 +17,28 @@ class AdminControlScreen extends StatefulWidget {
 class _AdminControlScreenState extends State<AdminControlScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final FirestoreService _firestore = FirestoreService();
-  final _dailyWordFormKey = GlobalKey<FormState>();
   final _topicFormKey = GlobalKey<FormState>();
   
-  final TextEditingController _wordController = TextEditingController();
-  final TextEditingController _englishController = TextEditingController();
-  final TextEditingController _sentenceController = TextEditingController();
+
   final TextEditingController _topicTitleController = TextEditingController();
   final TextEditingController _topicOrderController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
   void dispose() {
     _tabController.dispose();
-    _wordController.dispose();
-    _englishController.dispose();
-    _sentenceController.dispose();
+
     _topicTitleController.dispose();
     _topicOrderController.dispose();
     super.dispose();
   }
 
-  Future<void> _addDailyWord() async {
-    if (!_dailyWordFormKey.currentState!.validate()) return;
 
-    final word = _wordController.text.trim();
-    final english = _englishController.text.trim();
-    final sentence = _sentenceController.text.trim();
-
-    final dateStr = DateTime.now().toIso8601String().split('T').first;
-    await _firestore.addDailyWord({
-      'word': word,
-      'english': english,
-      'sentence': sentence,
-      'date': dateStr,
-      'createdAt': FieldValue.serverTimestamp(),
-    });
-
-    _showSnackBar('Daily Word Added!', Colors.green);
-    _wordController.clear();
-    _englishController.clear();
-    _sentenceController.clear();
-  }
 
   Future<void> _addTopic() async {
     if (!_topicFormKey.currentState!.validate()) return;
@@ -78,7 +53,7 @@ class _AdminControlScreenState extends State<AdminControlScreen> with SingleTick
       'createdAt': FieldValue.serverTimestamp(),
     });
 
-    _showSnackBar('Topic Added!', Colors.green);
+    _showSnackBar('Topic Added!', AppTheme.success);
     _topicTitleController.clear();
     _topicOrderController.clear();
   }
@@ -91,15 +66,15 @@ class _AdminControlScreenState extends State<AdminControlScreen> with SingleTick
 
   Future<void> _updateUserRole(String uid, String newRole) async {
     await FirebaseFirestore.instance.collection('users').doc(uid).update({'role': newRole});
-    _showSnackBar('User role updated to $newRole', Colors.blue);
+    _showSnackBar('User role updated to $newRole', AppTheme.info);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
+        backgroundColor: AppTheme.white,
+        
         centerTitle: false,
         title: Row(
           children: [
@@ -133,10 +108,10 @@ class _AdminControlScreenState extends State<AdminControlScreen> with SingleTick
         ],
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: Colors.white,
+          indicatorColor: AppTheme.white,
           isScrollable: true,
           tabs: const [
-            Tab(icon: Icon(Icons.wb_sunny_outlined), text: 'Daily Word'),
+
             Tab(icon: Icon(Icons.topic_outlined), text: 'Topics'),
             Tab(icon: Icon(Icons.school_outlined), text: 'Classrooms'),
             Tab(icon: Icon(Icons.people_outline), text: 'Users'),
@@ -146,7 +121,7 @@ class _AdminControlScreenState extends State<AdminControlScreen> with SingleTick
       body: TabBarView(
         controller: _tabController,
         children: [
-          _buildDailyWordTab(),
+
           _buildTopicsTab(),
           const AdminClassroomsTab(),
           _buildUsersTab(),
@@ -155,108 +130,7 @@ class _AdminControlScreenState extends State<AdminControlScreen> with SingleTick
     );
   }
 
-  Widget _buildDailyWordTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Post Daily Tamil Word', style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          Card(
-            elevation: 4,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: _dailyWordFormKey,
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: _wordController,
-                      decoration: InputDecoration(
-                        labelText: 'Tamil Word',
-                        border: const OutlineInputBorder(),
-                        filled: true,
-                        fillColor: AppTheme.topoLight,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Tamil word is required';
-                        }
-                        if (value.trim().length < 2) {
-                          return 'Word must be at least 2 characters';
-                        }
-                        if (value.trim().length > 100) {
-                          return 'Word must be less than 100 characters';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _englishController,
-                      decoration: InputDecoration(
-                        labelText: 'English Meaning',
-                        border: const OutlineInputBorder(),
-                        filled: true,
-                        fillColor: AppTheme.topoLight,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'English meaning is required';
-                        }
-                        if (value.trim().length < 2) {
-                          return 'Meaning must be at least 2 characters';
-                        }
-                        if (value.trim().length > 200) {
-                          return 'Meaning must be less than 200 characters';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _sentenceController,
-                      maxLines: 3,
-                      decoration: InputDecoration(
-                        labelText: 'Example Sentence',
-                        hintText: 'Both Tamil & English info',
-                        border: const OutlineInputBorder(),
-                        filled: true,
-                        fillColor: AppTheme.topoLight,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Example sentence is required';
-                        }
-                        if (value.trim().length < 5) {
-                          return 'Sentence must be at least 5 characters';
-                        }
-                        if (value.trim().length > 500) {
-                          return 'Sentence must be less than 500 characters';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: _addDailyWord,
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 50),
-                        backgroundColor: AppTheme.primary,
-                      ),
-                      child: Text('Publish Word', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: Colors.white)),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+
 
   Widget _buildTopicsTab() {
     return Padding(
@@ -273,9 +147,9 @@ class _AdminControlScreenState extends State<AdminControlScreen> with SingleTick
                 Expanded(
                   child: TextFormField(
                     controller: _topicTitleController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Topic Title',
-                      border: const OutlineInputBorder(),
+                      border: OutlineInputBorder(),
                       filled: true,
                       fillColor: AppTheme.topoLight,
                     ),
@@ -298,9 +172,9 @@ class _AdminControlScreenState extends State<AdminControlScreen> with SingleTick
                   width: 80,
                   child: TextFormField(
                     controller: _topicOrderController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Order',
-                      border: const OutlineInputBorder(),
+                      border: OutlineInputBorder(),
                       filled: true,
                       fillColor: AppTheme.topoLight,
                     ),
@@ -342,7 +216,7 @@ class _AdminControlScreenState extends State<AdminControlScreen> with SingleTick
                         title: Text(data['title']),
                         subtitle: Text('Status: ${data['status']}'),
                         trailing: IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
+                          icon: const Icon(Icons.delete, color: AppTheme.primary),
                           onPressed: () => _firestore.deleteTopic(topics[index].id),
                         ),
                       ),

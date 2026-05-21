@@ -109,16 +109,16 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen>
                   padding: const EdgeInsets.all(20),
                   margin: const EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: [AppTheme.primary, AppTheme.primaryDark]),
+                    gradient: const LinearGradient(colors: [AppTheme.primary, AppTheme.primaryDark]),
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [BoxShadow(color: AppTheme.primary.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 6))],
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.person_add_alt_1_rounded, color: Colors.white),
+                      const Icon(Icons.person_add_alt_1_rounded, color: AppTheme.white),
                       const SizedBox(width: 12),
-                      Text('Add Member', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w800, color: Colors.white)),
+                      Text('Add Member', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w800, color: AppTheme.white)),
                     ],
                   ),
                 ),
@@ -129,7 +129,7 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen>
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppTheme.white,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: AppTheme.topoSilver),
               ),
@@ -141,13 +141,13 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen>
                   const Spacer(),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(color: Colors.green.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+                    decoration: BoxDecoration(color: AppTheme.success.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Container(width: 6, height: 6, decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle)),
+                        Container(width: 6, height: 6, decoration: const BoxDecoration(color: AppTheme.success, shape: BoxShape.circle)),
                         const SizedBox(width: 6),
-                        Text('Online', style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.green)),
+                        Text('Online', style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w800, color: AppTheme.success)),
                       ],
                     ),
                   ),
@@ -167,7 +167,7 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen>
                 margin: const EdgeInsets.only(bottom: 12),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppTheme.white,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: isTeacherMember ? AppTheme.primary.withOpacity(0.2) : AppTheme.topoSilver),
                 ),
@@ -195,7 +195,7 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen>
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                   margin: const EdgeInsets.only(right: 6),
                                   decoration: BoxDecoration(color: AppTheme.primary, borderRadius: BorderRadius.circular(4)),
-                                  child: Text('TEACHER', style: GoogleFonts.outfit(fontSize: 8, fontWeight: FontWeight.w900, color: Colors.white)),
+                                  child: Text('TEACHER', style: GoogleFonts.outfit(fontSize: 8, fontWeight: FontWeight.w900, color: AppTheme.white)),
                                 ),
                               Flexible(
                                 child: Text(data['email'] ?? '', style: GoogleFonts.outfit(fontSize: 11, color: AppTheme.textGray), overflow: TextOverflow.ellipsis),
@@ -232,16 +232,16 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen>
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [Colors.orange, Colors.orange.shade700]),
+                  gradient: LinearGradient(colors: [AppTheme.warning, AppTheme.warning.withOpacity(0.7)]),
                   borderRadius: BorderRadius.circular(20),
-                  boxShadow: [BoxShadow(color: Colors.orange.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 6))],
+                  boxShadow: [BoxShadow(color: AppTheme.warning.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 6))],
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.add_task_rounded, color: Colors.white),
+                    const Icon(Icons.add_task_rounded, color: AppTheme.white),
                     const SizedBox(width: 12),
-                    Text('Create New Task', style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w800, color: Colors.white)),
+                    Text('Create New Task', style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w800, color: AppTheme.white)),
                   ],
                 ),
               ),
@@ -270,7 +270,7 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen>
                   return Container(
                     margin: const EdgeInsets.only(bottom: 12),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppTheme.white,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: AppTheme.topoSilver),
                     ),
@@ -280,10 +280,10 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen>
                       leading: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: (isQuiz ? AppTheme.primary : Colors.orange).withOpacity(0.1),
+                          color: (isQuiz ? AppTheme.primary : AppTheme.warning).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        child: Icon(isQuiz ? Icons.quiz_rounded : Icons.assignment_rounded, color: isQuiz ? AppTheme.primary : Colors.orange),
+                        child: Icon(isQuiz ? Icons.quiz_rounded : Icons.assignment_rounded, color: isQuiz ? AppTheme.primary : AppTheme.warning),
                       ),
                       title: Text(data['title'] ?? 'Untitled', style: GoogleFonts.outfit(fontWeight: FontWeight.w700, fontSize: 15, color: AppTheme.secondary)),
                       subtitle: Text(type, style: GoogleFonts.outfit(fontSize: 11, color: AppTheme.textGray)),
@@ -350,16 +350,16 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen>
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [Colors.indigo, Colors.indigo.shade700]),
+                  gradient: LinearGradient(colors: [AppTheme.secondary, AppTheme.secondary.withOpacity(0.7)]),
                   borderRadius: BorderRadius.circular(20),
-                  boxShadow: [BoxShadow(color: Colors.indigo.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 6))],
+                  boxShadow: [BoxShadow(color: AppTheme.secondary.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 6))],
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.campaign_rounded, color: Colors.white),
+                    const Icon(Icons.campaign_rounded, color: AppTheme.white),
                     const SizedBox(width: 12),
-                    Text('Post Announcement', style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w800, color: Colors.white)),
+                    Text('Post Announcement', style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w800, color: AppTheme.white)),
                   ],
                 ),
               ),
@@ -390,9 +390,9 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen>
                     margin: const EdgeInsets.only(bottom: 16),
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppTheme.white,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.indigo.withOpacity(0.15)),
+                      border: Border.all(color: AppTheme.secondary.withOpacity(0.15)),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -401,8 +401,8 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen>
                           children: [
                             Container(
                               padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(color: Colors.indigo.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
-                              child: const Icon(Icons.campaign_rounded, color: Colors.indigo, size: 18),
+                              decoration: BoxDecoration(color: AppTheme.secondary.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+                              child: const Icon(Icons.campaign_rounded, color: AppTheme.secondary, size: 18),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
@@ -477,7 +477,7 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen>
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     margin: const EdgeInsets.only(right: 6),
                     decoration: BoxDecoration(color: AppTheme.primary, borderRadius: BorderRadius.circular(4)),
-                    child: Text('TEACHER', style: GoogleFonts.outfit(fontSize: 8, fontWeight: FontWeight.w900, color: Colors.white)),
+                    child: Text('TEACHER', style: GoogleFonts.outfit(fontSize: 8, fontWeight: FontWeight.w900, color: AppTheme.white)),
                   ),
                 Text(isMe ? 'You' : sender, style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w800, color: isTeacher ? AppTheme.primary : AppTheme.textGray)),
                 const SizedBox(width: 8),
@@ -488,7 +488,7 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen>
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: isMe ? AppTheme.primary : Colors.white,
+                color: isMe ? AppTheme.primary : AppTheme.white,
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(18),
                   topRight: const Radius.circular(18),
@@ -499,7 +499,7 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen>
               ),
               child: Text(
                 data['message'] ?? '',
-                style: GoogleFonts.outfit(color: isMe ? Colors.white : AppTheme.secondary, fontSize: 14, height: 1.4),
+                style: GoogleFonts.outfit(color: isMe ? AppTheme.white : AppTheme.secondary, fontSize: 14, height: 1.4),
               ),
             ),
           ],
@@ -512,9 +512,9 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen>
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 15, offset: const Offset(0, -4))],
+        boxShadow: [BoxShadow(color: AppTheme.textDark.withOpacity(0.05), blurRadius: 15, offset: const Offset(0, -4))],
       ),
       child: Row(
         children: [
@@ -551,7 +551,7 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen>
                 shape: BoxShape.circle,
                 boxShadow: [BoxShadow(color: AppTheme.primary.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 4))],
               ),
-              child: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
+              child: const Icon(Icons.send_rounded, color: AppTheme.white, size: 20),
             ),
           ),
         ],
@@ -640,7 +640,7 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen>
                 backgroundColor: AppTheme.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
-              child: Text('ADD', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: Colors.white)),
+              child: Text('ADD', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.white)),
             ),
           ],
         ),
@@ -666,7 +666,7 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen>
               Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
-            child: Text('REMOVE', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: Colors.white)),
+            child: Text('REMOVE', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.white)),
           ),
         ],
       ),
@@ -705,7 +705,7 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen>
                   ChoiceChip(
                     label: Text('Task', style: GoogleFonts.outfit(fontWeight: FontWeight.w700, fontSize: 12)),
                     selected: type == 'Task',
-                    selectedColor: Colors.orange.withOpacity(0.2),
+                    selectedColor: AppTheme.warning.withOpacity(0.2),
                     onSelected: (_) => setDialogState(() => type = 'Task'),
                   ),
                   const SizedBox(width: 8),
@@ -730,8 +730,8 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen>
                 _firestore.addTask({'title': titleController.text.trim(), 'type': type});
                 Navigator.pop(context);
               },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.orange, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
-              child: Text('CREATE', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: Colors.white)),
+              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.warning, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+              child: Text('CREATE', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.white)),
             ),
           ],
         ),
@@ -792,8 +792,8 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen>
               );
               Navigator.pop(context);
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
-            child: Text('POST', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: Colors.white)),
+            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.secondary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+            child: Text('POST', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.white)),
           ),
         ],
       ),

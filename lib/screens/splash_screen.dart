@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../services/auth_service.dart';
 import '../providers/enhanced_progress_provider.dart';
-import 'enhanced_home_screen.dart';
+import 'home_screen.dart';
 import 'login_screen.dart';
 import 'admin_control_screen.dart';
 import 'teacher_dashboard_screen.dart';
@@ -33,22 +33,21 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   }
 
   Future<void> _initialize() async {
-    final startTime = DateTime.now();
     final authService = Provider.of<AuthService>(context, listen: false);
     final progress = Provider.of<EnhancedProgressProvider>(context, listen: false);
 
     // Run heavy initialization tasks in parallel with a safety timeout
-    print("SplashScreen: Starting initialization...");
+    debugPrint('SplashScreen: Starting initialization...');
     try {
       await Future.wait([
         if (authService.isAuthenticated)
-          progress.initializeProgress(uid: authService.user?.uid).then((_) => print("SplashScreen: Progress initialized")).catchError((e) => print("SplashScreen: Progress error: $e")),
+          progress.initializeProgress(uid: authService.user?.uid).then((_) => debugPrint('SplashScreen: Progress initialized')).catchError((e) => debugPrint('SplashScreen: Progress error: $e')),
         // Ensure at least 2 seconds for branding
         Future.delayed(const Duration(milliseconds: 2000)),
       ]).timeout(const Duration(seconds: 8)); // Safety timeout of 8 seconds
-      print("SplashScreen: Initialization complete or timed out");
+      debugPrint('SplashScreen: Initialization complete or timed out');
     } catch (e) {
-      print("SplashScreen: Error during initialization: $e");
+      debugPrint('SplashScreen: Error during initialization: $e');
     }
 
     if (!mounted) return;
@@ -67,7 +66,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           nextScreen = const ParentDashboardScreen();
           break;
         default:
-          nextScreen = const EnhancedHomeScreen();
+          nextScreen = const HomeScreen();
       }
     } else {
       nextScreen = const LoginScreen();
@@ -124,7 +123,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               width: 400,
               height: 400,
               controller: _controller,
-              color: index == 0 ? Colors.white.withOpacity(0.05) : AppTheme.primary.withOpacity(0.08),
+              color: index == 0 ? AppTheme.white.withOpacity(0.05) : AppTheme.primary.withOpacity(0.08),
             ),
           )),
 
@@ -150,7 +149,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       decoration: AppTheme.whiteCard(radius: 60).copyWith(
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.4),
+                            color: AppTheme.textDark.withOpacity(0.4),
                             blurRadius: 50,
                             offset: const Offset(0, 25),
                           ),
@@ -170,7 +169,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     style: GoogleFonts.outfit(
                       fontSize: 32,
                       fontWeight: FontWeight.w900,
-                      color: Colors.white,
+                      color: AppTheme.white,
                       letterSpacing: 2.0,
                     ),
                   ),
@@ -179,7 +178,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     height: 3,
                     width: 40,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.3),
+                      color: AppTheme.white.withOpacity(0.3),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -189,7 +188,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     style: GoogleFonts.outfit(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white.withOpacity(0.7),
+                      color: AppTheme.white.withOpacity(0.7),
                       letterSpacing: 4.0,
                     ),
                   ),
@@ -206,8 +205,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             child: Center(
               child: Column(
                 children: [
-                  const CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white24),
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(AppTheme.white.withOpacity(0.24)),
                     strokeWidth: 2,
                   ),
                   const SizedBox(height: 24),
@@ -216,7 +215,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     style: GoogleFonts.outfit(
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
-                      color: Colors.white.withOpacity(0.4),
+                      color: AppTheme.white.withOpacity(0.4),
                       letterSpacing: 3.0,
                     ),
                   ),
@@ -237,7 +236,6 @@ class _PulseCircle extends StatelessWidget {
   final Color color;
 
   const _PulseCircle({
-    super.key,
     required this.width,
     required this.height,
     required this.controller,

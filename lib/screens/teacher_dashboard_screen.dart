@@ -19,8 +19,8 @@ class TeacherDashboardScreen extends StatelessWidget {
     
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
+        backgroundColor: AppTheme.white,
+        
         centerTitle: false,
         title: Row(
           children: [
@@ -98,13 +98,13 @@ class TeacherDashboardScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              const Row(
                 children: [
-                  const Icon(Icons.campaign_rounded, color: Colors.amber, size: 28),
-                  const SizedBox(width: 12),
-                  const Text(
+                  Icon(Icons.campaign_rounded, color: AppTheme.warning, size: 28),
+                  SizedBox(width: 12),
+                  Text(
                     'அறிவிப்பு பலகை (Notice Board)',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.amber),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.warning),
                   ),
                 ],
               ),
@@ -112,13 +112,13 @@ class TeacherDashboardScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.amber.withOpacity(0.05),
+                  color: AppTheme.warning.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.amber.withOpacity(0.1)),
+                  border: Border.all(color: AppTheme.warning.withOpacity(0.1)),
                 ),
                 child: Text(
                   notice,
-                  style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.brown),
+                  style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: AppTheme.textSlate),
                 ),
               ),
               const SizedBox(height: 16),
@@ -127,8 +127,8 @@ class TeacherDashboardScreen extends StatelessWidget {
                 icon: const Icon(Icons.edit_notifications),
                 label: const Text('அறிவிப்பை மாற்று (Edit Notice)'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.amber,
-                  foregroundColor: Colors.brown,
+                  backgroundColor: AppTheme.warning,
+                  foregroundColor: AppTheme.white,
                   minimumSize: const Size(double.infinity, 45),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
@@ -182,7 +182,7 @@ class TeacherDashboardScreen extends StatelessWidget {
                       label: const Text('Task'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.primaryRed,
-                        foregroundColor: Colors.white,
+                        foregroundColor: AppTheme.white,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                     ),
@@ -195,7 +195,7 @@ class TeacherDashboardScreen extends StatelessWidget {
                       label: const Text('Quiz'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.primaryRed,
-                        foregroundColor: Colors.white,
+                        foregroundColor: AppTheme.white,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                     ),
@@ -213,27 +213,27 @@ class TeacherDashboardScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.amber.shade50,
+        color: AppTheme.warning.withOpacity(0.05),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.amber.shade200, width: 2),
+        border: Border.all(color: AppTheme.warning.withOpacity(0.2), width: 2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Row(
             children: [
-              Icon(Icons.menu_book, color: Colors.amber, size: 28),
+              Icon(Icons.menu_book, color: AppTheme.warning, size: 28),
               SizedBox(width: 12),
               Text(
                 'கற்பித்தல் வழிகாட்டி',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.brown),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textSlate),
               ),
             ],
           ),
           const SizedBox(height: 8),
           const Text(
             'உங்கள் மாணவருக்கு தமிழை முறையாகக் கற்பிக்க உதவும் விரிவான வழிகாட்டி.',
-            style: TextStyle(fontSize: 14, color: Colors.brown),
+            style: TextStyle(fontSize: 14, color: AppTheme.textSlate),
           ),
           const SizedBox(height: 16),
           ElevatedButton(
@@ -244,9 +244,9 @@ class TeacherDashboardScreen extends StatelessWidget {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.amber,
-              foregroundColor: Colors.brown,
-              elevation: 0,
+              backgroundColor: AppTheme.warning,
+              foregroundColor: AppTheme.white,
+              
               minimumSize: const Size(double.infinity, 45),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
@@ -262,13 +262,13 @@ class TeacherDashboardScreen extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF1A237E), Color(0xFF3949AB)],
+          colors: [AppTheme.secondary, AppTheme.primaryDark],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
-          BoxShadow(color: Colors.indigo.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 10)),
+          BoxShadow(color: AppTheme.primary.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 10)),
         ],
       ),
       child: Column(
@@ -279,26 +279,26 @@ class TeacherDashboardScreen extends StatelessWidget {
             children: [
               Text(
                 'UNIFIED CLASSROOM',
-                style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.white.withOpacity(0.6), letterSpacing: 2),
+                style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.white.withOpacity(0.6), letterSpacing: 2),
               ),
-              const Icon(Icons.hub_rounded, color: Colors.white, size: 16),
+              const Icon(Icons.hub_rounded, color: AppTheme.white, size: 16),
             ],
           ),
           const SizedBox(height: 8),
           Text(
             'Global Students Hub',
-            style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.white),
+            style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w900, color: AppTheme.white),
           ),
           const SizedBox(height: 20),
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
+            decoration: BoxDecoration(color: AppTheme.white.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
             child: Column(
               children: [
                 _buildInfoRow('Active Student', progress.userName),
-                const Divider(color: Colors.white24),
+                Divider(color: AppTheme.white.withOpacity(0.24)),
                 _buildInfoRow('Class Average Level', '${progress.level}'),
-                const Divider(color: Colors.white24),
+                Divider(color: AppTheme.white.withOpacity(0.24)),
                 _buildInfoRow('Total Letters Taught', '${progress.totalLettersLearned}'),
               ],
             ),
@@ -354,7 +354,7 @@ class TeacherDashboardScreen extends StatelessWidget {
             label: const Text('அடுத்த பாடத்தைத் திற (Unlock Next)'),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryRed,
-              foregroundColor: Colors.white,
+              foregroundColor: AppTheme.white,
               minimumSize: const Size(double.infinity, 45),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
@@ -373,7 +373,7 @@ class TeacherDashboardScreen extends StatelessWidget {
         children: [
           const Text(
             'வகுப்பறை மையம் (Classroom Hub)',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.info),
           ),
           const SizedBox(height: 8),
           const Text('கேள்விகளுக்கு பதிலளிக்கவும் மற்றும் வினாடி வினாக்களை அனுப்பவும்.', style: TextStyle(fontSize: 13)),
@@ -384,8 +384,8 @@ class TeacherDashboardScreen extends StatelessWidget {
             label: const Text('மையத்திற்குச் செல்லவும் (Go to Hub)'),
             style: ElevatedButton.styleFrom(
               minimumSize: const Size(double.infinity, 50),
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
+              backgroundColor: AppTheme.info,
+              foregroundColor: AppTheme.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
           ),
@@ -417,7 +417,7 @@ class TeacherDashboardScreen extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               minimumSize: const Size(double.infinity, 50),
               backgroundColor: AppTheme.primaryRed,
-              foregroundColor: Colors.white,
+              foregroundColor: AppTheme.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
           ),
@@ -446,7 +446,7 @@ class TeacherDashboardScreen extends StatelessWidget {
                 Navigator.pop(context);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Notice cannot be empty!'), backgroundColor: Colors.red),
+                  const SnackBar(content: Text('Notice cannot be empty!'), backgroundColor: AppTheme.primary),
                 );
               }
             },
@@ -510,7 +510,7 @@ class TeacherDashboardScreen extends StatelessWidget {
                 Navigator.pop(context);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Assignment cannot be empty!'), backgroundColor: Colors.red),
+                  const SnackBar(content: Text('Assignment cannot be empty!'), backgroundColor: AppTheme.primary),
                 );
               }
             },

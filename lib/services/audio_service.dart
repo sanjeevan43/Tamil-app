@@ -23,23 +23,25 @@ class AudioService {
       if (voices != null) {
         for (var voice in voices) {
           if (voice['locale'].toString().startsWith('ta')) {
-            await _flutterTts.setVoice({"name": voice["name"], "locale": voice["locale"]});
+            await _flutterTts.setVoice({'name': voice['name'], 'locale': voice['locale']});
             break;
           }
         }
       }
     } catch (e) {
-      print("TTS Initialization Error: $e");
+      print('TTS Initialization Error: $e');
     }
   }
 
   static Future<void> playLetter(String letter, {String? phonetic}) async {
     // Priority: 1. Manual phonetic text, 2. Map lookup (for dotted letters), 3. Original letter
     String textToSpeak = phonetic ?? _phoneticMap[letter] ?? letter;
+    await _flutterTts.stop();
     await _flutterTts.speak(textToSpeak);
   }
 
   static Future<void> playWord(String word) async {
+    await _flutterTts.stop();
     await _flutterTts.speak(word);
   }
 

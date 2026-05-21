@@ -165,7 +165,7 @@ class _QuizScreenState extends State<QuizScreen> {
               borderRadius: BorderRadius.circular(8),
               child: LinearProgressIndicator(
                 value: (_currentQuestion + 1) / _questions.length,
-                backgroundColor: Colors.grey.shade300,
+                backgroundColor: AppTheme.textGray.withOpacity(0.3),
                 color: AppTheme.primaryRed,
                 minHeight: 8,
               ),

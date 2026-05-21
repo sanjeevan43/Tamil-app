@@ -25,11 +25,11 @@ class ParentDashboardScreen extends StatelessWidget {
               width: 36,
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppTheme.white,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: AppTheme.topoSilver),
                 boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4)),
+                  BoxShadow(color: AppTheme.textDark.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4)),
                 ],
               ),
               child: Image.asset('assets/images/29099e40-2686-49d2-af50-5d939b785f80.png'),
@@ -78,7 +78,7 @@ class ParentDashboardScreen extends StatelessWidget {
             
             Text(
               'Teaching Tools',
-              style: GoogleFonts.lexend(
+              style: GoogleFonts.outfit(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: AppTheme.textDark,
@@ -108,7 +108,7 @@ class ParentDashboardScreen extends StatelessWidget {
             const SizedBox(height: 32),
             Text(
               'Settings',
-              style: GoogleFonts.lexend(
+              style: GoogleFonts.outfit(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: AppTheme.textDark,
@@ -121,7 +121,7 @@ class ParentDashboardScreen extends StatelessWidget {
               child: Column(
                 children: [
                   _buildSettingTile('Focus Mode', Icons.visibility, true, (val) {}),
-                  Divider(height: 1, color: Colors.grey[100]),
+                  const Divider(height: 1, color: AppTheme.topoLight),
                   _buildSettingTile('Notifications', Icons.notifications, true, (val) {}),
                 ],
               ),
@@ -159,10 +159,10 @@ class ParentDashboardScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: AppTheme.white.withOpacity(0.2),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.family_restroom, color: Colors.white, size: 28),
+                child: const Icon(Icons.family_restroom, color: AppTheme.white, size: 28),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -171,17 +171,17 @@ class ParentDashboardScreen extends StatelessWidget {
                   children: [
                     Text(
                       'Welcome to Parent Mode',
-                      style: GoogleFonts.lexend(
+                      style: GoogleFonts.outfit(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: AppTheme.white,
                       ),
                     ),
                     Text(
                       'Track & guide your child',
-                      style: GoogleFonts.lexend(
+                      style: GoogleFonts.outfit(
                         fontSize: 12,
-                        color: Colors.white.withOpacity(0.8),
+                        color: AppTheme.white.withOpacity(0.8),
                       ),
                     ),
                   ],
@@ -193,16 +193,16 @@ class ParentDashboardScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
+              color: AppTheme.white.withOpacity(0.15),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _buildStatItem('Level', '${progress.level}'),
-                Container(width: 1, height: 24, color: Colors.white.withOpacity(0.3)),
+                Container(width: 1, height: 24, color: AppTheme.white.withOpacity(0.3)),
                 _buildStatItem('Stars', '${progress.totalStars}'),
-                Container(width: 1, height: 24, color: Colors.white.withOpacity(0.3)),
+                Container(width: 1, height: 24, color: AppTheme.white.withOpacity(0.3)),
                 _buildStatItem('Learned', '${progress.totalLettersLearned}'),
               ],
             ),
@@ -217,17 +217,17 @@ class ParentDashboardScreen extends StatelessWidget {
       children: [
         Text(
           value,
-          style: GoogleFonts.lexend(
+          style: GoogleFonts.outfit(
             fontWeight: FontWeight.bold,
             fontSize: 18,
-            color: Colors.white,
+            color: AppTheme.white,
           ),
         ),
         Text(
           label,
-          style: GoogleFonts.lexend(
+          style: GoogleFonts.outfit(
             fontSize: 10,
-            color: Colors.white.withOpacity(0.8),
+            color: AppTheme.white.withOpacity(0.8),
           ),
         ),
       ],
@@ -259,7 +259,7 @@ class ParentDashboardScreen extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.lexend(
+                    style: GoogleFonts.outfit(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                       color: AppTheme.textDark,
@@ -268,7 +268,7 @@ class ParentDashboardScreen extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: GoogleFonts.lexend(
+                    style: GoogleFonts.outfit(
                       color: AppTheme.textSlate,
                       fontSize: 12,
                     ),
@@ -276,7 +276,7 @@ class ParentDashboardScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: Colors.grey[400]),
+            const Icon(Icons.chevron_right, color: AppTheme.textGray),
           ],
         ),
       ),
@@ -295,7 +295,7 @@ class ParentDashboardScreen extends StatelessWidget {
           const SizedBox(width: 16),
           Text(
             title,
-            style: GoogleFonts.lexend(
+            style: GoogleFonts.outfit(
               fontSize: 14,
               fontWeight: FontWeight.w500,
               color: AppTheme.textDark,
@@ -322,8 +322,8 @@ class ParentDashboardScreen extends StatelessWidget {
               Text('This Week', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w800, color: AppTheme.secondary)),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(color: Colors.green.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
-                child: Text('Active', style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.green)),
+                decoration: BoxDecoration(color: AppTheme.success.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+                child: Text('Active', style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w800, color: AppTheme.success)),
               ),
             ],
           ),
@@ -375,13 +375,13 @@ class ParentDashboardScreen extends StatelessWidget {
       decoration: AppTheme.whiteCard(radius: 24),
       child: Column(
         children: [
-          _buildSkillRow('Reading', 0.75, Colors.blue),
+          _buildSkillRow('Reading', 0.75, AppTheme.info),
           const SizedBox(height: 16),
-          _buildSkillRow('Writing', 0.45, Colors.green),
+          _buildSkillRow('Writing', 0.45, AppTheme.success),
           const SizedBox(height: 16),
-          _buildSkillRow('Listening', 0.60, Colors.orange),
+          _buildSkillRow('Listening', 0.60, AppTheme.warning),
           const SizedBox(height: 16),
-          _buildSkillRow('Speaking', 0.30, Colors.purple),
+          _buildSkillRow('Speaking', 0.30, AppTheme.primaryDark),
         ],
       ),
     );

@@ -21,14 +21,13 @@ dependencies:
   google_sign_in: ^6.2.1
   cloud_firestore: ^4.15.8
   firebase_storage: ^11.6.9
-  sqflite: ^2.3.2
-  path: ^1.8.3
   file_picker: ^8.0.0+1
   url_launcher: ^6.3.0
   confetti: ^0.8.0
   audioplayers: ^5.2.1
   http: ^1.2.0
   intl: ^0.19.0
+  flutter_dotenv: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -36,15 +35,15 @@ dev_dependencies:
   flutter_lints: ^3.0.1
   build_runner: ^2.4.9
   flutter_launcher_icons: ^0.13.1
-  hive: ^2.2.3
-  hive_flutter: ^1.1.0
 
 flutter:
   uses-material-design: true
   assets:
     - assets/images/
     - assets/audio/
-    - assets/data/
+    - assets/data/tamil_proverbs.json
+    - assets/data/v_thirukkural_list.json
+    - .env
 
 flutter_launcher_icons:
   android: true

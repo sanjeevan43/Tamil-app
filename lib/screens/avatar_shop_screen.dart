@@ -31,15 +31,15 @@ class AvatarShopScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_rounded, color: AppTheme.textDark),
           onPressed: () => Navigator.pop(context),
           style: IconButton.styleFrom(
-            backgroundColor: Colors.white,
+            backgroundColor: AppTheme.white,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           ),
         ),
         title: Text(
           'AVATAR SHOP',
-          style: GoogleFonts.inter(fontWeight: FontWeight.w900, color: AppTheme.textDark, letterSpacing: 2, fontSize: 13),
+          style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.textDark, letterSpacing: 2, fontSize: 13),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: AppTheme.white,
         elevation: 0,
         centerTitle: true,
         actions: [
@@ -55,7 +55,7 @@ class AvatarShopScreen extends StatelessWidget {
                 const Text('🪙 ', style: TextStyle(fontSize: 14)),
                 Text(
                   '${progress.totalCoins}', 
-                  style: GoogleFonts.inter(fontWeight: FontWeight.w900, color: AppTheme.primary, fontSize: 14)
+                  style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.primary, fontSize: 14)
                 ),
               ],
             ),
@@ -75,7 +75,7 @@ class AvatarShopScreen extends StatelessWidget {
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppTheme.white,
                     shape: BoxShape.circle,
                     boxShadow: [BoxShadow(color: AppTheme.primaryDark.withOpacity(0.3), blurRadius: 20)],
                   ),
@@ -90,16 +90,16 @@ class AvatarShopScreen extends StatelessWidget {
                     children: [
                       Text(
                         'CURRENT STYLE',
-                        style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.white.withOpacity(0.8), letterSpacing: 1),
+                        style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.white.withOpacity(0.8), letterSpacing: 1),
                       ),
                       Text(
-                        '${progress.userName}',
-                        style: GoogleFonts.inter(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.white),
+                        progress.userName,
+                        style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w900, color: AppTheme.white),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'Level ${progress.level} Explorer',
-                        style: GoogleFonts.inter(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w600),
+                        style: GoogleFonts.outfit(fontSize: 13, color: AppTheme.white, fontWeight: FontWeight.w600),
                       ),
                     ],
                   ),
@@ -120,7 +120,7 @@ class AvatarShopScreen extends StatelessWidget {
                 const SizedBox(width: 12),
                 Text(
                   'COLLECTION',
-                  style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w900, color: AppTheme.primary, letterSpacing: 1),
+                  style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w900, color: AppTheme.primary, letterSpacing: 1),
                 ),
               ],
             ),
@@ -155,7 +155,7 @@ class AvatarShopScreen extends StatelessWidget {
                     duration: const Duration(milliseconds: 200),
                     decoration: isEquipped 
                       ? BoxDecoration(
-                          color: Colors.white,
+                          color: AppTheme.white,
                           borderRadius: BorderRadius.circular(32),
                           border: Border.all(color: AppTheme.primary, width: 2.5),
                           boxShadow: [BoxShadow(color: AppTheme.primary.withOpacity(0.1), blurRadius: 15, offset: const Offset(0, 8))],
@@ -178,12 +178,12 @@ class AvatarShopScreen extends StatelessWidget {
                         const SizedBox(height: 16),
                         Text(
                           item['name'] as String, 
-                          style: GoogleFonts.inter(fontWeight: FontWeight.w800, color: AppTheme.textDark, fontSize: 16),
+                          style: GoogleFonts.outfit(fontWeight: FontWeight.w800, color: AppTheme.textDark, fontSize: 16),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           item['description'] as String, 
-                          style: GoogleFonts.inter(fontSize: 11, color: AppTheme.textGray, fontWeight: FontWeight.w600), 
+                          style: GoogleFonts.outfit(fontSize: 11, color: AppTheme.textGray, fontWeight: FontWeight.w600), 
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 16),
@@ -196,8 +196,8 @@ class AvatarShopScreen extends StatelessWidget {
                             ),
                             child: Text(
                               isEquipped ? 'ACTIVE' : 'READY',
-                              style: GoogleFonts.inter(
-                                color: isEquipped ? Colors.white : AppTheme.success,
+                              style: GoogleFonts.outfit(
+                                color: isEquipped ? AppTheme.white : AppTheme.success,
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 1,
@@ -217,7 +217,7 @@ class AvatarShopScreen extends StatelessWidget {
                                 const Text('🪙 ', style: TextStyle(fontSize: 10)),
                                 Text(
                                   '${item['price']}',
-                                  style: GoogleFonts.inter(fontWeight: FontWeight.w900, color: AppTheme.primary, fontSize: 13),
+                                  style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.primary, fontSize: 13),
                                 ),
                               ],
                             ),
@@ -246,19 +246,19 @@ class AvatarShopScreen extends StatelessWidget {
             Container(
               width: 100,
               height: 100,
-              decoration: BoxDecoration(color: AppTheme.offWhite, shape: BoxShape.circle),
+              decoration: const BoxDecoration(color: AppTheme.offWhite, shape: BoxShape.circle),
               child: Center(child: Text(item['emoji'], style: const TextStyle(fontSize: 56))),
             ),
             const SizedBox(height: 24),
             Text(
               'UNLOCK ${item['name']}',
-              style: GoogleFonts.inter(fontWeight: FontWeight.w900, color: AppTheme.textDark, fontSize: 18),
+              style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.textDark, fontSize: 18),
             ),
             const SizedBox(height: 8),
             Text(
               'Would you like to spend ${item['price']} coins to unlock this avatar style?',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(color: AppTheme.textSlate, fontWeight: FontWeight.w500, fontSize: 14),
+              style: GoogleFonts.outfit(color: AppTheme.textSlate, fontWeight: FontWeight.w500, fontSize: 14),
             ),
             const SizedBox(height: 32),
             Row(
@@ -266,7 +266,7 @@ class AvatarShopScreen extends StatelessWidget {
                 Expanded(
                   child: TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text('NOT YET', style: GoogleFonts.inter(fontWeight: FontWeight.w800, color: AppTheme.textGray)),
+                    child: Text('NOT YET', style: GoogleFonts.outfit(fontWeight: FontWeight.w800, color: AppTheme.textGray)),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -281,7 +281,7 @@ class AvatarShopScreen extends StatelessWidget {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       elevation: 0,
                     ),
-                    child: Text('BUY NOW', style: GoogleFonts.inter(fontWeight: FontWeight.w800, color: Colors.white)),
+                    child: Text('BUY NOW', style: GoogleFonts.outfit(fontWeight: FontWeight.w800, color: AppTheme.white)),
                   ),
                 ),
               ],

@@ -4,8 +4,7 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 class SpeechToTextService with ChangeNotifier {
   final stt.SpeechToText _speech = stt.SpeechToText();
   bool _isListening = false;
-  String _text = "";
-  double _confidence = 1.0;
+  String _text = '';
 
   bool get isListening => _isListening;
   String get text => _text;
@@ -13,13 +12,13 @@ class SpeechToTextService with ChangeNotifier {
   Future<bool> initialize() async {
     bool available = await _speech.initialize(
       onStatus: (val) {
-        print('onStatus: $val');
+        debugPrint('onStatus: $val');
         if (val == 'done' || val == 'notListening') {
           _isListening = false;
           notifyListeners();
         }
       },
-      onError: (val) => print('onError: $val'),
+      onError: (val) => debugPrint('onError: $val'),
     );
     return available;
   }
@@ -29,15 +28,12 @@ class SpeechToTextService with ChangeNotifier {
       bool available = await initialize();
       if (available) {
         _isListening = true;
-        _text = "";
+        _text = '';
         notifyListeners();
         
         _speech.listen(
           onResult: (val) {
             _text = val.recognizedWords;
-            if (val.hasConfidenceRating && val.confidence > 0) {
-              _confidence = val.confidence;
-            }
             onResult(_text);
             notifyListeners();
           },
@@ -80,7 +76,7 @@ class _SpeakingButtonWidgetState extends State<SpeakingButtonWidget> {
             boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10)],
           ),
           child: Text(
-            _speechService.text.isEmpty ? "பேசத் தயாராக உள்ளது... (Ready to speak...)" : _speechService.text,
+            _speechService.text.isEmpty ? 'பேசத் தயாராக உள்ளது... (Ready to speak...)' : _speechService.text,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
@@ -113,7 +109,7 @@ class _SpeakingButtonWidgetState extends State<SpeakingButtonWidget> {
         ),
         const SizedBox(height: 10),
         Text(
-          _speechService.isListening ? "நிறுத்துவதற்கு மீண்டும் தட்டவும் (Tap to stop)" : "பேசுவதற்கு தட்டவும் (Tap to speak)",
+          _speechService.isListening ? 'நிறுத்துவதற்கு மீண்டும் தட்டவும் (Tap to stop)' : 'பேசுவதற்கு தட்டவும் (Tap to speak)',
           style: const TextStyle(color: Colors.grey, fontSize: 14),
         ),
       ],

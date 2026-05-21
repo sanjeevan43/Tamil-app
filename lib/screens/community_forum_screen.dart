@@ -31,8 +31,8 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddQuestionDialog(context),
         backgroundColor: AppTheme.primary,
-        icon: const Icon(Icons.add_comment_rounded, color: Colors.white),
-        label: Text('ASK QUESTION', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: Colors.white)),
+        icon: const Icon(Icons.add_comment_rounded, color: AppTheme.white),
+        label: Text('ASK QUESTION', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: AppTheme.white)),
       ),
     );
   }
@@ -49,14 +49,14 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
         titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
         title: Text(
           'COMMUNITY Q&A',
-          style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: Colors.white, fontSize: 18, letterSpacing: 1),
+          style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.white, fontSize: 18, letterSpacing: 1),
         ),
         background: Stack(
           children: [
             Positioned(
               right: -50,
               top: -20,
-              child: Icon(Icons.forum_rounded, size: 200, color: Colors.white.withOpacity(0.05)),
+              child: Icon(Icons.forum_rounded, size: 200, color: AppTheme.white.withOpacity(0.05)),
             ),
           ],
         ),
@@ -71,11 +71,11 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppTheme.white,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: AppTheme.topoSilver),
             boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4)),
+              BoxShadow(color: AppTheme.textDark.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4)),
             ],
           ),
           child: TextField(
@@ -140,11 +140,11 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.white,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(color: AppTheme.topoSilver),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 8, offset: const Offset(0, 2)),
+            BoxShadow(color: AppTheme.textDark.withOpacity(0.02), blurRadius: 8, offset: const Offset(0, 2)),
           ],
         ),
         child: Column(
@@ -219,7 +219,7 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
       builder: (context) => Container(
         height: MediaQuery.of(context).size.height * 0.8,
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
         ),
         padding: const EdgeInsets.all(24),
@@ -281,7 +281,7 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                    backgroundColor: AppTheme.primary,
                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                  ),
-                 child: Text('POST QUESTION', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: Colors.white)),
+                 child: Text('POST QUESTION', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: AppTheme.white)),
                ),
              ),
            ],
@@ -320,8 +320,8 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
       appBar: AppBar(
         backgroundColor: AppTheme.secondary,
         elevation: 0,
-        title: Text('ANSWERS', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 2, fontSize: 16)),
-        iconTheme: const IconThemeData(color: Colors.white),
+        title: Text('ANSWERS', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.white, letterSpacing: 2, fontSize: 16)),
+        iconTheme: const IconThemeData(color: AppTheme.white),
       ),
       body: Column(
         children: [
@@ -347,9 +347,9 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.white,
         borderRadius: BorderRadius.circular(28),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 20)],
+        boxShadow: [BoxShadow(color: AppTheme.textDark.withOpacity(0.04), blurRadius: 20)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -394,7 +394,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
               margin: const EdgeInsets.only(bottom: 16),
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppTheme.white,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: AppTheme.topoSilver.withOpacity(0.5)),
               ),
@@ -427,8 +427,8 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
     return Container(
       padding: EdgeInsets.only(left: 20, right: 20, top: 16, bottom: MediaQuery.of(context).padding.bottom + 16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -4))],
+        color: AppTheme.white,
+        boxShadow: [BoxShadow(color: AppTheme.textDark.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -4))],
       ),
       child: Row(
         children: [
@@ -457,7 +457,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
               width: 50,
               height: 50,
               decoration: const BoxDecoration(color: AppTheme.primary, shape: BoxShape.circle),
-              child: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
+              child: const Icon(Icons.send_rounded, color: AppTheme.white, size: 20),
             ),
           ),
         ],

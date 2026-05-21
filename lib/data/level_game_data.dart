@@ -434,7 +434,7 @@ class LevelGameData {
 
   // Level 17: Read paragraph
   static List<Map<String, dynamic>> _generateReadParagraphRounds(int count) {
-    final stories = TamilData.tamilStories;
+    const stories = TamilData.tamilStories;
     final rounds = <Map<String, dynamic>>[];
     for (var story in stories) {
       final scenes = story['scenes'] as List;
@@ -455,7 +455,7 @@ class LevelGameData {
 
   // Level 18: Comprehension
   static List<Map<String, dynamic>> _generateComprehensionRounds(int count) {
-    final stories = TamilData.tamilStories;
+    const stories = TamilData.tamilStories;
     final rounds = <Map<String, dynamic>>[];
     for (var story in stories) {
       final questions = story['questions'] as List;

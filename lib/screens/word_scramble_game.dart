@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -92,13 +91,13 @@ class _WordScrambleGameState extends State<WordScrambleGame> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: AppTheme.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         title: const Center(child: Text('🎊 Excellent! 🎊', style: TextStyle(color: AppTheme.success, fontWeight: FontWeight.bold))),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('You spelled it correctly!', style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+            Text('You spelled it correctly!', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
             const SizedBox(height: 12),
             Text(_words[_currentIndex]['word']!, style: GoogleFonts.notoSansTamil(fontSize: 32, fontWeight: FontWeight.bold, color: AppTheme.primary)),
             const SizedBox(height: 20),
@@ -121,7 +120,7 @@ class _WordScrambleGameState extends State<WordScrambleGame> {
                 _loadLevel();
               });
             },
-            child: Text('NEXT WORD', style: GoogleFonts.inter(fontWeight: FontWeight.w900, color: AppTheme.primary)),
+            child: Text('NEXT WORD', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.primary)),
           ),
         ],
       ),
@@ -132,7 +131,7 @@ class _WordScrambleGameState extends State<WordScrambleGame> {
     return Column(
       children: [
         Text(emoji, style: const TextStyle(fontSize: 24)),
-        Text(text, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w800, color: AppTheme.textSlate)),
+        Text(text, style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w800, color: AppTheme.textSlate)),
       ],
     );
   }
@@ -142,7 +141,7 @@ class _WordScrambleGameState extends State<WordScrambleGame> {
     return Scaffold(
       backgroundColor: AppTheme.backgroundLight,
       appBar: AppBar(
-        title: Text('Word Scramble', style: GoogleFonts.inter(fontWeight: FontWeight.w800)),
+        title: Text('Word Scramble', style: GoogleFonts.outfit(fontWeight: FontWeight.w800)),
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -150,7 +149,7 @@ class _WordScrambleGameState extends State<WordScrambleGame> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: AppTheme.pillBadge(),
-                child: Text('Score: $_score', style: GoogleFonts.inter(fontWeight: FontWeight.w900, color: AppTheme.primary, fontSize: 12)),
+                child: Text('Score: $_score', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.primary, fontSize: 12)),
               ),
             ),
           ),
@@ -168,9 +167,9 @@ class _WordScrambleGameState extends State<WordScrambleGame> {
                 decoration: AppTheme.whiteCard(radius: 28),
                 child: Column(
                   children: [
-                    Text('HINT', style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.textSlate.withOpacity(0.4), letterSpacing: 2)),
+                    Text('HINT', style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.textSlate.withOpacity(0.4), letterSpacing: 2)),
                     const SizedBox(height: 8),
-                    Text(_words[_currentIndex]['hint']!, style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
+                    Text(_words[_currentIndex]['hint']!, style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
                   ],
                 ),
               ),
@@ -181,7 +180,7 @@ class _WordScrambleGameState extends State<WordScrambleGame> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppTheme.white,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: AppTheme.primary.withOpacity(0.1), width: 2),
                 ),
@@ -194,7 +193,7 @@ class _WordScrambleGameState extends State<WordScrambleGame> {
               ),
               const SizedBox(height: 48),
               // Scrambled Letters Area
-              Text('TAP LETTERS TO SPELL', style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.textSlate.withOpacity(0.4), letterSpacing: 2)),
+              Text('TAP LETTERS TO SPELL', style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.textSlate.withOpacity(0.4), letterSpacing: 2)),
               const SizedBox(height: 16),
               Wrap(
                 alignment: WrapAlignment.center,
@@ -232,11 +231,11 @@ class _WordScrambleGameState extends State<WordScrambleGame> {
       width: 50,
       height: 50,
       decoration: BoxDecoration(
-        color: isSelected ? AppTheme.primary : Colors.white,
+        color: isSelected ? AppTheme.primary : AppTheme.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: isSelected ? AppTheme.primary.withOpacity(0.3) : Colors.black.withOpacity(0.05),
+            color: isSelected ? AppTheme.primary.withOpacity(0.3) : AppTheme.textDark.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -251,7 +250,7 @@ class _WordScrambleGameState extends State<WordScrambleGame> {
           style: GoogleFonts.notoSansTamil(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: isSelected ? Colors.white : AppTheme.textDark,
+            color: isSelected ? AppTheme.white : AppTheme.textDark,
           ),
         ),
       ),

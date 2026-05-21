@@ -14,7 +14,7 @@ class WritingPracticeGame extends StatefulWidget {
 
 class _WritingPracticeGameState extends State<WritingPracticeGame> {
   int _currentLetterIndex = 0;
-  List<Offset> _points = [];
+  final List<Offset> _points = [];
   int _stars = 0;
 
   void _nextLetter() {
@@ -35,7 +35,7 @@ class _WritingPracticeGameState extends State<WritingPracticeGame> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Please draw the letter first!', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
-          backgroundColor: Colors.red,
+          backgroundColor: AppTheme.primary,
           duration: const Duration(seconds: 2),
         ),
       );
@@ -48,7 +48,7 @@ class _WritingPracticeGameState extends State<WritingPracticeGame> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Draw more to complete the letter!', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
-          backgroundColor: Colors.orange,
+          backgroundColor: AppTheme.warning,
           duration: const Duration(seconds: 2),
         ),
       );
@@ -107,7 +107,7 @@ class _WritingPracticeGameState extends State<WritingPracticeGame> {
                 backgroundColor: AppTheme.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
-              child: Text('Next Letter', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: Colors.white)),
+              child: Text('Next Letter', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.white)),
             ),
           ],
         ),
@@ -121,7 +121,7 @@ class _WritingPracticeGameState extends State<WritingPracticeGame> {
     
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppTheme.white,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.secondary, size: 20),
@@ -157,12 +157,12 @@ class _WritingPracticeGameState extends State<WritingPracticeGame> {
                   children: [
                     Text(
                       'Trace Letter',
-                      style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w700, color: Colors.white.withOpacity(0.7), letterSpacing: 1),
+                      style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w700, color: AppTheme.white.withOpacity(0.7), letterSpacing: 1),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       TamilData.uyirEzhuthukkal[_currentLetterIndex],
-                      style: GoogleFonts.notoSansTamil(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: GoogleFonts.notoSansTamil(fontSize: 32, fontWeight: FontWeight.bold, color: AppTheme.white),
                     ),
                   ],
                 ),
@@ -182,7 +182,7 @@ class _WritingPracticeGameState extends State<WritingPracticeGame> {
             child: Container(
               margin: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppTheme.white,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: AppTheme.primary, width: 2),
                 boxShadow: [
@@ -219,12 +219,12 @@ class _WritingPracticeGameState extends State<WritingPracticeGame> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: validPoints.length < 10 ? Colors.orange : AppTheme.success,
+                        color: validPoints.length < 10 ? AppTheme.warning : AppTheme.success,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         '${validPoints.length} strokes',
-                        style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w700, color: Colors.white),
+                        style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w700, color: AppTheme.white),
                       ),
                     ),
                   ),
@@ -245,7 +245,7 @@ class _WritingPracticeGameState extends State<WritingPracticeGame> {
                         label: Text('Clear', style: GoogleFonts.outfit(fontWeight: FontWeight.w700)),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppTheme.textGray,
-                          foregroundColor: Colors.white,
+                          foregroundColor: AppTheme.white,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
                       ),
@@ -258,7 +258,7 @@ class _WritingPracticeGameState extends State<WritingPracticeGame> {
                         label: Text('Submit', style: GoogleFonts.outfit(fontWeight: FontWeight.w700)),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppTheme.primary,
-                          foregroundColor: Colors.white,
+                          foregroundColor: AppTheme.white,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
                       ),
@@ -271,7 +271,7 @@ class _WritingPracticeGameState extends State<WritingPracticeGame> {
                         label: Text('Next', style: GoogleFonts.outfit(fontWeight: FontWeight.w700)),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppTheme.secondary,
-                          foregroundColor: Colors.white,
+                          foregroundColor: AppTheme.white,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
                       ),
@@ -283,18 +283,18 @@ class _WritingPracticeGameState extends State<WritingPracticeGame> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.1),
+                      color: AppTheme.warning.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.orange, width: 1),
+                      border: Border.all(color: AppTheme.warning, width: 1),
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.info_outline, color: Colors.orange, size: 18),
+                        const Icon(Icons.info_outline, color: AppTheme.warning, size: 18),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             'Draw more strokes to complete the letter (${10 - validPoints.length} more needed)',
-                            style: GoogleFonts.outfit(fontSize: 12, color: Colors.orange.shade800, fontWeight: FontWeight.w600),
+                            style: GoogleFonts.outfit(fontSize: 12, color: AppTheme.warning.withOpacity(0.8), fontWeight: FontWeight.w600),
                           ),
                         ),
                       ],

@@ -82,7 +82,7 @@ class GameLogic {
 
   // Sentence Builder Game
   static Map<String, dynamic> generateSentenceBuilderRound() {
-    final sentences = TamilData.sentences;
+    const sentences = TamilData.sentences;
     final sentenceData = sentences[_random.nextInt(sentences.length)];
     
     final words = List<String>.from(sentenceData['tamil'] as List);
@@ -100,7 +100,9 @@ class GameLogic {
   // Pronunciation Practice
   static Map<String, dynamic> generatePronunciationRound() {
     final allWords = <Map<String, String>>[];
-    TamilData.wordCategories.values.forEach((cat) => allWords.addAll(cat));
+    for (var cat in TamilData.wordCategories.values) {
+      allWords.addAll(cat);
+    }
     
     final word = allWords[_random.nextInt(allWords.length)];
     
@@ -163,7 +165,9 @@ class GameLogic {
   // Sound Match Game
   static Map<String, dynamic> generateSoundMatchRound() {
     final allWords = <Map<String, String>>[];
-    TamilData.wordCategories.values.forEach((cat) => allWords.addAll(cat));
+    for (var cat in TamilData.wordCategories.values) {
+      allWords.addAll(cat);
+    }
     
     final correctWord = allWords[_random.nextInt(allWords.length)];
     final options = [correctWord];

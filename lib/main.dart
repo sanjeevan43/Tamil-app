@@ -9,41 +9,48 @@ import 'services/audio_service.dart';
 import 'services/auth_service.dart';
 import 'providers/lesson_provider.dart';
 import 'screens/splash_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
+  await dotenv.load(fileName: '.env');
+  
   try {
-    print("Initializing Firebase...");
+    debugPrint('Initializing Firebase...');
     // Initialize Firebase
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    print("Firebase initialized successfully");
+    debugPrint('Firebase initialized successfully');
     
     // Enable Firestore offline persistence for better experience in low-network areas
     FirebaseFirestore.instance.settings = const Settings(
       persistenceEnabled: true,
       cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
     );
-    print("Firestore settings applied");
+    debugPrint('Firestore settings applied');
 
-    await AudioService.initialize();
-    print("Audio Service initialized");
+    // Initialize non-blocking services after basic setup
+    AudioService.initialize().then((_) {
+      debugPrint('Audio Service initialized successfully in background');
+    }).catchError((e) {
+      debugPrint('Non-critical service error (AudioService): $e');
+    });
     
     runApp(
       MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => AuthService(), lazy: false),
           ChangeNotifierProvider(create: (_) => EnhancedProgressProvider(), lazy: false),
-          ChangeNotifierProvider(create: (_) => LessonProvider(), lazy: false), // Add the new LessonProvider
+          ChangeNotifierProvider(create: (_) => LessonProvider(), lazy: false),
         ],
         child: const TamilMasterApp(),
       ),
     );
   } catch (e, stackTrace) {
-    print("CRITICAL INITIALIZATION ERROR: $e");
-    print("Stack Trace: $stackTrace");
+    debugPrint('CRITICAL INITIALIZATION ERROR: $e');
+    debugPrint('Stack Trace: $stackTrace');
     // Still run the app but maybe show an error screen? 
     // For now, just rethrow to let it crash but with info
     rethrow;

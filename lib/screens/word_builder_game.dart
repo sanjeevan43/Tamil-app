@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:characters/characters.dart';
 import 'dart:math';
 import '../constants/app_theme.dart';
 import '../constants/tamil_data.dart';
@@ -123,7 +122,7 @@ class _WordBuilderGameState extends State<WordBuilderGame> {
             Text(_emoji, style: const TextStyle(fontSize: 60)),
             const SizedBox(height: 16),
             Text(
-              '$_targetWord',
+              _targetWord,
               style: const TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
@@ -257,140 +256,143 @@ class _WordBuilderGameState extends State<WordBuilderGame> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            // Progress
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: LinearProgressIndicator(
-                value: _round / _maxRounds,
-                backgroundColor: Colors.grey.shade300,
-                color: AppTheme.primaryRed,
-                minHeight: 8,
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              // Progress
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: LinearProgressIndicator(
+                  value: _round / _maxRounds,
+                  backgroundColor: AppTheme.textGray.withOpacity(0.3),
+                  color: AppTheme.primaryRed,
+                  minHeight: 8,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Word $_round/$_maxRounds',
-              style: const TextStyle(fontSize: 14, color: AppTheme.textGray),
-            ),
-            const SizedBox(height: 20),
+              const SizedBox(height: 8),
+              Text(
+                'Word $_round/$_maxRounds',
+                style: const TextStyle(fontSize: 14, color: AppTheme.textGray),
+              ),
+              const SizedBox(height: 20),
 
-            // Clue
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: AppTheme.premiumCard(),
-              child: Column(
-                children: [
-                  Text(_emoji, style: const TextStyle(fontSize: 50)),
-                  const SizedBox(height: 8),
-                  Text(
-                    _english,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.white,
+              // Clue
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: AppTheme.premiumCard(),
+                child: Column(
+                  children: [
+                    Text(_emoji, style: const TextStyle(fontSize: 50)),
+                    const SizedBox(height: 8),
+                    Text(
+                      _english,
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.white,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'Build the Tamil word!',
-                    style: TextStyle(fontSize: 14, color: AppTheme.white),
-                  ),
-                ],
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Build the Tamil word!',
+                      style: TextStyle(fontSize: 14, color: AppTheme.white),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 24),
+              const SizedBox(height: 24),
 
-            // Answer slots
-            Container(
-              constraints: const BoxConstraints(minHeight: 80),
-              padding: const EdgeInsets.all(16),
-              decoration: AppTheme.glassCard(),
-              child: Center(
-                child: Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  alignment: WrapAlignment.center,
-                  children: _userAnswer.asMap().entries.map((entry) {
-                    return GestureDetector(
-                      onTap: () => _removeLetter(entry.key),
-                      child: Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: AppTheme.primaryRed,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppTheme.primaryRed.withOpacity(0.3),
-                              blurRadius: 6,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Text(
-                            entry.value,
-                            style: const TextStyle(
-                              fontSize: 28,
-                              color: AppTheme.white,
-                              fontWeight: FontWeight.bold,
+              // Answer slots
+              Container(
+                constraints: const BoxConstraints(minHeight: 80),
+                padding: const EdgeInsets.all(16),
+                decoration: AppTheme.glassCard(),
+                child: Center(
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    alignment: WrapAlignment.center,
+                    children: _userAnswer.asMap().entries.map((entry) {
+                      return GestureDetector(
+                        onTap: () => _removeLetter(entry.key),
+                        child: Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            color: AppTheme.primaryRed,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppTheme.primaryRed.withOpacity(0.3),
+                                blurRadius: 6,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: Text(
+                              entry.value,
+                              style: const TextStyle(
+                                fontSize: 28,
+                                color: AppTheme.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }).toList(),
+                      );
+                    }).toList(),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // Scrambled letters
-            const Text(
-              'Tap letters to build:',
-              style: TextStyle(fontSize: 14, color: AppTheme.textGray),
-            ),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              alignment: WrapAlignment.center,
-              children: _scrambledLetters.asMap().entries.map((entry) {
-                return GestureDetector(
-                  onTap: () => _addLetter(entry.value, entry.key),
-                  child: Container(
-                    width: 56,
-                    height: 56,
-                    decoration: AppTheme.gameCard(),
-                    child: Center(
-                      child: Text(
-                        entry.value,
-                        style: const TextStyle(
-                          fontSize: 28,
-                          color: AppTheme.primaryRed,
-                          fontWeight: FontWeight.bold,
+              // Scrambled letters
+              const Text(
+                'Tap letters to build:',
+                style: TextStyle(fontSize: 14, color: AppTheme.textGray),
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                alignment: WrapAlignment.center,
+                children: _scrambledLetters.asMap().entries.map((entry) {
+                  return GestureDetector(
+                    onTap: () => _addLetter(entry.value, entry.key),
+                    child: Container(
+                      width: 56,
+                      height: 56,
+                      decoration: AppTheme.gameCard(),
+                      child: Center(
+                        child: Text(
+                          entry.value,
+                          style: const TextStyle(
+                            fontSize: 28,
+                            color: AppTheme.primaryRed,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              }).toList(),
-            ),
-            const Spacer(),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 30),
 
-            // Skip button
-            TextButton.icon(
-              onPressed: _skipWord,
-              icon: const Icon(Icons.skip_next, color: AppTheme.textGray),
-              label:
-                  const Text('Skip', style: TextStyle(color: AppTheme.textGray)),
-            ),
-            const SizedBox(height: 10),
-          ],
+              // Skip button
+              TextButton.icon(
+                onPressed: _skipWord,
+                icon: const Icon(Icons.skip_next, color: AppTheme.textGray),
+                label:
+                    const Text('Skip', style: TextStyle(color: AppTheme.textGray)),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );

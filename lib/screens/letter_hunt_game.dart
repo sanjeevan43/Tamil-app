@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
-import '../constants/tamil_data.dart';
 import '../services/audio_service.dart';
 import '../services/game_logic.dart';
 import '../providers/enhanced_progress_provider.dart';

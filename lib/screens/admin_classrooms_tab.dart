@@ -42,7 +42,7 @@ class _AdminClassroomsTabState extends State<AdminClassroomsTab> {
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Classroom created!'), backgroundColor: Colors.green),
+      const SnackBar(content: Text('Classroom created!'), backgroundColor: AppTheme.success),
     );
 
     _nameController.clear();
@@ -68,7 +68,7 @@ class _AdminClassroomsTabState extends State<AdminClassroomsTab> {
 
   Widget _buildCreationForm() {
     return Card(
-      elevation: 4,
+      
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -78,9 +78,9 @@ class _AdminClassroomsTabState extends State<AdminClassroomsTab> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Classroom Name (e.g., 8th Std Tamil Section A)',
-                  border: const OutlineInputBorder(),
+                  border: OutlineInputBorder(),
                   filled: true,
                   fillColor: AppTheme.topoLight,
                 ),
@@ -89,9 +89,9 @@ class _AdminClassroomsTabState extends State<AdminClassroomsTab> {
               const SizedBox(height: 12),
               TextFormField(
                 controller: _descController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Description',
-                  border: const OutlineInputBorder(),
+                  border: OutlineInputBorder(),
                   filled: true,
                   fillColor: AppTheme.topoLight,
                 ),
@@ -104,7 +104,7 @@ class _AdminClassroomsTabState extends State<AdminClassroomsTab> {
                   minimumSize: const Size(double.infinity, 50),
                   backgroundColor: AppTheme.primary,
                 ),
-                child: Text('Create Classroom', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: Colors.white)),
+                child: Text('Create Classroom', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.white)),
               ),
             ],
           ),
@@ -132,7 +132,7 @@ class _AdminClassroomsTabState extends State<AdminClassroomsTab> {
               child: ListTile(
                 leading: const CircleAvatar(
                   backgroundColor: AppTheme.primary,
-                  child: Icon(Icons.school, color: Colors.white),
+                  child: Icon(Icons.school, color: AppTheme.white),
                 ),
                 title: Text(data['name'] ?? ''),
                 subtitle: Text(data['description'] ?? ''),
