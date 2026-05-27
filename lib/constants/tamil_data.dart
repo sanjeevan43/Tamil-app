@@ -145,7 +145,7 @@ class TamilData {
   ];
 
   static List<Map<String, dynamic>> getQuizQuestions() {
-    return [
+    final List<Map<String, dynamic>> questions = [
       {
         'question': 'இது எந்த எழுத்து?',
         'letter': 'அ',
@@ -207,6 +207,86 @@ class TamilData {
         'correct': 1,
       },
     ];
+
+    // Generate Vowel Questions
+    for (int i = 0; i < uyirEzhuthukkal.length; i++) {
+      final letter = uyirEzhuthukkal[i];
+      if (letter == 'அ' || letter == 'இ' || letter == 'ஓ') continue;
+      
+      final options = [letter];
+      while (options.length < 4) {
+        final opt = uyirEzhuthukkal[(i + options.length + 3) % uyirEzhuthukkal.length];
+        if (!options.contains(opt)) options.add(opt);
+      }
+      options.shuffle();
+      questions.add({
+        'question': 'இது எந்த உயிர் எழுத்து?',
+        'letter': letter,
+        'options': options,
+        'correct': options.indexOf(letter),
+      });
+    }
+
+    // Generate Consonant Questions
+    for (int i = 0; i < meiEzhuthukkal.length; i++) {
+      final letter = meiEzhuthukkal[i];
+      final options = [letter];
+      while (options.length < 4) {
+        final opt = meiEzhuthukkal[(i + options.length + 5) % meiEzhuthukkal.length];
+        if (!options.contains(opt)) options.add(opt);
+      }
+      options.shuffle();
+      questions.add({
+        'question': 'இது எந்த மெய் எழுத்து?',
+        'letter': letter,
+        'options': options,
+        'correct': options.indexOf(letter),
+      });
+    }
+
+    // Generate Vocabulary Questions
+    wordCategories.forEach((category, words) {
+      for (int i = 0; i < words.length; i++) {
+        final word = words[i];
+        final tamil = word['tamil']!;
+        final english = word['english']!;
+        final emoji = word['emoji']!;
+
+        // English to Tamil
+        final optionsTamil = [tamil];
+        while (optionsTamil.length < 4) {
+          final optWord = words[(i + optionsTamil.length) % words.length];
+          if (!optionsTamil.contains(optWord['tamil'])) {
+            optionsTamil.add(optWord['tamil']!);
+          }
+        }
+        optionsTamil.shuffle();
+        questions.add({
+          'question': '"$english" என்பது தமிழில் என்ன?',
+          'letter': emoji,
+          'options': optionsTamil,
+          'correct': optionsTamil.indexOf(tamil),
+        });
+
+        // Tamil to English
+        final optionsEnglish = [english];
+        while (optionsEnglish.length < 4) {
+          final optWord = words[(i + optionsEnglish.length + 2) % words.length];
+          if (!optionsEnglish.contains(optWord['english'])) {
+            optionsEnglish.add(optWord['english']!);
+          }
+        }
+        optionsEnglish.shuffle();
+        questions.add({
+          'question': '"$tamil" என்பதன் ஆங்கிலப் பொருள் என்ன?',
+          'letter': emoji,
+          'options': optionsEnglish,
+          'correct': optionsEnglish.indexOf(english),
+        });
+      }
+    });
+
+    return questions;
   }
 
   static final List<Map<String, dynamic>> quizQuestions = getQuizQuestions();

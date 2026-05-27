@@ -48,15 +48,15 @@ class _MainNavigationContainerState extends State<MainNavigationContainer> {
             child: Container(
               height: 72,
               decoration: BoxDecoration(
-                color: AppTheme.secondary.withOpacity(0.96), // Premium Deep Black background
+                color: AppTheme.white.withOpacity(0.95), // Premium White Glassmorphic background
                 borderRadius: BorderRadius.circular(28),
                 border: Border.all(
-                  color: AppTheme.primary.withOpacity(0.24), // Glowing logo-red border outline
+                  color: AppTheme.borderLight, // Subtle modern border
                   width: 1.5,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.primary.withOpacity(0.12),
+                    color: AppTheme.secondary.withOpacity(0.06),
                     blurRadius: 24,
                     offset: const Offset(0, 8),
                   ),
@@ -140,13 +140,13 @@ class _MainNavigationContainerState extends State<MainNavigationContainer> {
                       : EdgeInsets.zero,
                   decoration: isSelected
                       ? BoxDecoration(
-                          color: accentColor.withOpacity(0.16),
+                          color: accentColor.withOpacity(0.12),
                           borderRadius: BorderRadius.circular(16),
                         )
                       : null,
                   child: Icon(
                     icon,
-                    color: isSelected ? accentColor : AppTheme.white.withOpacity(0.6),
+                    color: isSelected ? accentColor : AppTheme.secondary.withOpacity(0.4),
                     size: isSelected ? 24 : 22,
                   ),
                 ),
@@ -156,7 +156,7 @@ class _MainNavigationContainerState extends State<MainNavigationContainer> {
                   style: GoogleFonts.outfit(
                     fontSize: 9,
                     fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
-                    color: isSelected ? accentColor : AppTheme.white.withOpacity(0.6),
+                    color: isSelected ? accentColor : AppTheme.secondary.withOpacity(0.45),
                     letterSpacing: 0.5,
                   ),
                   child: Text(label),

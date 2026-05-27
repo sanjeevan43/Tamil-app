@@ -5,7 +5,7 @@ class AppTheme {
   // Logo-Inspired Palette (Black & Vibrant Red)
   static const Color primary = Color(0xFFF44336); // Vibrant Red
   static const Color primaryDark = Color(0xFFC62828); 
-  static const Color secondary = Color(0xFF1A1A1B); // Deep Black
+  static const Color secondary = Color(0xFF0F1E36); // Premium Midnight Navy
   static const Color accent = Color(0xFF424242); 
   
   // Topographic Theme Accents

@@ -222,33 +222,59 @@ class _AkaranMentorScreenState extends State<AkaranMentorScreen> {
   Widget _buildMessageBubble(Map<String, String> message) {
     final isUser = message['role'] == 'user';
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
         mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isUser) ...[
-            CircleAvatar(
-              backgroundColor: AppTheme.primary.withOpacity(0.2),
-              child: const Text('🌟', style: TextStyle(fontSize: 20)),
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(colors: [AppTheme.primary, AppTheme.primaryDark]),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primary.withOpacity(0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: const Center(
+                child: Text('🤖', style: TextStyle(fontSize: 18)),
+              ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 10),
           ],
           Flexible(
             child: Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
               decoration: BoxDecoration(
-                color: isUser ? AppTheme.primary : AppTheme.white,
+                gradient: isUser
+                    ? const LinearGradient(
+                        colors: [AppTheme.primary, AppTheme.primaryDark],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      )
+                    : null,
+                color: isUser ? null : AppTheme.white,
                 borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(20),
-                  topRight: const Radius.circular(20),
-                  bottomLeft: isUser ? const Radius.circular(20) : Radius.zero,
-                  bottomRight: isUser ? Radius.zero : const Radius.circular(20),
+                  topLeft: const Radius.circular(24),
+                  topRight: const Radius.circular(24),
+                  bottomLeft: isUser ? const Radius.circular(24) : Radius.zero,
+                  bottomRight: isUser ? Radius.zero : const Radius.circular(24),
                 ),
+                border: isUser
+                    ? null
+                    : Border.all(color: AppTheme.borderLight, width: 1.5),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.secondary.withOpacity(0.05),
-                    blurRadius: 10,
+                    color: isUser
+                        ? AppTheme.primary.withOpacity(0.2)
+                        : AppTheme.secondary.withOpacity(0.04),
+                    blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
                 ],
@@ -265,40 +291,105 @@ class _AkaranMentorScreenState extends State<AkaranMentorScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Emojis for each game mode
+    final Map<String, String> modeEmojis = {
+      'Spot the Spoken': '🎯',
+      'Fix It!': '🔧',
+      'Flip It!': '🔄',
+      'Street Scene': '🛣️',
+      'Voice Comparison': '🗣️',
+    };
+
+    // Color theme for chips
+    final List<Color> chipColors = [
+      const Color(0xFFFF7043),
+      const Color(0xFF42A5F5),
+      AppTheme.success,
+      const Color(0xFFAB47BC),
+      const Color(0xFFEC407A),
+    ];
+
     return Scaffold(
       backgroundColor: AppTheme.backgroundLight,
       appBar: AppBar(
+        leading: Navigator.canPop(context)
+            ? Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppTheme.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [BoxShadow(color: AppTheme.textDark.withOpacity(0.08), blurRadius: 8)],
+                      border: Border.all(color: AppTheme.borderLight),
+                    ),
+                    child: const Icon(Icons.arrow_back_rounded, color: AppTheme.secondary, size: 20),
+                  ),
+                ),
+              )
+            : null,
         title: Text(
-          'Akaran Interactive Mentor',
+          'Akaran AI Mentor',
           style: GoogleFonts.outfit(
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w900,
             color: AppTheme.secondary,
+            letterSpacing: 0.5,
           ),
         ),
-        backgroundColor: AppTheme.backgroundLight,
+        backgroundColor: AppTheme.white,
         elevation: 0,
-        iconTheme: const IconThemeData(color: AppTheme.secondary),
-        actions: [
-          Row(
-            children: [
-              Text(
-                'Regional',
-                style: GoogleFonts.outfit(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                  color: AppTheme.secondary,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(60.0),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            decoration: const BoxDecoration(
+              color: AppTheme.white,
+              border: Border(bottom: BorderSide(color: AppTheme.borderLight)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: const BoxDecoration(
+                    color: AppTheme.success,
+                    shape: BoxShape.circle,
+                  ),
                 ),
-              ),
-              Switch(
-                value: _regionalMode,
-                activeColor: AppTheme.primary,
-                onChanged: (val) {
-                  setState(() => _regionalMode = val);
-                },
-              ),
-            ],
+                const SizedBox(width: 8),
+                Text(
+                  'Online Tamil Guide',
+                  style: GoogleFonts.outfit(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.textGray,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  'Regional Dialect',
+                  style: GoogleFonts.outfit(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.secondary,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Transform.scale(
+                  scale: 0.8,
+                  child: Switch(
+                    value: _regionalMode,
+                    activeColor: AppTheme.primary,
+                    onChanged: (val) {
+                      setState(() => _regionalMode = val);
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
-        ],
+        ),
       ),
       body: _isInitializing
           ? const Center(child: CircularProgressIndicator(color: AppTheme.primary))
@@ -306,55 +397,90 @@ class _AkaranMentorScreenState extends State<AkaranMentorScreen> {
               children: [
                 // Game Mode Chips
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  color: AppTheme.offWhite,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     physics: const BouncingScrollPhysics(),
                     child: Row(
-                      children: gameModes.map((mode) {
+                      children: List.generate(gameModes.length, (index) {
+                        final mode = gameModes[index];
+                        final emoji = modeEmojis[mode] ?? '🎮';
+                        final color = chipColors[index % chipColors.length];
                         return Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: ActionChip(
-                            label: Text(
-                              mode,
-                              style: GoogleFonts.outfit(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                color: AppTheme.white,
-                              ),
-                            ),
-                            backgroundColor: AppTheme.secondary,
-                            onPressed: () {
+                          padding: const EdgeInsets.only(right: 10.0),
+                          child: InkWell(
+                            onTap: () {
                               _sendMessage("Let's play $mode!");
                             },
+                            borderRadius: BorderRadius.circular(20),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: color.withOpacity(0.08),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: color.withOpacity(0.2), width: 1.5),
+                              ),
+                              child: Row(
+                                children: [
+                                  Text(emoji, style: const TextStyle(fontSize: 14)),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    mode,
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w800,
+                                      color: color,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         );
-                      }).toList(),
+                      }),
                     ),
                   ),
                 ),
                 // Chat Area
                 Expanded(
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _messages.length,
-                    itemBuilder: (context, index) {
-                      return _buildMessageBubble(_messages[index]);
-                    },
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: AppTheme.offWhite,
+                    ),
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.all(20),
+                      itemCount: _messages.length,
+                      itemBuilder: (context, index) {
+                        return _buildMessageBubble(_messages[index]);
+                      },
+                    ),
                   ),
                 ),
                 if (_isLoading)
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
+                  Container(
+                    color: AppTheme.offWhite,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     child: Row(
                       children: [
-                        CircleAvatar(
-                          backgroundColor: AppTheme.primary.withOpacity(0.2),
-                          child: const Text('🌟', style: TextStyle(fontSize: 20)),
+                        Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(colors: [AppTheme.primary, AppTheme.primaryDark]),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Center(
+                            child: Text('🤖', style: TextStyle(fontSize: 18)),
+                          ),
                         ),
-                        const SizedBox(width: 16),
-                        const CircularProgressIndicator(color: AppTheme.primary),
+                        const SizedBox(width: 12),
+                        const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(color: AppTheme.primary, strokeWidth: 2),
+                        ),
                       ],
                     ),
                   ),
@@ -365,55 +491,77 @@ class _AkaranMentorScreenState extends State<AkaranMentorScreen> {
                     color: AppTheme.white,
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.secondary.withOpacity(0.05),
+                        color: AppTheme.secondary.withOpacity(0.04),
                         blurRadius: 10,
                         offset: const Offset(0, -4),
                       ),
                     ],
+                    border: const Border(top: BorderSide(color: AppTheme.borderLight)),
                   ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _messageController,
-                          style: GoogleFonts.notoSansTamil(
-                            fontSize: 16,
-                            color: AppTheme.secondary,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: 'Type your message...',
-                            hintStyle: GoogleFonts.outfit(
-                              color: AppTheme.textGray,
-                              fontSize: 14,
+                  child: SafeArea(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _messageController,
+                            style: GoogleFonts.notoSansTamil(
+                              fontSize: 15,
+                              color: AppTheme.secondary,
+                              fontWeight: FontWeight.w500,
                             ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(24),
-                              borderSide: BorderSide.none,
+                            decoration: InputDecoration(
+                              hintText: 'Type your message in Tamil or English...',
+                              hintStyle: GoogleFonts.outfit(
+                                color: AppTheme.textGray.withOpacity(0.7),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(24),
+                                borderSide: const BorderSide(color: AppTheme.borderLight, width: 1.5),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(24),
+                                borderSide: const BorderSide(color: AppTheme.borderLight, width: 1.5),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(24),
+                                borderSide: const BorderSide(color: AppTheme.primary, width: 1.5),
+                              ),
+                              filled: true,
+                              fillColor: AppTheme.offWhite,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                             ),
-                            filled: true,
-                            fillColor: AppTheme.backgroundLight,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                            onSubmitted: (val) => _sendMessage(val),
                           ),
-                          onSubmitted: (val) => _sendMessage(val),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      Container(
-                        decoration: const BoxDecoration(
-                          color: AppTheme.primary,
-                          shape: BoxShape.circle,
+                        const SizedBox(width: 12),
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(colors: [AppTheme.primary, AppTheme.primaryDark]),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppTheme.primary.withOpacity(0.3),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: IconButton(
+                            icon: const Icon(Icons.send_rounded, color: AppTheme.white, size: 20),
+                            onPressed: () => _sendMessage(_messageController.text),
+                          ),
                         ),
-                        child: IconButton(
-                          icon: const Icon(Icons.send_rounded, color: AppTheme.white),
-                          onPressed: () => _sendMessage(_messageController.text),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
-    );
+      );
   }
 }
+

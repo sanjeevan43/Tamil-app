@@ -7,6 +7,7 @@ import '../providers/enhanced_progress_provider.dart';
 import '../widgets/safe_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../services/firestore_service.dart';
+import '../data/moral_stories_data.dart';
 import 'story_detail_screen.dart';
 import 'story_quiz_screen.dart';
 
@@ -89,7 +90,16 @@ class _StoriesScreenState extends State<StoriesScreen> {
                 return const SliverFillRemaining(child: Center(child: CircularProgressIndicator()));
               }
 
-              final stories = snapshot.data?.docs ?? [];
+              final docs = snapshot.data?.docs ?? [];
+              final List<Map<String, dynamic>> stories = [];
+
+              if (docs.isNotEmpty) {
+                for (var doc in docs) {
+                  stories.add(doc.data() as Map<String, dynamic>);
+                }
+              } else {
+                stories.addAll(MoralStoriesData.moralStories);
+              }
               
               return SliverToBoxAdapter(
                 child: Padding(
@@ -113,8 +123,8 @@ class _StoriesScreenState extends State<StoriesScreen> {
 
                       // Featured Story
                       if (stories.isNotEmpty)
-                        _buildFeaturedStoryCard(context, stories[0].data() as Map<String, dynamic>)
-                      else if (!snapshot.hasData || stories.isEmpty)
+                        _buildFeaturedStoryCard(context, stories[0])
+                      else
                          _buildEmptyBox('No stories found. Add some from Admin Panel!'),
 
                       const SizedBox(height: 32),
@@ -132,10 +142,10 @@ class _StoriesScreenState extends State<StoriesScreen> {
                       
                       // Story List
                       if (stories.length > 1)
-                        ...stories.skip(1).map((doc) => 
+                        ...stories.skip(1).map((story) => 
                           Padding(
                             padding: const EdgeInsets.only(bottom: 20),
-                            child: _buildStoryCard(context, doc.data() as Map<String, dynamic>),
+                            child: _buildStoryCard(context, story),
                           )
                         ),
                         

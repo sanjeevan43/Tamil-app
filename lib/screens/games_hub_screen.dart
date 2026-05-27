@@ -97,18 +97,6 @@ class GamesHubScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Featured row
-                  Text('POPULAR', style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w900, color: AppTheme.primary, letterSpacing: 1.5)),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    height: 150,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      physics: const BouncingScrollPhysics(),
-                      children: games.take(4).map((game) => _buildFeaturedGameCard(context, game)).toList(),
-                    ),
-                  ),
-                  const SizedBox(height: 32),
                   Text('ALL GAMES', style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w900, color: AppTheme.primary, letterSpacing: 1.5)),
                   const SizedBox(height: 16),
                 ],
@@ -135,43 +123,6 @@ class GamesHubScreen extends StatelessWidget {
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 40)),
         ],
-      ),
-    );
-  }
-
-  Widget _buildFeaturedGameCard(BuildContext context, Map<String, dynamic> game) {
-    final color = game['color'] as Color;
-    return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => game['screen'] as Widget)),
-      child: Container(
-        width: 180,
-        margin: const EdgeInsets.only(right: 16),
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [color, color.withOpacity(0.7)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(color: color.withOpacity(0.3), blurRadius: 15, offset: const Offset(0, 8)),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(game['icon'] as String, style: const TextStyle(fontSize: 36)),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(game['name'] as String, style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w900, color: AppTheme.white)),
-                Text(game['tamil'] as String, style: GoogleFonts.notoSansTamil(fontSize: 11, color: AppTheme.white.withOpacity(0.8))),
-              ],
-            ),
-          ],
-        ),
       ),
     );
   }
