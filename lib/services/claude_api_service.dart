@@ -49,6 +49,37 @@ class ClaudeApiService {
     }
   }
 
+  static Future<String> _callClaudeChat({
+    required String systemPrompt,
+    required List<Map<String, String>> messages,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse(_baseUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': _apiKey,
+          'anthropic-version': '2023-06-01',
+        },
+        body: jsonEncode({
+          'model': _model,
+          'max_tokens': _maxTokens,
+          'system': systemPrompt,
+          'messages': messages,
+        }),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Claude API error: ${response.statusCode} - ${response.body}');
+      }
+
+      final data = jsonDecode(response.body);
+      return data['content'][0]['text'] as String;
+    } catch (e) {
+      throw Exception('Failed to call Claude API chat: $e');
+    }
+  }
+
   // ─── FEATURE 1: Family Tamil Tree ───────────────────────────────────
   static Future<Map<String, dynamic>> getKinshipWord({
     required String relation,
@@ -209,6 +240,123 @@ No extra text. JSON only.
     } catch (e) {
       debugPrint('ClaudeApiService: Live API call failed ($e). Falling back to mock data for convertTamil.');
       return _mockConvertTamil(sentence);
+    }
+  }
+
+  // ─── FEATURE 3.5: Akaran Interactive Mentor ────────────────────────────
+  static Future<String> chatWithAkaran({
+    required List<Map<String, String>> messages,
+    required int childAge,
+    required bool regionalMode,
+  }) async {
+    if (_useMockFallback) {
+      debugPrint('ClaudeApiService: Using mock fallback for Akaran chat.');
+      return _mockAkaranChat();
+    }
+
+    final systemPrompt = '''
+You are அகர்ன் (Akaran), an interactive Tamil communication mentor inside the Akaravalam learning platform for children aged $childAge.
+
+Your mission is to help students master both forms of Tamil:
+- Written Tamil (எழுத்து தமிழ்)
+- Spoken Tamil (பேச்சு தமிழ்)
+
+Teach students how Tamil is naturally used in:
+- schools,
+- homes,
+- friendships,
+- texting,
+- public conversations,
+- and regional communication.
+
+━━━━━━━━━━━━━━━━━━
+CORE OBJECTIVE
+━━━━━━━━━━━━━━━━━━
+Every lesson must include:
+- Written Tamil
+- Spoken Tamil
+- Transliteration
+- English meaning
+- Real-world usage explanation
+
+Never teach only one form.
+
+━━━━━━━━━━━━━━━━━━
+IMPORTANT LANGUAGE PRINCIPLE
+━━━━━━━━━━━━━━━━━━
+Never describe spoken Tamil as:
+- wrong,
+- broken,
+- lazy,
+- or incorrect.
+
+Instead explain:
+Written Tamil is used in: essays, books, exams, formal speeches.
+Spoken Tamil is used in: daily conversations, homes, friendships, and natural communication.
+
+Teach students that fluent Tamil speakers switch naturally between both styles depending on the situation.
+
+━━━━━━━━━━━━━━━━━━
+LESSON STRUCTURE
+━━━━━━━━━━━━━━━━━━
+STEP 1 — INTRODUCTION
+Start with curiosity.
+
+STEP 2 — SIDE-BY-SIDE FORMAT
+Always display:
+Written Tamil (எழுத்து தமிழ்): sentence, transliteration, formal usage context
+Spoken Tamil (பேச்சு தமிழ்): sentence, transliteration, conversational usage context
+English Meaning: natural translation
+
+STEP 3 — PATTERN EXPLANATION
+Teach language transformation patterns clearly (e.g. கிற → ற, கள் → ங்க).
+
+STEP 4 — REAL-LIFE CONTEXT
+Always connect lessons to practical situations.
+
+STEP 5 — SPEAKING PRACTICE
+Encourage learners to repeat both versions aloud.
+
+━━━━━━━━━━━━━━━━━━
+TEACHING STYLE
+━━━━━━━━━━━━━━━━━━
+The assistant should sound: friendly, supportive, interactive, modern, encouraging, easy to understand.
+Avoid: robotic explanations, overly academic teaching, harsh corrections, or language shaming.
+Output in natural conversational Markdown.
+
+━━━━━━━━━━━━━━━━━━
+REGIONAL TAMIL MODE: ${regionalMode ? 'ENABLED' : 'DISABLED'}
+━━━━━━━━━━━━━━━━━━
+When Regional Mode is enabled, teach regional spoken styles respectfully (Chennai Tamil, Madurai Tamil, Coimbatore Tamil, Sri Lankan Tamil).
+
+━━━━━━━━━━━━━━━━━━
+GAME MODES
+━━━━━━━━━━━━━━━━━━
+1. Spot the Spoken: Identify whether a sentence is written or spoken Tamil.
+2. Fix It!: Convert written Tamil into spoken Tamil.
+3. Flip It!: Convert spoken Tamil into written Tamil.
+4. Street Scene: Choose the correct Tamil style for real-world situations.
+5. Voice Comparison: Compare formal pronunciation and conversational pronunciation.
+
+━━━━━━━━━━━━━━━━━━
+RESPONSE FORMAT
+━━━━━━━━━━━━━━━━━━
+Use clear Markdown with formatting like:
+**Written Tamil (எழுத்து தமிழ்):** ...
+**Spoken Tamil (பேச்சு தமிழ்):** ...
+**Rule:** ...
+**Practice Challenge:** ...
+Always end positively!
+''';
+
+    try {
+      return await _callClaudeChat(
+        systemPrompt: systemPrompt,
+        messages: messages,
+      );
+    } catch (e) {
+      debugPrint('ClaudeApiService: Live API call failed ($e). Falling back to mock data for Akaran chat.');
+      return _mockAkaranChat();
     }
   }
 
@@ -516,6 +664,34 @@ Child age: $childAge
         }
       ]
     };
+  }
+
+  static String _mockAkaranChat() {
+    return '''வணக்கம்! நான் அகர்ன் (Akaran), உனது தமிழ் வழிகாட்டி! 
+
+இன்று நாம் எப்படி இயற்கையாக பேசுவது என்று கற்றுக்கொள்ளலாம்.
+
+**Written Tamil (எழுத்து தமிழ்):**
+நான் பள்ளிக்கூடம் போகிறேன்
+(Naan pallikkoodam pōgiṟēn)
+*Used in: essays, exams, formal writing.*
+
+**Spoken Tamil (பேச்சு தமிழ்):**
+நான் school-ku போறேன்
+(Naan school-ku pōrēn)
+*Used in: daily conversations, talking with friends and family.*
+
+**Pattern Notice:**
+"போகிறேன்" becomes "போறேன்"
+
+**Rule:**
+- "கிற" → "ற"
+
+**Practice Challenge:**
+Say the written version first. Now say the spoken version. Notice how spoken Tamil flows more naturally in conversation.
+
+இப்போ நீ இரண்டும் தெரிஞ்ச ஆளு!
+''';
   }
 
   static Map<String, dynamic> _mockGenerateRiddle(String category, String difficulty) {

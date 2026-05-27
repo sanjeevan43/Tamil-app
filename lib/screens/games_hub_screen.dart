@@ -44,20 +44,22 @@ class GamesHubScreen extends StatelessWidget {
             expandedHeight: 220,
             backgroundColor: AppTheme.backgroundLight,
             elevation: 0,
-            leading: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppTheme.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [BoxShadow(color: AppTheme.textDark.withOpacity(0.08), blurRadius: 8)],
-                  ),
-                  child: const Icon(Icons.arrow_back_rounded, color: AppTheme.secondary),
-                ),
-              ),
-            ),
+            leading: Navigator.canPop(context)
+                ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppTheme.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [BoxShadow(color: AppTheme.textDark.withOpacity(0.08), blurRadius: 8)],
+                        ),
+                        child: const Icon(Icons.arrow_back_rounded, color: AppTheme.secondary),
+                      ),
+                    ),
+                  )
+                : null,
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 decoration: BoxDecoration(

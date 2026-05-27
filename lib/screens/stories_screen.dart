@@ -35,14 +35,16 @@ class _StoriesScreenState extends State<StoriesScreen> {
             pinned: true,
             backgroundColor: AppTheme.white.withOpacity(0.9),
             elevation: 0,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_rounded, color: AppTheme.textDark),
-              onPressed: () => Navigator.pop(context),
-              style: IconButton.styleFrom(
-                backgroundColor: AppTheme.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-            ),
+            leading: Navigator.canPop(context)
+                ? IconButton(
+                    icon: const Icon(Icons.arrow_back_rounded, color: AppTheme.textDark),
+                    onPressed: () => Navigator.pop(context),
+                    style: IconButton.styleFrom(
+                      backgroundColor: AppTheme.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  )
+                : null,
             centerTitle: true,
             title: Text(
               'MORAL STORIES',

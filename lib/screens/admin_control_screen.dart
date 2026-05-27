@@ -6,6 +6,7 @@ import '../constants/app_theme.dart';
 import '../services/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'admin_classrooms_tab.dart';
+import '../data/moral_stories_data.dart';
 
 class AdminControlScreen extends StatefulWidget {
   const AdminControlScreen({super.key});
@@ -39,6 +40,35 @@ class _AdminControlScreenState extends State<AdminControlScreen> with SingleTick
   }
 
 
+
+  Future<void> _seedMoralStories() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      final batch = FirebaseFirestore.instance.batch();
+      for (final story in MoralStoriesData.moralStories) {
+        final docRef = FirebaseFirestore.instance.collection('stories').doc(story['id']);
+        batch.set(docRef, {
+          ...story,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      }
+      await batch.commit();
+      if (mounted) {
+        Navigator.pop(context); // Dismiss loading
+        _showSnackBar('Successfully seeded 16 Moral Stories!', AppTheme.success);
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.pop(context); // Dismiss loading
+        _showSnackBar('Error seeding stories: $e', AppTheme.primary);
+      }
+    }
+  }
 
   Future<void> _addTopic() async {
     if (!_topicFormKey.currentState!.validate()) return;
@@ -140,6 +170,50 @@ class _AdminControlScreenState extends State<AdminControlScreen> with SingleTick
         children: [
           Text('Manage Learning Topics', style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(16),
+            margin: const EdgeInsets.only(bottom: 24),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppTheme.primary.withOpacity(0.08), AppTheme.primary.withOpacity(0.02)],
+              ),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppTheme.primary.withOpacity(0.15)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.auto_stories, color: AppTheme.primary, size: 36),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Moral Stories Seeding Database',
+                        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 15, color: AppTheme.secondary),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Seed 16 classic dual-language moral stories and interactive quizzes directly into Firestore.',
+                        style: GoogleFonts.outfit(fontSize: 12, color: AppTheme.textSlate, height: 1.3),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                ElevatedButton(
+                  onPressed: _seedMoralStories,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  ),
+                  child: Text('SEED STORIES', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.bold)),
+                ),
+              ],
+            ),
+          ),
           Form(
             key: _topicFormKey,
             child: Row(

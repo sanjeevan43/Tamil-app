@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AnalyticsService {
@@ -23,7 +24,7 @@ class AnalyticsService {
         'timestamp': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      print('Error logging event: $e');
+      debugPrint('Error logging event: $e');
     }
   }
 
@@ -42,7 +43,7 @@ class AnalyticsService {
         'timestamp': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      print('Error logging game score: $e');
+      debugPrint('Error logging game score: $e');
     }
   }
 
@@ -61,7 +62,7 @@ class AnalyticsService {
         'timestamp': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      print('Error logging lesson completion: $e');
+      debugPrint('Error logging lesson completion: $e');
     }
   }
 
@@ -90,7 +91,7 @@ class AnalyticsService {
         'totalTimeSpent': _calculateTotalTime(gameScores.docs, lessonCompletions.docs),
       };
     } catch (e) {
-      print('Error getting user analytics: $e');
+      debugPrint('Error getting user analytics: $e');
       return null;
     }
   }
@@ -127,7 +128,7 @@ class AnalyticsService {
           .map((doc) => doc.data())
           .toList();
     } catch (e) {
-      print('Error getting top players: $e');
+      debugPrint('Error getting top players: $e');
       return [];
     }
   }
@@ -145,7 +146,7 @@ class AnalyticsService {
           .map((doc) => doc.data())
           .toList();
     } catch (e) {
-      print('Error getting game statistics: $e');
+      debugPrint('Error getting game statistics: $e');
       return [];
     }
   }
@@ -164,7 +165,8 @@ class AnalyticsService {
         'timestamp': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      print('Error logging user session: $e');
+      debugPrint('Error logging user session: $e');
     }
   }
 }
+

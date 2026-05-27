@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 class AudioService {
@@ -29,7 +30,7 @@ class AudioService {
         }
       }
     } catch (e) {
-      print('TTS Initialization Error: $e');
+      debugPrint('TTS Initialization Error: $e');
     }
   }
 
@@ -75,3 +76,4 @@ class AudioService {
   }
 
 }
+

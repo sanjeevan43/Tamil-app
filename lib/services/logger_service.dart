@@ -42,7 +42,7 @@ class LoggerService {
 
     if (_enableConsoleOutput) {
       if (kDebugMode) {
-        print(fullLog);
+        debugPrint(fullLog);
       }
     }
 
@@ -93,7 +93,7 @@ class LoggerService {
     // Implementation for reporting errors to crash reporting service
     // This could integrate with Firebase Crashlytics or similar
     if (kDebugMode) {
-      print('ERROR REPORTED: $message');
+      debugPrint('ERROR REPORTED: $message');
     }
   }
 
@@ -140,3 +140,4 @@ class LoggerService {
     info(message, tag: 'PERFORMANCE');
   }
 }
+

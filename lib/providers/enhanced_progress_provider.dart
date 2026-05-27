@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/firestore_service.dart';
-import '../data/reading_journey_data.dart';
+
 
 class EnhancedProgressProvider extends ChangeNotifier {
   final FirestoreService _firestore;
@@ -40,7 +40,7 @@ class EnhancedProgressProvider extends ChangeNotifier {
   
   // Daily Missions
   List<Map<String, dynamic>> _dailyMissions = [
-    {'id': 'quiz_master', 'title': 'Complete 5 Quiz Rounds', 'target': 5, 'current': 0, 'completed': false},
+
     {'id': 'letter_pro', 'title': 'Learn 10 New Letters', 'target': 10, 'current': 0, 'completed': false},
     {'id': 'game_hero', 'title': 'Play any 3 Games', 'target': 3, 'current': 0, 'completed': false},
   ];
@@ -91,7 +91,6 @@ class EnhancedProgressProvider extends ChangeNotifier {
       }
       
       await _updateStreak();
-      await _loadLevelStars();
       notifyListeners();
     } catch (e) {
       debugPrint('Error initializing progress: $e');
@@ -445,95 +444,7 @@ class EnhancedProgressProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // --- Candy Crush Level Map Methods ---
-  // Map of levelId -> stars earned (0 = not completed, 1-3 = star rating)
-  Map<int, int> _levelStars = {};
-  Map<int, int> get levelStars => _levelStars;
-  int _xpPoints = 0;
-  int get xpPoints => _xpPoints;
 
-  /// Complete a level with a star rating (1-3)
-  Future<void> completeLevel(int levelId, int starsEarned) async {
-    // Only update if new stars are higher
-    final currentStars = _levelStars[levelId] ?? 0;
-    if (starsEarned <= currentStars) return;
-
-    _levelStars[levelId] = starsEarned;
-
-    // Award rewards
-    final levelData = ReadingJourneyData.levels.firstWhere((l) => l['id'] == levelId, orElse: () => {});
-    final xp = (levelData['xp'] ?? 10) as int;
-    _xpPoints += xp;
-    await _addStars(starsEarned);
-    await _addCoins(starsEarned * 10);
-
-    // Unlock next level
-    if (_level == levelId && levelId < ReadingJourneyData.levels.length) {
-      _level = levelId + 1;
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('level', _level);
-    }
-
-    await _saveLevelStars();
-    await _saveToLocal();
-    await syncToCloud();
-    notifyListeners();
-  }
-
-  /// Get star rating for a level (0 if not completed)
-  int getLevelStarRating(int levelId) {
-    return _levelStars[levelId] ?? 0;
-  }
-
-  /// Check if a level is unlocked
-  bool isLevelUnlocked(int levelId) {
-    return levelId <= _level;
-  }
-
-  /// Check if a level is completed
-  bool isLevelCompleted(int levelId) {
-    return (_levelStars[levelId] ?? 0) > 0;
-  }
-
-  /// Get total stars earned across all levels
-  int get totalLevelStars {
-    int total = 0;
-    for (var stars in _levelStars.values) {
-      total += stars;
-    }
-    return total;
-  }
-
-  /// Get stage progress (0.0 to 1.0) based on completed levels in that stage
-  double getStageProgress(int stageId) {
-    final stageLevels = ReadingJourneyData.getLevelsForStage(stageId);
-    if (stageLevels.isEmpty) return 0.0;
-    int completed = 0;
-    for (var level in stageLevels) {
-      if (isLevelCompleted(level['id'])) completed++;
-    }
-    return completed / stageLevels.length;
-  }
-
-  Future<void> _saveLevelStars() async {
-    final prefs = await SharedPreferences.getInstance();
-    final entries = _levelStars.entries.map((e) => '${e.key}:${e.value}').toList();
-    await prefs.setStringList('levelStars', entries);
-    await prefs.setInt('xpPoints', _xpPoints);
-  }
-
-  Future<void> _loadLevelStars() async {
-    final prefs = await SharedPreferences.getInstance();
-    final entries = prefs.getStringList('levelStars') ?? [];
-    _levelStars = {};
-    for (var entry in entries) {
-      final parts = entry.split(':');
-      if (parts.length == 2) {
-        _levelStars[int.parse(parts[0])] = int.parse(parts[1]);
-      }
-    }
-    _xpPoints = prefs.getInt('xpPoints') ?? 0;
-  }
 
   // Keep old methods for backward compatibility
   Future<void> completeTask(String taskId, int levelId, int points) async {
@@ -562,7 +473,7 @@ class EnhancedProgressProvider extends ChangeNotifier {
   }
 
   int getCompletedTasksCount(int levelId) {
-    return isLevelCompleted(levelId) ? 1 : 0;
+    return levelId < _level ? 1 : 0;
   }
 
   Future<void> toggleTeacherModeOnly() async {

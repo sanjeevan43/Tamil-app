@@ -41,8 +41,8 @@ void main() {
     // The Tamil letter from TamilData.uyirEzhuthukkal[0] is 'அ'
     expect(find.text('அ'), findsWidgets);
 
-    // Test: Click Next without drawing should show snackbar
-    await tester.tap(find.text('Next Letter'));
+    // Test: Click Submit without drawing should show snackbar
+    await tester.tap(find.text('Submit'));
     await tester.pump();
     expect(find.text('Please draw the letter first!'), findsOneWidget);
   });

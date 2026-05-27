@@ -10,6 +10,7 @@ import 'login_screen.dart';
 import 'admin_control_screen.dart';
 import 'teacher_dashboard_screen.dart';
 import 'parent_dashboard_screen.dart';
+import 'main_navigation_container.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -66,7 +67,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           nextScreen = const ParentDashboardScreen();
           break;
         default:
-          nextScreen = const HomeScreen();
+          nextScreen = const MainNavigationContainer();
       }
     } else {
       nextScreen = const LoginScreen();

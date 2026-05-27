@@ -26,7 +26,7 @@ class DatabaseService {
         'createdAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true)); // merge: true updates existing fields without overwriting the whole document
     } catch (e) {
-      print('Error saving user profile: $e');
+      debugPrint('Error saving user profile: $e');
       rethrow;
     }
   }
@@ -40,7 +40,7 @@ class DatabaseService {
       }
       return null;
     } catch (e) {
-      print('Error getting user profile: $e');
+      debugPrint('Error getting user profile: $e');
       return null;
     }
   }
@@ -59,7 +59,7 @@ class DatabaseService {
       });
       return docRef.id;
     } catch (e) {
-      print('Error creating classroom: $e');
+      debugPrint('Error creating classroom: $e');
       return null;
     }
   }
@@ -71,7 +71,7 @@ class DatabaseService {
         'students': FieldValue.arrayUnion([studentId])
       });
     } catch (e) {
-      print('Error joining classroom: $e');
+      debugPrint('Error joining classroom: $e');
       rethrow;
     }
   }
@@ -89,7 +89,7 @@ class DatabaseService {
     try {
       return await _db.collection('classrooms').doc(classroomId).get();
     } catch (e) {
-      print('Error getting classroom: $e');
+      debugPrint('Error getting classroom: $e');
       return null;
     }
   }
@@ -104,7 +104,7 @@ class DatabaseService {
       }
       return [];
     } catch (e) {
-      print('Error getting classroom students: $e');
+      debugPrint('Error getting classroom students: $e');
       return [];
     }
   }
@@ -116,7 +116,7 @@ class DatabaseService {
         'students': FieldValue.arrayRemove([studentId])
       });
     } catch (e) {
-      print('Error removing student from classroom: $e');
+      debugPrint('Error removing student from classroom: $e');
       rethrow;
     }
   }
@@ -129,7 +129,7 @@ class DatabaseService {
         'lastUpdated': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      print('Error saving progress: $e');
+      debugPrint('Error saving progress: $e');
       rethrow;
     }
   }
@@ -142,7 +142,7 @@ class DatabaseService {
       }
       return null;
     } catch (e) {
-      print('Error getting progress: $e');
+      debugPrint('Error getting progress: $e');
       return null;
     }
   }
@@ -158,7 +158,7 @@ class DatabaseService {
         'type': 'homework',
       });
     } catch (e) {
-      print('Error assigning homework: $e');
+      debugPrint('Error assigning homework: $e');
       rethrow;
     }
   }
@@ -190,3 +190,4 @@ class DatabaseService {
   }
 
 }
+

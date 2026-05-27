@@ -9,6 +9,7 @@ import 'home_screen.dart';
 import 'admin_control_screen.dart';
 import 'teacher_dashboard_screen.dart';
 import 'parent_dashboard_screen.dart';
+import 'main_navigation_container.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -81,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
         nextScreen = const ParentDashboardScreen();
         break;
       default:
-        nextScreen = const HomeScreen();
+        nextScreen = const MainNavigationContainer();
     }
 
     if (mounted) {

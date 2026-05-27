@@ -443,6 +443,7 @@ class TeacherDashboardScreen extends StatelessWidget {
             onPressed: () async {
               if (controller.text.trim().isNotEmpty) {
                 await _firestore.updateNotice(controller.text);
+                if (!context.mounted) return;
                 Navigator.pop(context);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -507,6 +508,7 @@ class TeacherDashboardScreen extends StatelessWidget {
                   'type': 'Homework',
                   'status': 'Pending',
                 });
+                if (!context.mounted) return;
                 Navigator.pop(context);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -538,6 +540,7 @@ class TeacherDashboardScreen extends StatelessWidget {
                 'type': 'Quiz',
                 'status': 'Pending',
               });
+              if (!context.mounted) return;
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('$q ஒதுக்கப்பட்டது!')),

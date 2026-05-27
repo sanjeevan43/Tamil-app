@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tamil_app/constants/app_theme.dart';
 import 'package:tamil_app/screens/kinship_tree_explorer_screen.dart';
 import 'package:tamil_app/screens/linguistic_scanner_screen.dart';
-import 'package:tamil_app/screens/dialectics_analyzer_screen.dart';
+import 'package:tamil_app/screens/akaran_mentor_screen.dart';
 import 'package:tamil_app/screens/riddle_academy_screen.dart';
 import 'package:tamil_app/screens/ai_story_weaver_screen.dart';
 
@@ -79,13 +79,13 @@ class AICognitiveAcademyScreen extends StatelessWidget {
             _buildFeatureCard(
               context,
               icon: '🗣️',
-              title: 'Colloquial Dialectics Analyzer',
-              description: 'Understand formal and colloquial Tamil differences',
+              title: 'Akaran Interactive Mentor',
+              description: 'Chat with Akaran to master spoken and written Tamil',
               color: AppTheme.warning,
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => DialecticsAnalyzerScreen(childAge: childAge),
+                  builder: (context) => AkaranMentorScreen(childAge: childAge),
                 ),
               ),
             ),

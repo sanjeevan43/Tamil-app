@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/app_models.dart';
@@ -42,7 +43,7 @@ class LessonProvider with ChangeNotifier {
         _loadMockData();
       }
     } catch (e) {
-      print('Error fetching questions: $e');
+      debugPrint('Error fetching questions: $e');
       _loadMockData();
     }
 
@@ -116,3 +117,4 @@ class LessonProvider with ChangeNotifier {
     notifyListeners();
   }
 }
+

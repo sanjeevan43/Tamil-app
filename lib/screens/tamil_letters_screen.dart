@@ -18,10 +18,12 @@ class TamilLettersScreen extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: AppTheme.white,
           elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.secondary, size: 20),
-            onPressed: () => Navigator.pop(context),
-          ),
+          leading: Navigator.canPop(context)
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.secondary, size: 20),
+                  onPressed: () => Navigator.pop(context),
+                )
+              : null,
           centerTitle: false,
           title: Text(
             'TAMIL ALPHABET',
