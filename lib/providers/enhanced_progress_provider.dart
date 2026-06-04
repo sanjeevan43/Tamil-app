@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../services/firestore_service.dart';
-
 
 class EnhancedProgressProvider extends ChangeNotifier {
   final FirestoreService _firestore;
@@ -28,6 +26,7 @@ class EnhancedProgressProvider extends ChangeNotifier {
   Map<int, int> _lessonProgress = {};
   Map<String, int> _storyQuizScores = {};
   Map<String, bool> _completedTasks = {};
+  List<String> _favoriteStories = [];
   
   // Teacher Mode
   bool _isTeacherMode = false;
@@ -36,11 +35,10 @@ class EnhancedProgressProvider extends ChangeNotifier {
   final List<Map<String, dynamic>> _assignedQuizzes = [];
   String _globalNotice = 'Welcome to அகரவளம்!';
   List<String> _streakHistory = [];
-  final String _lastRewardDate = '';
+  String _lastLoginDate = '';
   
   // Daily Missions
   List<Map<String, dynamic>> _dailyMissions = [
-
     {'id': 'letter_pro', 'title': 'Learn 10 New Letters', 'target': 10, 'current': 0, 'completed': false},
     {'id': 'game_hero', 'title': 'Play any 3 Games', 'target': 3, 'current': 0, 'completed': false},
   ];
@@ -61,6 +59,7 @@ class EnhancedProgressProvider extends ChangeNotifier {
   Map<int, int> get lessonProgress => _lessonProgress;
   Map<String, int> get storyQuizScores => _storyQuizScores;
   Map<String, bool> get completedTasks => _completedTasks;
+  List<String> get favoriteStories => _favoriteStories;
   bool get isTeacherMode => _isTeacherMode;
   List<String> get assignedHomework => _assignedHomework;
   List<Map<String, String>> get discussions => _discussions;
@@ -68,87 +67,58 @@ class EnhancedProgressProvider extends ChangeNotifier {
   String get globalNotice => _globalNotice;
   List<Map<String, dynamic>> get dailyMissions => _dailyMissions;
   List<String> get streakHistory => _streakHistory;
-  String get lastRewardDate => _lastRewardDate;
+  String get lastLoginDate => _lastLoginDate;
   String? get userId => _userId;
 
   Future<void> initializeProgress({String? uid}) async {
+    // Reset all in-memory values to defaults first to avoid carrying over state from other users
+    _userName = 'Student';
+    _avatar = '👦';
+    _region = 'India';
+    _level = 1;
+    _totalCoins = 0;
+    _totalStars = 0;
+    _streakDays = 0;
+    _totalLettersLearned = 0;
+    _quizScore = 0;
+    
+    _achievementBadges = [];
+    _inventory = ['standard'];
+    _unlockedLessons = [1, 2, 3];
+    _lessonProgress = {};
+    _storyQuizScores = {};
+    _completedTasks = {};
+    _favoriteStories = [];
+    
+    _isTeacherMode = false;
+    _assignedHomework.clear();
+    _discussions.clear();
+    _assignedQuizzes.clear();
+    _globalNotice = 'Welcome to அகரவளம்!';
+    _streakHistory = [];
+    _lastLoginDate = '';
+    
+    _dailyMissions = [
+      {'id': 'letter_pro', 'title': 'Learn 10 New Letters', 'target': 10, 'current': 0, 'completed': false},
+      {'id': 'game_hero', 'title': 'Play any 3 Games', 'target': 3, 'current': 0, 'completed': false},
+    ];
+
     _userId = uid;
     try {
-      final prefs = await SharedPreferences.getInstance();
-      
-      // If we have a UID, try to fetch from cloud first
+      // If we have a UID, fetch from Firestore cloud (the single source of truth)
       if (_userId != null) {
         final cloudProgress = await _firestore.getProgress(_userId!);
         if (cloudProgress != null) {
           _loadFromMap(cloudProgress);
-          await _saveToLocal(); // Sync cloud to local
         } else {
-          await _loadFromLocal(prefs);
-          await syncToCloud(); // Sync local to cloud if cloud is empty
+          await syncToCloud(); // Sync default local values to cloud
         }
-      } else {
-        await _loadFromLocal(prefs);
+        await _updateStreak();
       }
-      
-      await _updateStreak();
       notifyListeners();
     } catch (e) {
       debugPrint('Error initializing progress: $e');
     }
-  }
-
-  Future<void> _loadFromLocal(SharedPreferences prefs) async {
-    _userName = prefs.getString('userName') ?? 'Student';
-    _avatar = prefs.getString('avatar') ?? '👦';
-    _region = prefs.getString('region') ?? 'India';
-    _level = prefs.getInt('level') ?? 1;
-    _totalCoins = prefs.getInt('totalCoins') ?? 0;
-    _totalStars = prefs.getInt('totalStars') ?? 0;
-    _streakDays = prefs.getInt('streakDays') ?? 0;
-    _totalLettersLearned = prefs.getInt('totalLettersLearned') ?? 0;
-    _quizScore = prefs.getInt('quizScore') ?? 0;
-    _achievementBadges = prefs.getStringList('achievementBadges') ?? [];
-    _inventory = prefs.getStringList('inventory') ?? ['standard'];
-    _unlockedLessons = (prefs.getStringList('unlockedLessons') ?? ['1', '2', '3'])
-        .map((e) => int.parse(e)).toList();
-    _isTeacherMode = prefs.getBool('isTeacherMode') ?? false;
-    _globalNotice = prefs.getString('globalNotice') ?? 'Welcome to அகரவளம்!';
-    
-    final missionsJson = prefs.getStringList('dailyMissions') ?? [];
-    if (missionsJson.isNotEmpty) {
-      _dailyMissions = missionsJson.map((e) {
-        final parts = e.split('|');
-        return {
-          'id': parts[0],
-          'title': parts[1],
-          'target': int.parse(parts[2]),
-          'current': int.parse(parts[3]),
-          'completed': parts[4] == 'true'
-        };
-      }).toList();
-    }
-    
-    final lessonProgList = prefs.getStringList('lessonProgressMap') ?? [];
-    _lessonProgress = {
-      for (var e in lessonProgList) 
-        if (e.contains(':'))
-          int.parse(e.split(':')[0]): int.parse(e.split(':')[1])
-    };
-
-    final storyScoreList = prefs.getStringList('storyScoresMap') ?? [];
-    _storyQuizScores = {
-      for (var e in storyScoreList) 
-        if (e.contains(':'))
-          e.split(':')[0]: int.parse(e.split(':')[1])
-    };
-
-    final taskCompList = prefs.getStringList('completedTasksMap') ?? [];
-    _completedTasks = {
-      for (var e in taskCompList)
-        if (e.contains(':'))
-          e.split(':')[0]: e.split(':')[1] == 'true'
-    };
-    _streakHistory = prefs.getStringList('streakHistory') ?? [];
   }
 
   void _loadFromMap(Map<String, dynamic> data) {
@@ -164,6 +134,10 @@ class EnhancedProgressProvider extends ChangeNotifier {
     _achievementBadges = List<String>.from(data['achievementBadges'] ?? []);
     _inventory = List<String>.from(data['inventory'] ?? ['standard']);
     _unlockedLessons = List<int>.from(data['unlockedLessons'] ?? [1, 2, 3]);
+    _lastLoginDate = data['lastLoginDate'] ?? '';
+    _isTeacherMode = data['isTeacherMode'] ?? false;
+    _streakHistory = List<String>.from(data['streakHistory'] ?? []);
+    _favoriteStories = List<String>.from(data['favoriteStories'] ?? []);
     
     if (data['lessonProgress'] != null) {
       _lessonProgress = (data['lessonProgress'] as Map).map((k, v) => MapEntry(int.parse(k.toString()), int.parse(v.toString())));
@@ -174,32 +148,9 @@ class EnhancedProgressProvider extends ChangeNotifier {
     if (data['completedTasks'] != null) {
       _completedTasks = (data['completedTasks'] as Map).map((k, v) => MapEntry(k.toString(), v as bool));
     }
-  }
-
-  Future<void> _saveToLocal() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('userName', _userName);
-    await prefs.setString('avatar', _avatar);
-    await prefs.setString('region', _region);
-    await prefs.setInt('level', _level);
-    await prefs.setInt('totalCoins', _totalCoins);
-    await prefs.setInt('totalStars', _totalStars);
-    await prefs.setInt('streakDays', _streakDays);
-    await prefs.setInt('totalLettersLearned', _totalLettersLearned);
-    await prefs.setInt('quizScore', _quizScore);
-    await prefs.setStringList('achievementBadges', _achievementBadges);
-    await prefs.setStringList('inventory', _inventory);
-    await prefs.setStringList('unlockedLessons', _unlockedLessons.map((e) => e.toString()).toList());
-    
-    List<String> lessonProgList = _lessonProgress.entries.map((e) => '${e.key}:${e.value}').toList();
-    await prefs.setStringList('lessonProgressMap', lessonProgList);
-    
-    List<String> storyScoreList = _storyQuizScores.entries.map((e) => '${e.key}:${e.value}').toList();
-    await prefs.setStringList('storyScoresMap', storyScoreList);
-
-    List<String> taskCompList = _completedTasks.entries.map((e) => '${e.key}:${e.value}').toList();
-    await prefs.setStringList('completedTasksMap', taskCompList);
-    await prefs.setStringList('streakHistory', _streakHistory);
+    if (data['dailyMissions'] != null) {
+      _dailyMissions = List<Map<String, dynamic>>.from(data['dailyMissions']);
+    }
   }
 
   Future<void> syncToCloud() async {
@@ -222,23 +173,26 @@ class EnhancedProgressProvider extends ChangeNotifier {
       'storyQuizScores': _storyQuizScores,
       'completedTasks': _completedTasks,
       'streakHistory': _streakHistory,
+      'favoriteStories': _favoriteStories,
+      'lastLoginDate': _lastLoginDate,
+      'isTeacherMode': _isTeacherMode,
+      'dailyMissions': _dailyMissions,
     };
     
     await _firestore.saveProgress(_userId!, progressMap);
   }
 
   Future<void> _updateStreak() async {
-    final prefs = await SharedPreferences.getInstance();
+    if (_userId == null) return;
     final now = DateTime.now();
-    final lastLoginStr = prefs.getString('lastLoginDate');
     
-    if (lastLoginStr != null) {
-      final lastLogin = DateTime.parse(lastLoginStr);
+    if (_lastLoginDate.isNotEmpty) {
+      final lastLogin = DateTime.parse(_lastLoginDate);
       final difference = now.difference(lastLogin).inDays;
       
       if (difference == 1) {
         _streakDays++;
-        await _addCoins(10);
+        _totalCoins += 10;
       } else if (difference > 1) {
         _streakDays = 1;
       }
@@ -252,29 +206,24 @@ class EnhancedProgressProvider extends ChangeNotifier {
       if (_streakHistory.length > 7) _streakHistory.removeAt(0);
     }
     
-    await prefs.setStringList('streakHistory', _streakHistory);
-    await prefs.setString('lastLoginDate', now.toIso8601String());
-    await prefs.setInt('streakDays', _streakDays);
+    _lastLoginDate = now.toIso8601String();
     await syncToCloud();
   }
 
   Future<void> setUserName(String name) async {
     _userName = name;
-    await _saveToLocal();
     await syncToCloud();
     notifyListeners();
   }
 
   Future<void> updateAvatar(String emoji) async {
     _avatar = emoji;
-    await _saveToLocal();
     await syncToCloud();
     notifyListeners();
   }
 
   Future<void> setRegion(String region) async {
     _region = region;
-    await _saveToLocal();
     await syncToCloud();
     notifyListeners();
   }
@@ -284,7 +233,6 @@ class EnhancedProgressProvider extends ChangeNotifier {
       _totalCoins -= price;
       _inventory.add(itemId);
       _avatar = emoji;
-      await _saveToLocal();
       await syncToCloud();
       notifyListeners();
     }
@@ -292,10 +240,8 @@ class EnhancedProgressProvider extends ChangeNotifier {
 
   Future<void> incrementLettersLearned() async {
     _totalLettersLearned++;
-    await _addStars(1);
-    await _addCoins(5);
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('totalLettersLearned', _totalLettersLearned);
+    _totalStars += 1;
+    _totalCoins += 5;
     await _checkLevelUp();
     await syncToCloud();
     notifyListeners();
@@ -303,82 +249,62 @@ class EnhancedProgressProvider extends ChangeNotifier {
 
   Future<void> addQuizScore(int score) async {
     _quizScore += score;
-    await _addStars(score ~/ 10);
-    await _addCoins(score);
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('quizScore', _quizScore);
+    _totalStars += score ~/ 10;
+    _totalCoins += score;
     await _checkLevelUp();
     await syncToCloud();
     notifyListeners();
   }
 
   Future<void> addXP(int amount) async {
-    await _addStars(amount ~/ 10);
+    _totalStars += amount ~/ 10;
     await syncToCloud();
     notifyListeners();
   }
 
   Future<void> addRewards({int coins = 0, int stars = 0, String? missionId}) async {
-    if (coins > 0) await _addCoins(coins);
-    if (stars > 0) await _addStars(stars);
+    _totalCoins += coins;
+    _totalStars += stars;
     
     if (missionId != null) {
-      updateMissionProgress(missionId, 1);
+      await updateMissionProgress(missionId, 1);
+    } else {
+      await syncToCloud();
+      notifyListeners();
     }
-    
-    await syncToCloud();
-    notifyListeners();
   }
 
   Future<void> updateMissionProgress(String id, int increment) async {
     final index = _dailyMissions.indexWhere((m) => m['id'] == id);
     if (index != -1) {
-      _dailyMissions[index]['current'] += increment;
-      if (_dailyMissions[index]['current'] >= _dailyMissions[index]['target'] && !_dailyMissions[index]['completed']) {
+      _dailyMissions[index]['current'] = (_dailyMissions[index]['current'] as int) + increment;
+      if ((_dailyMissions[index]['current'] as int) >= (_dailyMissions[index]['target'] as int) && !(_dailyMissions[index]['completed'] as bool)) {
         _dailyMissions[index]['completed'] = true;
-        await _addCoins(50);
-        await _addStars(10);
+        _totalCoins += 50;
+        _totalStars += 10;
       }
-      
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setStringList('dailyMissions', 
-          _dailyMissions.map((m) => "${m['id']}|${m['title']}|${m['target']}|${m['current']}|${m['completed']}").toList());
       await syncToCloud();
       notifyListeners();
     }
   }
 
   Future<void> addCoins(int amount) async {
-    await _addCoins(amount);
+    _totalCoins += amount;
     await syncToCloud();
     notifyListeners();
   }
 
   Future<void> addStars(int amount) async {
-    await _addStars(amount);
+    _totalStars += amount;
     await syncToCloud();
     notifyListeners();
-  }
-
-  Future<void> _addStars(int amount) async {
-    _totalStars += amount;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('totalStars', _totalStars);
-  }
-
-  Future<void> _addCoins(int amount) async {
-    _totalCoins += amount;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('totalCoins', _totalCoins);
   }
 
   Future<void> addAchievement(String badge) async {
     if (!_achievementBadges.contains(badge)) {
       _achievementBadges.add(badge);
-      await _addCoins(50);
-      await _addStars(10);
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setStringList('achievementBadges', _achievementBadges);
+      _totalCoins += 50;
+      _totalStars += 10;
       await syncToCloud();
       notifyListeners();
     }
@@ -387,9 +313,6 @@ class EnhancedProgressProvider extends ChangeNotifier {
   Future<void> unlockLesson(int lessonId) async {
     if (!_unlockedLessons.contains(lessonId)) {
       _unlockedLessons.add(lessonId);
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setStringList('unlockedLessons', 
-          _unlockedLessons.map((e) => e.toString()).toList());
       await syncToCloud();
       notifyListeners();
     }
@@ -398,17 +321,12 @@ class EnhancedProgressProvider extends ChangeNotifier {
   Future<void> updateLessonProgress(int lessonId, int progress) async {
     _lessonProgress[lessonId] = progress;
     if (progress >= 100) {
-      await _addCoins(100);
-      await _addStars(20);
+      _totalCoins += 100;
+      _totalStars += 20;
       if (lessonId < 30) {
         await unlockLesson(lessonId + 1);
       }
     }
-    
-    final prefs = await SharedPreferences.getInstance();
-    List<String> mapList = _lessonProgress.entries.map((e) => '${e.key}:${e.value}').toList();
-    await prefs.setStringList('lessonProgressMap', mapList);
-    
     await syncToCloud();
     notifyListeners();
   }
@@ -417,51 +335,53 @@ class EnhancedProgressProvider extends ChangeNotifier {
     int requiredStars = _level * 100;
     if (_totalStars >= requiredStars) {
       _level++;
-      await _addCoins(200);
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('level', _level);
+      _totalCoins += 200;
       await syncToCloud();
     }
   }
 
   Future<void> toggleTeacherMode() async {
     _isTeacherMode = !_isTeacherMode;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isTeacherMode', _isTeacherMode);
+    await syncToCloud();
     notifyListeners();
   }
 
   Future<void> addStoryScore(String title, int score) async {
     _storyQuizScores[title] = score;
-    await _addCoins(score * 10);
-    await _addStars(score * 5);
-    final prefs = await SharedPreferences.getInstance();
-    
-    List<String> mapList = _storyQuizScores.entries.map((e) => '${e.key}:${e.value}').toList();
-    await prefs.setStringList('storyScoresMap', mapList);
-    
+    _totalCoins += score * 10;
+    _totalStars += score * 5;
     await syncToCloud();
     notifyListeners();
   }
 
+  // --- Favorites ---
+  bool isFavoriteStory(String title) {
+    return _favoriteStories.contains(title);
+  }
 
+  Future<void> toggleFavoriteStory(String title) async {
+    if (_favoriteStories.contains(title)) {
+      _favoriteStories.remove(title);
+    } else {
+      _favoriteStories.add(title);
+    }
+    await syncToCloud();
+    notifyListeners();
+  }
 
   // Keep old methods for backward compatibility
   Future<void> completeTask(String taskId, int levelId, int points) async {
     if (_completedTasks[taskId] == true) return;
     _completedTasks[taskId] = true;
-    await _addStars(points);
-    await _addCoins(points * 2);
+    _totalStars += points;
+    _totalCoins += points * 2;
 
     // Auto complete the level if it's the current one
     if (_level == levelId) {
       _level++;
-      await _addCoins(100);
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('level', _level);
+      _totalCoins += 100;
     }
 
-    await _saveToLocal();
     await syncToCloud();
     notifyListeners();
   }
@@ -478,15 +398,50 @@ class EnhancedProgressProvider extends ChangeNotifier {
 
   Future<void> toggleTeacherModeOnly() async {
     _isTeacherMode = !_isTeacherMode;
+    await syncToCloud();
     notifyListeners();
   }
 
   Future<void> resetProgress() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
     if (_userId != null) {
       await _firestore.saveProgress(_userId!, {});
     }
     await initializeProgress(uid: _userId);
+  }
+
+  void clearProgress() {
+    _userId = null;
+    _userName = 'Student';
+    _avatar = '👦';
+    _region = 'India';
+    _level = 1;
+    _totalCoins = 0;
+    _totalStars = 0;
+    _streakDays = 0;
+    _totalLettersLearned = 0;
+    _quizScore = 0;
+    
+    _achievementBadges = [];
+    _inventory = ['standard'];
+    _unlockedLessons = [1, 2, 3];
+    _lessonProgress = {};
+    _storyQuizScores = {};
+    _completedTasks = {};
+    _favoriteStories = [];
+    
+    _isTeacherMode = false;
+    _assignedHomework.clear();
+    _discussions.clear();
+    _assignedQuizzes.clear();
+    _globalNotice = 'Welcome to அகரவளம்!';
+    _streakHistory = [];
+    _lastLoginDate = '';
+    
+    _dailyMissions = [
+      {'id': 'letter_pro', 'title': 'Learn 10 New Letters', 'target': 10, 'current': 0, 'completed': false},
+      {'id': 'game_hero', 'title': 'Play any 3 Games', 'target': 3, 'current': 0, 'completed': false},
+    ];
+    
+    notifyListeners();
   }
 }

@@ -104,10 +104,10 @@ class FirestoreService {
 
   // --- User Progress Sync ---
   Future<void> saveProgress(String uid, Map<String, dynamic> progressData) async {
-    await _db.collection('users').doc(uid).update({
+    await _db.collection('users').doc(uid).set({
       'progress': progressData,
       'lastSync': FieldValue.serverTimestamp(),
-    });
+    }, SetOptions(merge: true));
   }
 
   Future<Map<String, dynamic>?> getProgress(String uid) async {
@@ -180,7 +180,7 @@ class FirestoreService {
 
   // --- Classroom Members ---
   Stream<QuerySnapshot> getClassroomMembersStream() {
-    return _db.collection('classroom_members').orderBy('joinedAt', descending: true).snapshots();
+    return _db.collection('users').snapshots();
   }
 
   Future<void> addClassroomMember(String email, String name, String role) async {

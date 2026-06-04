@@ -5,6 +5,7 @@ import '../constants/app_theme.dart';
 import '../providers/enhanced_progress_provider.dart';
 import '../services/auth_service.dart';
 import 'avatar_shop_screen.dart';
+import 'login_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -400,8 +401,12 @@ class ProfileScreen extends StatelessWidget {
           label: 'Sign Out Account',
           color: AppTheme.textGray,
           onTap: () {
+            progress.clearProgress();
             Provider.of<AuthService>(context, listen: false).signOut();
-            Navigator.of(context).popUntil((route) => route.isFirst);
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const LoginScreen()),
+              (route) => false,
+            );
           },
         ),
       ],

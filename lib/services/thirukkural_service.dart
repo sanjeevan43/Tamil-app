@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Thirukkural {
@@ -33,44 +34,22 @@ class ThirukkuralService {
   static final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   static Future<Thirukkural?> fetchDailyKural() async {
-    final now = DateTime.now();
-    final dateStr = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
-
     try {
-      // 1. Try to fetch from Firebase first
-      final snapshot = await _db.collection('daily_kurals')
-          .where('date', isEqualTo: dateStr)
-          .limit(1)
-          .get();
+      final now = DateTime.now();
+      final startOfYear = DateTime(now.year, 1, 1);
+      final dayOfYear = now.difference(startOfYear).inDays;
 
-      if (snapshot.docs.isNotEmpty) {
-        final data = snapshot.docs.first.data();
-        return Thirukkural.fromJson(data);
+      // Pseudo-random index from 1 to 1330 based on day of the year
+      final int index = (dayOfYear % 1330) + 1;
+
+      // Fetch the specific thirukkural document directly by ID (fast & offline cached)
+      final doc = await _db.collection('kurals').doc(index.toString()).get();
+      if (doc.exists && doc.data() != null) {
+        return Thirukkural.fromJson(doc.data()!);
       }
-
-      // 2. If not found in FireStore for today, you might want to pick a random one 
-      // from the main 'kurals' collection if you have it.
-      // For now, let's fall back to local as a safety check if Firebase is empty.
-      return _fetchFromLocal(now);
+      return _getFallbackKural();
     } catch (e) {
-      return _fetchFromLocal(now);
-    }
-  }
-
-  static Future<Thirukkural?> _fetchFromLocal(DateTime now) async {
-    try {
-      final String jsonString = await rootBundle.loadString('assets/data/v_thirukkural_list.json');
-      final Map<String, dynamic> data = json.decode(jsonString);
-      final List<dynamic> kuralList = data['kural'];
-
-      if (kuralList.isEmpty) return _getFallbackKural();
-
-      final dateValue = now.year * 10000 + now.month * 100 + now.day;
-      final random = Random(dateValue);
-      final index = random.nextInt(kuralList.length);
-
-      return Thirukkural.fromJson(kuralList[index]);
-    } catch (e) {
+      debugPrint('ThirukkuralService: Error fetching Kural from Firestore: $e');
       return _getFallbackKural();
     }
   }

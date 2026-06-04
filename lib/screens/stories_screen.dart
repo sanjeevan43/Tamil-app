@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
-import '../constants/tamil_data.dart';
+import '../data/tamil_data.dart';
 import '../providers/enhanced_progress_provider.dart';
 import '../widgets/safe_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -91,14 +91,22 @@ class _StoriesScreenState extends State<StoriesScreen> {
               }
 
               final docs = snapshot.data?.docs ?? [];
-              final List<Map<String, dynamic>> stories = [];
+              final List<Map<String, dynamic>> allStories = [];
 
               if (docs.isNotEmpty) {
                 for (var doc in docs) {
-                  stories.add(doc.data() as Map<String, dynamic>);
+                  allStories.add(doc.data() as Map<String, dynamic>);
                 }
               } else {
-                stories.addAll(MoralStoriesData.moralStories);
+                allStories.addAll(MoralStoriesData.moralStories);
+              }
+
+              // Apply favorites filter
+              final List<Map<String, dynamic>> stories;
+              if (_selectedFilter == 'My Favorites') {
+                stories = allStories.where((s) => progress.isFavoriteStory(s['title'] ?? '')).toList();
+              } else {
+                stories = allStories;
               }
               
               return SliverToBoxAdapter(
@@ -122,7 +130,9 @@ class _StoriesScreenState extends State<StoriesScreen> {
                       const SizedBox(height: 16),
 
                       // Featured Story
-                      if (stories.isNotEmpty)
+                      if (_selectedFilter == 'My Favorites' && stories.isEmpty)
+                        _buildEmptyBox('No favorite stories yet!\nTap the ❤️ icon on any story to add it here.')
+                      else if (stories.isNotEmpty)
                         _buildFeaturedStoryCard(context, stories[0])
                       else
                          _buildEmptyBox('No stories found. Add some from Admin Panel!'),
@@ -249,11 +259,13 @@ class _StoriesScreenState extends State<StoriesScreen> {
         children: [
           Stack(
             children: [
-              const SizedBox(
+              SizedBox(
                 height: 240,
                 width: double.infinity,
                 child: SafeImage(
-                  assetPath: 'assets/images/story_placeholder_1.jpg',
+                  assetPath: (story['scenes'] != null && (story['scenes'] as List).isNotEmpty)
+                      ? 'assets/images/${story['scenes'][0]['image']}.png'
+                      : 'assets/images/placeholder.png',
                   fit: BoxFit.cover,
                 ),
               ),
@@ -351,10 +363,20 @@ class _StoriesScreenState extends State<StoriesScreen> {
                         ],
                       ),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.favorite_outline_rounded, color: AppTheme.textSlate),
-                      onPressed: () {},
-                      style: IconButton.styleFrom(backgroundColor: AppTheme.offWhite),
+                    Consumer<EnhancedProgressProvider>(
+                      builder: (context, progress, _) {
+                        final isFav = progress.isFavoriteStory(story['title'] ?? '');
+                        return IconButton(
+                          icon: Icon(
+                            isFav ? Icons.favorite_rounded : Icons.favorite_outline_rounded,
+                            color: isFav ? Colors.redAccent : AppTheme.textSlate,
+                          ),
+                          onPressed: () {
+                            progress.toggleFavoriteStory(story['title'] ?? '');
+                          },
+                          style: IconButton.styleFrom(backgroundColor: AppTheme.offWhite),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -492,7 +514,29 @@ class _StoriesScreenState extends State<StoriesScreen> {
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right_rounded, color: AppTheme.borderLight, size: 28),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Consumer<EnhancedProgressProvider>(
+                  builder: (context, progress, _) {
+                    final isFav = progress.isFavoriteStory(story['title'] ?? '');
+                    return IconButton(
+                      icon: Icon(
+                        isFav ? Icons.favorite_rounded : Icons.favorite_outline_rounded,
+                        color: isFav ? Colors.redAccent : AppTheme.borderLight,
+                        size: 24,
+                      ),
+                      onPressed: () {
+                        progress.toggleFavoriteStory(story['title'] ?? '');
+                      },
+                      constraints: const BoxConstraints(),
+                      padding: const EdgeInsets.all(4),
+                    );
+                  },
+                ),
+                const Icon(Icons.chevron_right_rounded, color: AppTheme.borderLight, size: 28),
+              ],
+            ),
           ],
         ),
       ),

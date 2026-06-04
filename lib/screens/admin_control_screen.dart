@@ -4,9 +4,12 @@ import 'package:google_fonts/google_fonts.dart';
 import '../services/firestore_service.dart';
 import '../constants/app_theme.dart';
 import '../services/auth_service.dart';
+import '../providers/enhanced_progress_provider.dart';
 import 'package:provider/provider.dart';
 import 'admin_classrooms_tab.dart';
 import '../data/moral_stories_data.dart';
+import '../data/tamil_data.dart';
+import 'login_screen.dart';
 
 class AdminControlScreen extends StatefulWidget {
   const AdminControlScreen({super.key});
@@ -66,6 +69,66 @@ class _AdminControlScreenState extends State<AdminControlScreen> with SingleTick
       if (mounted) {
         Navigator.pop(context); // Dismiss loading
         _showSnackBar('Error seeding stories: $e', AppTheme.primary);
+      }
+    }
+  }
+
+  Future<void> _seedRhymes() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      final batch = FirebaseFirestore.instance.batch();
+      for (final rhyme in TamilData.tamilRhymes) {
+        final docId = rhyme['title'].hashCode.toString();
+        final docRef = FirebaseFirestore.instance.collection('rhymes').doc(docId);
+        batch.set(docRef, {
+          ...rhyme,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      }
+      await batch.commit();
+      if (mounted) {
+        Navigator.pop(context); // Dismiss loading
+        _showSnackBar('Successfully seeded Tamil Rhymes!', AppTheme.success);
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.pop(context); // Dismiss loading
+        _showSnackBar('Error seeding rhymes: $e', AppTheme.primary);
+      }
+    }
+  }
+
+  Future<void> _seedTopics() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      final batch = FirebaseFirestore.instance.batch();
+      for (final topic in TamilData.lessons) {
+        final docId = topic['id'].toString();
+        final docRef = FirebaseFirestore.instance.collection('topics').doc(docId);
+        batch.set(docRef, {
+          ...topic,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      }
+      await batch.commit();
+      if (mounted) {
+        Navigator.pop(context); // Dismiss loading
+        _showSnackBar('Successfully seeded Learning Topics!', AppTheme.success);
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.pop(context); // Dismiss loading
+        _showSnackBar('Error seeding topics: $e', AppTheme.primary);
       }
     }
   }
@@ -130,8 +193,12 @@ class _AdminControlScreenState extends State<AdminControlScreen> with SingleTick
           IconButton(
             icon: const Icon(Icons.power_settings_new_rounded, color: AppTheme.primary),
             onPressed: () {
+              Provider.of<EnhancedProgressProvider>(context, listen: false).clearProgress();
               Provider.of<AuthService>(context, listen: false).signOut();
-              Navigator.of(context).popUntil((route) => route.isFirst);
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                (route) => false,
+              );
             },
           ),
           const SizedBox(width: 8),
@@ -162,58 +229,108 @@ class _AdminControlScreenState extends State<AdminControlScreen> with SingleTick
 
 
 
+  Widget _buildSeedCard({
+    required String title,
+    required String desc,
+    required IconData icon,
+    required VoidCallback onPressed,
+    required String btnText,
+  }) {
+    return Container(
+      width: 260,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [AppTheme.primary.withOpacity(0.08), AppTheme.primary.withOpacity(0.02)],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.primary.withOpacity(0.15)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: AppTheme.primary, size: 28),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  title,
+                  style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 15, color: AppTheme.secondary),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            desc,
+            style: GoogleFonts.outfit(fontSize: 12, color: AppTheme.textSlate, height: 1.3),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: onPressed,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+              child: Text(btnText, style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.bold)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildTopicsTab() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Manage Learning Topics', style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(16),
-            margin: const EdgeInsets.only(bottom: 24),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppTheme.primary.withOpacity(0.08), AppTheme.primary.withOpacity(0.02)],
-              ),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppTheme.primary.withOpacity(0.15)),
-            ),
+          Text('Database Seeding Dashboard', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 12),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
             child: Row(
               children: [
-                const Icon(Icons.auto_stories, color: AppTheme.primary, size: 36),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Moral Stories Seeding Database',
-                        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 15, color: AppTheme.secondary),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Seed 16 classic dual-language moral stories and interactive quizzes directly into Firestore.',
-                        style: GoogleFonts.outfit(fontSize: 12, color: AppTheme.textSlate, height: 1.3),
-                      ),
-                    ],
-                  ),
+                _buildSeedCard(
+                  title: 'Moral Stories',
+                  desc: '16 bilingual moral stories & interactive quizzes.',
+                  icon: Icons.auto_stories,
+                  onPressed: _seedMoralStories,
+                  btnText: 'SEED STORIES',
                 ),
                 const SizedBox(width: 12),
-                ElevatedButton(
-                  onPressed: _seedMoralStories,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primary,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  ),
-                  child: Text('SEED STORIES', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.bold)),
+                _buildSeedCard(
+                  title: 'Tamil Rhymes',
+                  desc: 'Sing-along interactive nursery rhymes.',
+                  icon: Icons.music_note,
+                  onPressed: _seedRhymes,
+                  btnText: 'SEED RHYMES',
+                ),
+                const SizedBox(width: 12),
+                _buildSeedCard(
+                  title: 'Learning Topics',
+                  desc: 'Topics/Lessons structured learning levels.',
+                  icon: Icons.bookmark,
+                  onPressed: _seedTopics,
+                  btnText: 'SEED TOPICS',
                 ),
               ],
             ),
           ),
+          const SizedBox(height: 24),
+          Text('Manage Learning Topics', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 12),
           Form(
             key: _topicFormKey,
             child: Row(

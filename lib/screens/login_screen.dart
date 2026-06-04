@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../services/auth_service.dart';
 import '../constants/app_theme.dart';
 import '../providers/enhanced_progress_provider.dart';
@@ -27,29 +26,10 @@ class _LoginScreenState extends State<LoginScreen> {
   String _selectedRole = 'student';
   final _adminKeyController = TextEditingController();
   bool _obscurePassword = true;
-  bool _rememberMe = false;
 
   @override
   void initState() {
     super.initState();
-    _loadSavedCredentials();
-  }
-
-  Future<void> _loadSavedCredentials() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedEmail = prefs.getString('saved_email');
-    final savedPassword = prefs.getString('saved_password');
-    final rememberMe = prefs.getBool('remember_me') ?? false;
-
-    if (rememberMe && savedEmail != null && savedPassword != null) {
-      setState(() {
-        _emailController.text = savedEmail;
-        _passwordController.text = savedPassword;
-        _rememberMe = true;
-      });
-      // Auto-login
-      Future.delayed(const Duration(milliseconds: 500), _handleSubmit);
-    }
   }
 
   @override
@@ -132,13 +112,6 @@ class _LoginScreenState extends State<LoginScreen> {
           SnackBar(content: Text(error), backgroundColor: AppTheme.error),
         );
       } else {
-        // Save credentials if Remember Me is checked
-        if (_rememberMe && _isLogin) {
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('saved_email', _emailController.text.trim());
-          await prefs.setString('saved_password', _passwordController.text.trim());
-          await prefs.setBool('remember_me', true);
-        }
         _navigateToRoleBasedScreen(authService);
       }
     }
@@ -339,28 +312,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ],
                               ],
 
-                              // Remember Me Checkbox (Login only)
-                              if (_isLogin)
-                                Row(
-                                  children: [
-                                    Checkbox(
-                                      value: _rememberMe,
-                                      onChanged: (val) => setState(() => _rememberMe = val ?? false),
-                                      activeColor: AppTheme.primary,
-                                      side: const BorderSide(color: AppTheme.textGray, width: 1.5),
-                                    ),
-                                    Text(
-                                      'Remember me',
-                                      style: GoogleFonts.outfit(
-                                        fontSize: 13,
-                                        color: AppTheme.textGray,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
 
-                              const SizedBox(height: 8),
 
                               // Submit Button or Loading
                               if (_isLoading)

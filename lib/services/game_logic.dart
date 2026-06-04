@@ -1,5 +1,5 @@
 import 'dart:math';
-import '../constants/tamil_data.dart';
+import '../data/tamil_data.dart';
 
 class GameLogic {
   static final Random _random = Random();

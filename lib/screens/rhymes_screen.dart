@@ -6,6 +6,7 @@ import '../widgets/glass_card.dart';
 import '../widgets/safe_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../services/firestore_service.dart';
+import '../data/tamil_data.dart';
 
 class RhymesScreen extends StatefulWidget {
   const RhymesScreen({super.key});
@@ -33,7 +34,16 @@ class _RhymesScreenState extends State<RhymesScreen> {
                     return const Center(child: CircularProgressIndicator());
                   }
                   
-                  final rhymes = snapshot.data?.docs ?? [];
+                  final docs = snapshot.data?.docs ?? [];
+                  final List<Map<String, dynamic>> rhymes = [];
+                  
+                  if (docs.isNotEmpty) {
+                    for (var doc in docs) {
+                      rhymes.add(doc.data() as Map<String, dynamic>);
+                    }
+                  } else {
+                    rhymes.addAll(TamilData.tamilRhymes);
+                  }
                   
                   if (rhymes.isEmpty) {
                     return Center(
@@ -52,7 +62,7 @@ class _RhymesScreenState extends State<RhymesScreen> {
                     padding: const EdgeInsets.all(20),
                     itemCount: rhymes.length,
                     itemBuilder: (context, index) {
-                      final rhyme = rhymes[index].data() as Map<String, dynamic>;
+                      final rhyme = rhymes[index];
                       return _buildRhymeCard(context, rhyme);
                     },
                   );

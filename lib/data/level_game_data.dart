@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:characters/characters.dart';
-import '../constants/tamil_data.dart';
+import 'tamil_data.dart';
 
 class LevelGameData {
   static final _random = Random();

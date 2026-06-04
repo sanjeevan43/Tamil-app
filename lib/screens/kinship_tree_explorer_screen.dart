@@ -13,12 +13,12 @@ class KinshipTreeExplorerScreen extends StatefulWidget {
 }
 
 class _KinshipTreeExplorerScreenState extends State<KinshipTreeExplorerScreen> {
-  final List<String> relations = [
-    'Mother\'s younger sister',
-    'Father\'s older brother',
-    'Grandfather',
-    'Older brother',
-    'Younger sister',
+  final List<Map<String, String>> relations = [
+    {'tamil': 'சித்தி', 'english': 'Mother\'s younger sister'},
+    {'tamil': 'பெரியப்பா', 'english': 'Father\'s older brother'},
+    {'tamil': 'தாத்தா', 'english': 'Grandfather'},
+    {'tamil': 'அண்ணன்', 'english': 'Older brother'},
+    {'tamil': 'தங்கை', 'english': 'Younger sister'},
   ];
 
   Map<String, dynamic>? kinshipData;
@@ -60,10 +60,11 @@ class _KinshipTreeExplorerScreenState extends State<KinshipTreeExplorerScreen> {
       backgroundColor: AppTheme.backgroundLight,
       appBar: AppBar(
         title: Text(
-          'Kinship Tree Explorer',
-          style: GoogleFonts.outfit(
-            fontWeight: FontWeight.w800,
+          'உறவுமுறைத் தேடல் (Kinship Explorer)',
+          style: GoogleFonts.notoSansTamil(
+            fontWeight: FontWeight.bold,
             color: AppTheme.secondary,
+            fontSize: 16,
           ),
         ),
         backgroundColor: AppTheme.backgroundLight,
@@ -77,10 +78,10 @@ class _KinshipTreeExplorerScreenState extends State<KinshipTreeExplorerScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Select a family relation:',
-              style: GoogleFonts.outfit(
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
+              'உறவைத்தேர்வு செய்க (Select family relation):',
+              style: GoogleFonts.notoSansTamil(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
                 color: AppTheme.secondary,
               ),
             ),
@@ -88,15 +89,17 @@ class _KinshipTreeExplorerScreenState extends State<KinshipTreeExplorerScreen> {
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: relations.map((relation) {
+              children: relations.map((relationMap) {
+                final relation = relationMap['english']!;
+                final tamilLabel = relationMap['tamil']!;
                 final isSelected = selectedRelation == relation;
                 return ChoiceChip(
                   label: Text(
-                    relation,
-                    style: GoogleFonts.outfit(
-                      fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
+                    '$tamilLabel ($relation)',
+                    style: GoogleFonts.notoSansTamil(
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                       color: isSelected ? AppTheme.white : AppTheme.secondary,
-                      fontSize: 13,
+                      fontSize: 12,
                     ),
                   ),
                   selected: isSelected,
@@ -133,10 +136,11 @@ class _KinshipTreeExplorerScreenState extends State<KinshipTreeExplorerScreen> {
                       const Text('🌳', style: TextStyle(fontSize: 48)),
                       const SizedBox(height: 12),
                       Text(
-                        'Select a relation to start exploring relations',
-                        style: GoogleFonts.outfit(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
+                        'உறவுமுறையைத் தேர்வுசெய்து தொடங்குங்கள்\n(Select a relation to start)',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.notoSansTamil(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
                           color: AppTheme.textGray,
                         ),
                       ),
@@ -174,10 +178,10 @@ class _KinshipTreeExplorerScreenState extends State<KinshipTreeExplorerScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: AppTheme.pillBadge(bgColor: AppTheme.success.withOpacity(0.08)),
                 child: Text(
-                  'Kinship Word',
-                  style: GoogleFonts.outfit(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
+                  'உறவுமுறைச் சொல் (Kinship Word)',
+                  style: GoogleFonts.notoSansTamil(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
                     color: AppTheme.success,
                   ),
                 ),
@@ -186,17 +190,17 @@ class _KinshipTreeExplorerScreenState extends State<KinshipTreeExplorerScreen> {
           ),
           const SizedBox(height: 4),
           Text(
-            'Transliteration: ${kinshipData!['transliteration'] ?? ''}',
-            style: GoogleFonts.outfit(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
+            'ஒலிபெயர்ப்பு (Transliteration): ${kinshipData!['transliteration'] ?? ''}',
+            style: GoogleFonts.notoSansTamil(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
               color: AppTheme.textGray,
             ),
           ),
           const SizedBox(height: 20),
-          _buildDefinitionRow('English Relation', kinshipData!['meaning_english'] ?? '', AppTheme.info),
+          _buildDefinitionRow('ஆங்கில உறவுமுறை (English)', kinshipData!['meaning_english'] ?? '', AppTheme.info),
           const SizedBox(height: 12),
-          _buildDefinitionRow('Tamil Relation', kinshipData!['meaning_tamil'] ?? '', AppTheme.success),
+          _buildDefinitionRow('தமிழ் உறவுமுறை (Tamil)', kinshipData!['meaning_tamil'] ?? '', AppTheme.success),
           const SizedBox(height: 20),
           Container(
             padding: const EdgeInsets.all(18),
@@ -215,12 +219,12 @@ class _KinshipTreeExplorerScreenState extends State<KinshipTreeExplorerScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'FUN FACT',
-                        style: GoogleFonts.outfit(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                        'சுவாரசியமான தகவல் (FUN FACT)',
+                        style: GoogleFonts.notoSansTamil(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
                           color: AppTheme.warning,
-                          letterSpacing: 1.5,
+                          letterSpacing: 1.0,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -241,12 +245,12 @@ class _KinshipTreeExplorerScreenState extends State<KinshipTreeExplorerScreen> {
           ),
           const SizedBox(height: 20),
           Text(
-            'EXAMPLE SENTENCE',
-            style: GoogleFonts.outfit(
-              fontSize: 10,
-              fontWeight: FontWeight.w900,
+            'உதாரண வாக்கியம் (EXAMPLE SENTENCE)',
+            style: GoogleFonts.notoSansTamil(
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
               color: AppTheme.textGray,
-              letterSpacing: 1.5,
+              letterSpacing: 1.0,
             ),
           ),
           const SizedBox(height: 6),
@@ -318,10 +322,10 @@ class _KinshipTreeExplorerScreenState extends State<KinshipTreeExplorerScreen> {
             const Icon(Icons.help_outline_rounded, color: AppTheme.primary, size: 20),
             const SizedBox(width: 8),
             Text(
-              'Linguistic Quiz',
-              style: GoogleFonts.outfit(
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
+              'உறவுமுறைப் பயிற்சி (Linguistic Quiz)',
+              style: GoogleFonts.notoSansTamil(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
                 color: AppTheme.secondary,
               ),
             ),

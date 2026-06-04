@@ -258,69 +258,99 @@ class TeacherDashboardScreen extends StatelessWidget {
   }
 
   Widget _buildStudentOverview(EnhancedProgressProvider progress) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppTheme.secondary, AppTheme.primaryDark],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(color: AppTheme.primary.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 10)),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'UNIFIED CLASSROOM',
-                style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.white.withOpacity(0.6), letterSpacing: 2),
-              ),
-              const Icon(Icons.hub_rounded, color: AppTheme.white, size: 16),
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('users').snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator(color: AppTheme.white));
+        }
+
+        final users = snapshot.data!.docs;
+
+        return Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [AppTheme.secondary, AppTheme.primaryDark],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(color: AppTheme.primary.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 10)),
             ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            'Global Students Hub',
-            style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w900, color: AppTheme.white),
-          ),
-          const SizedBox(height: 20),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(color: AppTheme.white.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
-            child: Column(
-              children: [
-                _buildInfoRow('Active Student', progress.userName),
-                Divider(color: AppTheme.white.withOpacity(0.24)),
-                _buildInfoRow('Class Average Level', '${progress.level}'),
-                Divider(color: AppTheme.white.withOpacity(0.24)),
-                _buildInfoRow('Total Letters Taught', '${progress.totalLettersLearned}'),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'CLASSROOM ROSTER',
+                    style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.white.withOpacity(0.6), letterSpacing: 2),
+                  ),
+                  const Icon(Icons.people_rounded, color: AppTheme.white, size: 16),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Registered Students (${users.length})',
+                style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w900, color: AppTheme.white),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                constraints: const BoxConstraints(maxHeight: 220),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: users.length,
+                  itemBuilder: (context, index) {
+                    final userData = users[index].data() as Map<String, dynamic>;
+                    final name = userData['displayName'] ?? userData['name'] ?? 'Unknown User';
+                    final role = userData['role'] ?? 'student';
 
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(fontSize: 14, color: AppTheme.white)),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.white),
+                    // Fetch progress details if present in the user map
+                    final progressMap = userData['progress'] as Map<String, dynamic>? ?? {};
+                    final level = progressMap['level'] ?? 1;
+                    final letters = progressMap['totalLettersLearned'] ?? 0;
+
+                    return Card(
+                      color: AppTheme.white.withOpacity(0.08),
+                      elevation: 0,
+                      margin: const EdgeInsets.only(bottom: 8),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      child: ListTile(
+                        dense: true,
+                        leading: CircleAvatar(
+                          backgroundColor: AppTheme.white.withOpacity(0.12),
+                          child: Text(progressMap['avatar']?.toString() ?? '👦', style: const TextStyle(fontSize: 16)),
+                        ),
+                        title: Text(
+                          name,
+                          style: GoogleFonts.outfit(color: AppTheme.white, fontWeight: FontWeight.bold, fontSize: 14),
+                        ),
+                        subtitle: Text(
+                          role.toUpperCase(),
+                          style: GoogleFonts.outfit(color: AppTheme.white.withOpacity(0.6), fontSize: 10, fontWeight: FontWeight.w700),
+                        ),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text('Lvl $level', style: GoogleFonts.outfit(color: AppTheme.white, fontWeight: FontWeight.w900, fontSize: 12)),
+                            Text('$letters letters', style: GoogleFonts.outfit(color: AppTheme.white.withOpacity(0.6), fontSize: 10)),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 

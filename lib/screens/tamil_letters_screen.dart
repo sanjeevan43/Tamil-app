@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
-import '../constants/tamil_data.dart';
+import '../data/tamil_data.dart';
 import '../services/audio_service.dart';
 import '../providers/enhanced_progress_provider.dart';
 

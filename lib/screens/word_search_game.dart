@@ -174,6 +174,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
 
   Widget _rewardBadge(String emoji, String val) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(emoji, style: const TextStyle(fontSize: 32)),
         Text(val, style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.textDark)),

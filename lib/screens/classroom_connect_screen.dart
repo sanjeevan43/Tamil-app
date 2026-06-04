@@ -187,7 +187,7 @@ class _ClassroomConnectScreenState extends State<ClassroomConnectScreen>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(data['name'] ?? 'Unknown', style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w700, color: AppTheme.secondary)),
+                          Text(data['displayName'] ?? data['name'] ?? 'Unknown', style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w700, color: AppTheme.secondary)),
                           Row(
                             children: [
                               if (isTeacherMember)

@@ -129,6 +129,7 @@ class _WordScrambleGameState extends State<WordScrambleGame> {
 
   Widget _rewardIcon(String emoji, String text) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(emoji, style: const TextStyle(fontSize: 24)),
         Text(text, style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w800, color: AppTheme.textSlate)),
