@@ -149,13 +149,13 @@ class AppTheme {
         ),
       ),
     ),
-    tabBarTheme: TabBarTheme(
+    tabBarTheme: const TabBarThemeData(
       labelColor: primary,
       unselectedLabelColor: textGray,
       indicatorColor: primary,
-      labelStyle: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+      labelStyle: TextStyle(fontWeight: FontWeight.bold),
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       color: white,
