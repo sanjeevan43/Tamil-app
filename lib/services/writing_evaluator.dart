@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
+import 'package:google_fonts/google_fonts.dart';
+import 'dart:math' as math;
 
 class WritingEvaluator {
   // Normalized key-points for each vowel (0.0 to 1.0)
@@ -212,9 +215,9 @@ class WritingEvaluator {
 
   /// Evaluates stars earned: 3 stars (excellent), 2 stars (good), 1 star (needs improvement)
   static int getStarsEarned(double similarity) {
-    if (similarity >= 0.82) return 3;
-    if (similarity >= 0.58) return 2;
-    return 1;
+    if (similarity >= 0.70) return 3;
+    if (similarity >= 0.45) return 2;
+    return 0;
   }
 
   /// Checks if a local coordinate point is close to the letter path (strict template skeleton proximity)
@@ -243,5 +246,283 @@ class WritingEvaluator {
     
     // Strict threshold (13% of canvas size) - only registers points directly on top of the letter path!
     return minDistance <= 0.13;
+  }
+
+  /// Dynamically generates a binary mask of the target character rendered off-screen
+  static Future<List<bool>> generateTemplateMask(String letter, double targetSize) async {
+    final recorder = ui.PictureRecorder();
+    final canvas = Canvas(recorder, Rect.fromLTWH(0, 0, targetSize, targetSize));
+
+    // Paint white background
+    final bgPaint = Paint()..color = const Color(0xFFFFFFFF);
+    canvas.drawRect(Rect.fromLTWH(0, 0, targetSize, targetSize), bgPaint);
+
+    // Paint text in black, sized to fit the offscreen canvas
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: letter,
+        style: GoogleFonts.notoSansTamil(
+          fontSize: targetSize * 0.58,
+          fontWeight: FontWeight.bold,
+          color: const Color(0xFF000000),
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+
+    final textOffset = Offset(
+      (targetSize - textPainter.width) / 2,
+      (targetSize - textPainter.height) / 2,
+    );
+    textPainter.paint(canvas, textOffset);
+
+    final picture = recorder.endRecording();
+    final image = await picture.toImage(targetSize.toInt(), targetSize.toInt());
+    final byteData = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
+    image.dispose();
+
+    if (byteData == null) return List.filled(targetSize.toInt() * targetSize.toInt(), false);
+
+    final bytes = byteData.buffer.asUint8List();
+    final int totalPixels = targetSize.toInt() * targetSize.toInt();
+    final mask = List<bool>.filled(totalPixels, false);
+
+    for (int i = 0; i < totalPixels; i++) {
+      final offset = i * 4;
+      if (offset + 3 >= bytes.length) continue;
+      final r = bytes[offset];
+      final g = bytes[offset + 1];
+      final b = bytes[offset + 2];
+      final a = bytes[offset + 3];
+
+      final luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      if (luminance < 150 && a > 50) {
+        mask[i] = true;
+      }
+    }
+
+    return mask;
+  }
+
+  /// Dynamically generates a binary mask of the user's drawing scaled to the targetSize
+  static Future<List<bool>> generateUserMask(
+    List<Offset> userPoints,
+    double canvasWidth,
+    double canvasHeight,
+    double targetSize,
+  ) async {
+    if (canvasWidth <= 0) canvasWidth = 400.0;
+    if (canvasHeight <= 0) canvasHeight = 400.0;
+
+    final recorder = ui.PictureRecorder();
+    final canvas = Canvas(recorder, Rect.fromLTWH(0, 0, targetSize, targetSize));
+
+    // Paint white background
+    final bgPaint = Paint()..color = const Color(0xFFFFFFFF);
+    canvas.drawRect(Rect.fromLTWH(0, 0, targetSize, targetSize), bgPaint);
+
+    // Paint user strokes in black with proportional stroke width
+    final paint = Paint()
+      ..color = const Color(0xFF000000)
+      ..strokeWidth = targetSize * 0.045 // Proportional stroke width (approx 6.7 pixels)
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..style = PaintingStyle.stroke;
+
+    final double scaleX = targetSize / canvasWidth;
+    final double scaleY = targetSize / canvasHeight;
+
+    for (int i = 0; i < userPoints.length - 1; i++) {
+      if (userPoints[i] != Offset.infinite && userPoints[i + 1] != Offset.infinite) {
+        final p1 = Offset(userPoints[i].dx * scaleX, userPoints[i].dy * scaleY);
+        final p2 = Offset(userPoints[i + 1].dx * scaleX, userPoints[i + 1].dy * scaleY);
+        canvas.drawLine(p1, p2, paint);
+      }
+    }
+
+    final picture = recorder.endRecording();
+    final image = await picture.toImage(targetSize.toInt(), targetSize.toInt());
+    final byteData = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
+    image.dispose();
+
+    if (byteData == null) return List.filled(targetSize.toInt() * targetSize.toInt(), false);
+
+    final bytes = byteData.buffer.asUint8List();
+    final int totalPixels = targetSize.toInt() * targetSize.toInt();
+    final mask = List<bool>.filled(totalPixels, false);
+
+    for (int i = 0; i < totalPixels; i++) {
+      final offset = i * 4;
+      if (offset + 3 >= bytes.length) continue;
+      final r = bytes[offset];
+      final g = bytes[offset + 1];
+      final b = bytes[offset + 2];
+      final a = bytes[offset + 3];
+
+      final luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      if (luminance < 150 && a > 50) {
+        mask[i] = true;
+      }
+    }
+
+    return mask;
+  }
+
+  /// Dilates a binary pixel mask with a given radius to allow natural tracing tolerance
+  static List<bool> dilateMask(List<bool> mask, int size, int radius) {
+    final dilated = List<bool>.filled(mask.length, false);
+    for (int y = 0; y < size; y++) {
+      for (int x = 0; x < size; x++) {
+        if (mask[y * size + x]) {
+          for (int dy = -radius; dy <= radius; dy++) {
+            final ny = y + dy;
+            if (ny < 0 || ny >= size) continue;
+            for (int dx = -radius; dx <= radius; dx++) {
+              final nx = x + dx;
+              if (nx < 0 || nx >= size) continue;
+              dilated[ny * size + nx] = true;
+            }
+          }
+        }
+      }
+    }
+    return dilated;
+  }
+
+  /// Calculates Intersection over Union (IoU) similarity between template and user drawing masks
+  static double evaluateIoUSimilarity(List<bool> templateMask, List<bool> userMask) {
+    if (templateMask.length != userMask.length) return 0.0;
+
+    int intersection = 0;
+    int union = 0;
+
+    for (int i = 0; i < templateMask.length; i++) {
+      final t = templateMask[i];
+      final u = userMask[i];
+
+      if (t && u) {
+        intersection++;
+      }
+      if (t || u) {
+        union++;
+      }
+    }
+
+    if (union == 0) return 0.0;
+    return intersection / union;
+  }
+
+  /// Calculates Cosine Similarity between X and Y projection profiles of two masks
+  static double calculateProjectionSimilarity(List<bool> templateMask, List<bool> userMask, int size) {
+    final tX = List<double>.filled(size, 0.0);
+    final tY = List<double>.filled(size, 0.0);
+    final uX = List<double>.filled(size, 0.0);
+    final uY = List<double>.filled(size, 0.0);
+
+    for (int y = 0; y < size; y++) {
+      for (int x = 0; x < size; x++) {
+        if (templateMask[y * size + x]) {
+          tX[x] += 1.0;
+          tY[y] += 1.0;
+        }
+        if (userMask[y * size + x]) {
+          uX[x] += 1.0;
+          uY[y] += 1.0;
+        }
+      }
+    }
+
+    double dotX = 0.0;
+    double normTX = 0.0;
+    double normUX = 0.0;
+
+    double dotY = 0.0;
+    double normTY = 0.0;
+    double normUY = 0.0;
+
+    for (int i = 0; i < size; i++) {
+      dotX += tX[i] * uX[i];
+      normTX += tX[i] * tX[i];
+      normUX += uX[i] * uX[i];
+
+      dotY += tY[i] * uY[i];
+      normTY += tY[i] * tY[i];
+      normUY += uY[i] * uY[i];
+    }
+
+    if (normTX == 0 || normUX == 0 || normTY == 0 || normUY == 0) return 0.0;
+
+    final cosX = dotX / (math.sqrt(normTX) * math.sqrt(normUX));
+    final cosY = dotY / (math.sqrt(normTY) * math.sqrt(normUY));
+
+    return (cosX + cosY) / 2.0;
+  }
+
+  /// Calculates Bidirectional Chamfer Distance Similarity between template and user drawing masks
+  static double evaluateChamferSimilarity(List<bool> templateMask, List<bool> userMask, int size) {
+    final T = <Offset>[];
+    final U = <Offset>[];
+
+    for (int y = 0; y < size; y++) {
+      for (int x = 0; x < size; x++) {
+        if (templateMask[y * size + x]) {
+          T.add(Offset(x.toDouble(), y.toDouble()));
+        }
+        if (userMask[y * size + x]) {
+          U.add(Offset(x.toDouble(), y.toDouble()));
+        }
+      }
+    }
+
+    if (T.isEmpty || U.isEmpty) return 0.0;
+
+    // 1. User Error: Average distance from user pixels to the template
+    double totalUserDist = 0.0;
+    for (final u in U) {
+      double minDist = double.infinity;
+      for (final t in T) {
+        final dx = u.dx - t.dx;
+        final dy = u.dy - t.dy;
+        final distSq = dx * dx + dy * dy;
+        if (distSq < minDist) {
+          minDist = distSq;
+        }
+      }
+      totalUserDist += math.sqrt(minDist);
+    }
+    final double userError = totalUserDist / U.length;
+
+    // 2. Template Error: Average distance from template pixels to the user's drawing
+    double totalTemplateDist = 0.0;
+    for (final t in T) {
+      double minDist = double.infinity;
+      for (final u in U) {
+        final dx = t.dx - u.dx;
+        final dy = t.dy - u.dy;
+        final distSq = dx * dx + dy * dy;
+        if (distSq < minDist) {
+          minDist = distSq;
+        }
+      }
+      totalTemplateDist += math.sqrt(minDist);
+    }
+    final double templateError = totalTemplateDist / T.length;
+
+    // Exponential decay of the average shape error.
+    // A target K value of 8.0 represents 5.3% of the 150x150 canvas.
+    final double averageError = (userError + templateError) / 2.0;
+    final double baseSimilarity = math.exp(-averageError / 8.0);
+
+    // Apply strict penalty for excessive drawing (scribbling/shading/filling canvas)
+    final double userPixels = U.length.toDouble();
+    final double templatePixels = T.length.toDouble();
+    double penalty = 1.0;
+    if (userPixels > templatePixels * 1.35) {
+      final double excessRatio = userPixels / (templatePixels * 1.35);
+      penalty = math.exp(-(excessRatio - 1.0) * 1.8);
+    }
+
+    return baseSimilarity * penalty;
   }
 }

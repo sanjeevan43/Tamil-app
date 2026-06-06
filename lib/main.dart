@@ -11,6 +11,7 @@ import 'services/auth_service.dart';
 import 'providers/lesson_provider.dart';
 import 'screens/splash_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,6 +32,10 @@ void main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
     debugPrint('Firebase initialized successfully');
+
+    // Initialize Google Sign-In
+    await GoogleSignIn.instance.initialize();
+    debugPrint('Google Sign-In initialized successfully');
     
     // Enable Firestore offline persistence with a reasonable cache limit to prevent RAM bloat and UI freezes
     FirebaseFirestore.instance.settings = const Settings(

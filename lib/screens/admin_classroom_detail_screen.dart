@@ -63,12 +63,12 @@ class _AdminClassroomDetailScreenState extends State<AdminClassroomDetailScreen>
                       children: [
                         ElevatedButton.icon(
                           onPressed: () async {
-                            final result = await FilePicker.platform.pickFiles(type: FileType.image);
+                            final result = await FilePicker.pickFiles(type: FileType.image);
                             if (result != null && result.files.single.path != null) {
-                              setState(() {
-                                selectedFile = File(result.files.single.path!);
-                                fileType = 'image';
-                              });
+                                setState(() {
+                                  selectedFile = File(result.files.single.path!);
+                                  fileType = 'image';
+                                });
                             }
                           },
                           icon: const Icon(Icons.image),
@@ -76,12 +76,12 @@ class _AdminClassroomDetailScreenState extends State<AdminClassroomDetailScreen>
                         ),
                         ElevatedButton.icon(
                           onPressed: () async {
-                            final result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
+                            final result = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
                             if (result != null && result.files.single.path != null) {
-                              setState(() {
-                                selectedFile = File(result.files.single.path!);
-                                fileType = 'pdf';
-                              });
+                                setState(() {
+                                  selectedFile = File(result.files.single.path!);
+                                  fileType = 'pdf';
+                                });
                             }
                           },
                           icon: const Icon(Icons.picture_as_pdf),

@@ -49,7 +49,7 @@ class _WritingPracticeGameState extends State<WritingPracticeGame> {
     setState(() => _points.clear());
   }
 
-  void _submitDrawing() {
+  Future<void> _submitDrawing() async {
     if (_points.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -63,40 +63,115 @@ class _WritingPracticeGameState extends State<WritingPracticeGame> {
 
     final currentLetter = _activeLetterList[_currentLetterIndex];
     
-    // Check how many points were actually drawn directly on/near the placeholder letter shape
-    final pointsOnLetter = _points.where((p) {
-      if (p == Offset.infinite) return false;
-      return WritingEvaluator.isNearPath(currentLetter, p, _canvasWidth, _canvasHeight);
-    }).toList();
-
-    if (pointsOnLetter.length < 5) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please trace directly over the letter guide before submitting!', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
-          backgroundColor: AppTheme.warning,
-          duration: const Duration(seconds: 2),
+    // Show a loading dialog during offscreen template generation/evaluation
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primary),
         ),
-      );
-      return;
+      ),
+    );
+
+    try {
+      const double targetSize = 150.0;
+      final templateMask = await WritingEvaluator.generateTemplateMask(currentLetter, targetSize);
+      final userMask = await WritingEvaluator.generateUserMask(_points, _canvasWidth, _canvasHeight, targetSize);
+
+      // Evaluate shape similarity using bidirectional Chamfer distance
+      final similarity = WritingEvaluator.evaluateChamferSimilarity(templateMask, userMask, targetSize.toInt());
+      final stars = WritingEvaluator.getStarsEarned(similarity);
+
+      // Dismiss the loading dialog
+      if (mounted) {
+        Navigator.pop(context);
+      }
+      if (!mounted) return;
+
+      // Verify they actually tried to draw on the guide (overlap of thin masks)
+      int pointsOnLetterCount = 0;
+      for (int i = 0; i < templateMask.length; i++) {
+        if (templateMask[i] && userMask[i]) {
+          pointsOnLetterCount++;
+        }
+      }
+
+      if (pointsOnLetterCount < 5) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Please trace directly over the letter guide before submitting!', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
+            backgroundColor: AppTheme.warning,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+        return;
+      }
+
+      setState(() {
+        _stars = stars;
+      });
+      if (stars > 0) {
+        _showResult();
+      } else {
+        _showTryAgain();
+      }
+    } catch (e) {
+      if (mounted) {
+        // Safe check to dismiss dialog
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('An error occurred during evaluation: $e', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
+            backgroundColor: AppTheme.primary,
+          ),
+        );
+      }
     }
+  }
 
-    final similarity = WritingEvaluator.evaluateSimilarity(currentLetter, _points, _canvasWidth, _canvasHeight);
-    final stars = WritingEvaluator.getStarsEarned(similarity);
-
-    if (stars == 1 && similarity < 0.4) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Try to trace the letter guide more closely!', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
-          backgroundColor: AppTheme.warning,
-          duration: const Duration(seconds: 3),
+  void _showTryAgain() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(color: AppTheme.warning.withOpacity(0.1), shape: BoxShape.circle),
+              child: const Text('✍️', style: TextStyle(fontSize: 40)),
+            ),
+            const SizedBox(height: 24),
+            Text('Keep Practicing!', style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.w900, color: AppTheme.secondary)),
+            const SizedBox(height: 8),
+            Text('Trace the letter guide closely to earn stars and coins.', 
+              textAlign: TextAlign.center,
+              style: GoogleFonts.outfit(fontWeight: FontWeight.w500, color: AppTheme.textGray)),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _clearDrawing();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 50),
+                      backgroundColor: AppTheme.primary,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    ),
+                    child: Text('Try Again', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.white)),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-      );
-    }
-
-    setState(() {
-      _stars = stars;
-    });
-    _showResult();
+      ),
+    );
   }
 
   void _showResult() {
@@ -270,27 +345,38 @@ class _WritingPracticeGameState extends State<WritingPracticeGame> {
  
                   return Stack(
                     children: [
-                      Listener(
-                        onPointerDown: (event) {
-                          _pointerCount++;
-                        },
-                        onPointerUp: (event) {
-                          _pointerCount--;
-                        },
-                        onPointerCancel: (event) {
-                          _pointerCount--;
-                        },
-                        child: GestureDetector(
-                          onPanUpdate: (details) {
-                            if (_pointerCount > 1) return; // Block multi-finger drawing
-                            setState(() => _points.add(details.localPosition));
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(18),
+                        child: Listener(
+                          onPointerDown: (event) {
+                            _pointerCount++;
                           },
-                          onPanEnd: (details) {
-                            setState(() => _points.add(Offset.infinite));
+                          onPointerUp: (event) {
+                            _pointerCount--;
                           },
-                          child: CustomPaint(
-                            painter: DrawingPainter(_points, currentLetter),
-                            size: Size.infinite,
+                          onPointerCancel: (event) {
+                            _pointerCount--;
+                          },
+                          child: GestureDetector(
+                            onPanUpdate: (details) {
+                              if (_pointerCount > 1) return; // Block multi-finger drawing
+                              final localPos = details.localPosition;
+                              if (localPos.dx >= 0 && localPos.dx <= _canvasWidth &&
+                                  localPos.dy >= 0 && localPos.dy <= _canvasHeight) {
+                                setState(() => _points.add(localPos));
+                              } else {
+                                if (_points.isNotEmpty && _points.last != Offset.infinite) {
+                                  setState(() => _points.add(Offset.infinite));
+                                }
+                              }
+                            },
+                            onPanEnd: (details) {
+                              setState(() => _points.add(Offset.infinite));
+                            },
+                            child: CustomPaint(
+                              painter: DrawingPainter(_points, currentLetter),
+                              size: Size.infinite,
+                            ),
                           ),
                         ),
                       ),
