@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../services/auth_service.dart';
 import '../providers/enhanced_progress_provider.dart';
-import 'home_screen.dart';
 import 'login_screen.dart';
 import 'admin_control_screen.dart';
 import 'teacher_dashboard_screen.dart';

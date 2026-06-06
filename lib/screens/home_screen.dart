@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../constants/app_theme.dart';
 import '../providers/enhanced_progress_provider.dart';
 import '../services/auth_service.dart';
@@ -511,63 +510,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Removed unwanted _buildLevelSection and _buildWeekendChallenge
 
-  Widget _buildStoriesCard(BuildContext context) {
-    return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const StoriesScreen())),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: AppTheme.primary.withOpacity(0.1), width: 1.5),
-          boxShadow: [
-            BoxShadow(color: AppTheme.primary.withOpacity(0.05), blurRadius: 12, offset: const Offset(0, 4)),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(color: AppTheme.primary.withOpacity(0.08), borderRadius: BorderRadius.circular(16)),
-              child: const Icon(Icons.auto_stories_rounded, color: AppTheme.primary, size: 24),
-            ),
-            const SizedBox(width: 16),
-            Expanded(child: Text('Moral Stories', style: GoogleFonts.outfit(fontSize: 17, fontWeight: FontWeight.w800, color: AppTheme.secondary))),
-            const Icon(Icons.chevron_right_rounded, color: AppTheme.topoSilver, size: 24),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildConnectCard(BuildContext context) {
-    return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ClassroomConnectScreen())),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: AppTheme.info.withOpacity(0.1), width: 1.5),
-          boxShadow: [
-            BoxShadow(color: AppTheme.info.withOpacity(0.05), blurRadius: 12, offset: const Offset(0, 4)),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(color: AppTheme.info.withOpacity(0.08), borderRadius: BorderRadius.circular(16)),
-              child: const Icon(Icons.forum_rounded, color: AppTheme.info, size: 24),
-            ),
-            const SizedBox(width: 16),
-            Expanded(child: Text('Classroom Connect', style: GoogleFonts.outfit(fontSize: 17, fontWeight: FontWeight.w800, color: AppTheme.secondary))),
-            const Icon(Icons.chevron_right_rounded, color: AppTheme.topoSilver, size: 24),
-          ],
-        ),
-      ),
-    );
-  }
 
   String _getTamilTitle(String title) {
     switch (title) {

@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../services/auth_service.dart';
 import '../constants/app_theme.dart';
 import '../providers/enhanced_progress_provider.dart';
-import 'home_screen.dart';
 import 'admin_control_screen.dart';
 import 'teacher_dashboard_screen.dart';
 import 'parent_dashboard_screen.dart';

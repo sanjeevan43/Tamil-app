@@ -84,7 +84,7 @@ class _MainNavigationContainerState extends State<MainNavigationContainer> {
 
   Widget _buildNavItem(int index, IconData icon, String label) {
     final isSelected = _currentIndex == index;
-    final accentColor = AppTheme.primary; // Vibrant logo-inspired red
+    const accentColor = AppTheme.primary; // Vibrant logo-inspired red
 
     return GestureDetector(
       onTap: () {

@@ -467,8 +467,8 @@ class _AkaranMentorScreenState extends State<AkaranMentorScreen> {
                         Container(
                           width: 38,
                           height: 38,
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(colors: [AppTheme.primary, AppTheme.primaryDark]),
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(colors: [AppTheme.primary, AppTheme.primaryDark]),
                             shape: BoxShape.circle,
                           ),
                           child: const Center(

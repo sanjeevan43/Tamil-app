@@ -184,7 +184,6 @@ class _WritingPracticeGameState extends State<WritingPracticeGame> {
 
   @override
   Widget build(BuildContext context) {
-    final validPoints = _points.where((p) => p != Offset.infinite).toList();
     final currentLetter = _activeLetterList[_currentLetterIndex];
     
     return Scaffold(

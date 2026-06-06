@@ -263,8 +263,8 @@ class EnhancedProgressProvider extends ChangeNotifier {
   }
 
   Future<void> addRewards({int coins = 0, int stars = 0, String? missionId}) async {
-    _totalCoins += coins;
-    _totalStars += stars;
+    if (coins > 0) _totalCoins += coins;
+    if (stars > 0) _totalStars += stars;
     
     if (missionId != null) {
       await updateMissionProgress(missionId, 1);
