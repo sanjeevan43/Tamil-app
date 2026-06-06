@@ -83,6 +83,10 @@ class _WritingPracticeGameState extends State<WritingPracticeGame> {
       final similarity = WritingEvaluator.evaluateChamferSimilarity(templateMask, userMask, targetSize.toInt());
       final stars = WritingEvaluator.getStarsEarned(similarity);
 
+      debugPrint('Writing Evaluator: Similarity = $similarity, Stars = $stars, '
+          'Template Pixels = ${templateMask.where((p) => p).length}, '
+          'User Pixels = ${userMask.where((p) => p).length}');
+
       // Dismiss the loading dialog
       if (mounted) {
         Navigator.pop(context);

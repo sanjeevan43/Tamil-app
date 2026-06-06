@@ -459,64 +459,97 @@ class WritingEvaluator {
     return (cosX + cosY) / 2.0;
   }
 
-  /// Calculates Bidirectional Chamfer Distance Similarity between template and user drawing masks
-  static double evaluateChamferSimilarity(List<bool> templateMask, List<bool> userMask, int size) {
-    final T = <Offset>[];
-    final U = <Offset>[];
+  // Helper method to compute the 2D Rosenfeld-Pfaltz Distance Transform
+  static List<double> _computeDistanceTransform(List<bool> mask, int size) {
+    final dist = List<double>.filled(size * size, 1e9);
+    for (int i = 0; i < mask.length; i++) {
+      if (mask[i]) {
+        dist[i] = 0.0;
+      }
+    }
 
+    // Forward pass: left-to-right, top-to-bottom
     for (int y = 0; y < size; y++) {
       for (int x = 0; x < size; x++) {
-        if (templateMask[y * size + x]) {
-          T.add(Offset(x.toDouble(), y.toDouble()));
+        final idx = y * size + x;
+        double d = dist[idx];
+        if (x > 0) {
+          d = math.min(d, dist[idx - 1] + 1.0);
         }
-        if (userMask[y * size + x]) {
-          U.add(Offset(x.toDouble(), y.toDouble()));
+        if (y > 0) {
+          d = math.min(d, dist[idx - size] + 1.0);
         }
+        if (x > 0 && y > 0) {
+          d = math.min(d, dist[idx - size - 1] + 1.414);
+        }
+        if (x < size - 1 && y > 0) {
+          d = math.min(d, dist[idx - size + 1] + 1.414);
+        }
+        dist[idx] = d;
       }
     }
 
-    if (T.isEmpty || U.isEmpty) return 0.0;
+    // Backward pass: right-to-left, bottom-to-top
+    for (int y = size - 1; y >= 0; y--) {
+      for (int x = size - 1; x >= 0; x--) {
+        final idx = y * size + x;
+        double d = dist[idx];
+        if (x < size - 1) {
+          d = math.min(d, dist[idx + 1] + 1.0);
+        }
+        if (y < size - 1) {
+          d = math.min(d, dist[idx + size] + 1.0);
+        }
+        if (x < size - 1 && y < size - 1) {
+          d = math.min(d, dist[idx + size + 1] + 1.414);
+        }
+        if (x > 0 && y < size - 1) {
+          d = math.min(d, dist[idx + size - 1] + 1.414);
+        }
+        dist[idx] = d;
+      }
+    }
 
-    // 1. User Error: Average distance from user pixels to the template
+    return dist;
+  }
+
+  /// Calculates Bidirectional Chamfer Distance Similarity between template and user drawing masks
+  static double evaluateChamferSimilarity(List<bool> templateMask, List<bool> userMask, int size) {
+    final tIndices = <int>[];
+    final uIndices = <int>[];
+
+    for (int i = 0; i < templateMask.length; i++) {
+      if (templateMask[i]) tIndices.add(i);
+      if (userMask[i]) uIndices.add(i);
+    }
+
+    if (tIndices.isEmpty || uIndices.isEmpty) return 0.0;
+
+    // 1. Compute Distance Transforms for template and user masks
+    final dtTemplate = _computeDistanceTransform(templateMask, size);
+    final dtUser = _computeDistanceTransform(userMask, size);
+
+    // 2. User Error: Average distance from user pixels to the template
     double totalUserDist = 0.0;
-    for (final u in U) {
-      double minDist = double.infinity;
-      for (final t in T) {
-        final dx = u.dx - t.dx;
-        final dy = u.dy - t.dy;
-        final distSq = dx * dx + dy * dy;
-        if (distSq < minDist) {
-          minDist = distSq;
-        }
-      }
-      totalUserDist += math.sqrt(minDist);
+    for (final uIdx in uIndices) {
+      totalUserDist += dtTemplate[uIdx];
     }
-    final double userError = totalUserDist / U.length;
+    final double userError = totalUserDist / uIndices.length;
 
-    // 2. Template Error: Average distance from template pixels to the user's drawing
+    // 3. Template Error: Average distance from template pixels to the user's drawing
     double totalTemplateDist = 0.0;
-    for (final t in T) {
-      double minDist = double.infinity;
-      for (final u in U) {
-        final dx = t.dx - u.dx;
-        final dy = t.dy - u.dy;
-        final distSq = dx * dx + dy * dy;
-        if (distSq < minDist) {
-          minDist = distSq;
-        }
-      }
-      totalTemplateDist += math.sqrt(minDist);
+    for (final tIdx in tIndices) {
+      totalTemplateDist += dtUser[tIdx];
     }
-    final double templateError = totalTemplateDist / T.length;
+    final double templateError = totalTemplateDist / tIndices.length;
 
-    // Exponential decay of the average shape error.
-    // A target K value of 8.0 represents 5.3% of the 150x150 canvas.
+    // Average shape error
     final double averageError = (userError + templateError) / 2.0;
     final double baseSimilarity = math.exp(-averageError / 8.0);
 
     // Apply strict penalty for excessive drawing (scribbling/shading/filling canvas)
-    final double userPixels = U.length.toDouble();
-    final double templatePixels = T.length.toDouble();
+    final double userPixels = uIndices.length.toDouble();
+    final double templatePixels = tIndices.length.toDouble();
     double penalty = 1.0;
     if (userPixels > templatePixels * 1.35) {
       final double excessRatio = userPixels / (templatePixels * 1.35);
