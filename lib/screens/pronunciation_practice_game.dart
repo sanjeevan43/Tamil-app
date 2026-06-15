@@ -29,8 +29,18 @@ class _PronunciationPracticeGameState extends State<PronunciationPracticeGame> {
   }
 
   void _initSpeech() async {
-    _speechEnabled = await _speechToText.initialize();
-    setState(() {});
+    try {
+      _speechEnabled = await _speechToText.initialize(
+        onError: (val) => debugPrint('STT Error: $val'),
+        onStatus: (val) => debugPrint('STT Status: $val'),
+      );
+    } catch (e) {
+      debugPrint('Speech initialization failed: $e');
+      _speechEnabled = false;
+    }
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void _generateRound() {

@@ -265,9 +265,13 @@ class _RhymePlayerScreenState extends State<RhymePlayerScreen> {
   }
 
   void _initTts() async {
-    await flutterTts.setLanguage('ta-IN');
-    await flutterTts.setPitch(1.0);
-    await flutterTts.setSpeechRate(0.3);
+    try {
+      await flutterTts.setLanguage('ta-IN');
+      await flutterTts.setPitch(1.0);
+      await flutterTts.setSpeechRate(0.3);
+    } catch (e) {
+      debugPrint('RhymesScreen TTS Init Error: $e');
+    }
   }
 
   Future<void> _speak(String text) async {

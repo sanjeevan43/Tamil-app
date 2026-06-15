@@ -42,9 +42,13 @@ class _ReadingPracticeScreenState extends State<ReadingPracticeScreen> with Sing
 
   void _initTts() {
     _flutterTts = FlutterTts();
-    _flutterTts.setLanguage('ta-IN');
-    _flutterTts.setPitch(1.0);
-    _flutterTts.setSpeechRate(0.5);
+    try {
+      _flutterTts.setLanguage('ta-IN');
+      _flutterTts.setPitch(1.0);
+      _flutterTts.setSpeechRate(0.5);
+    } catch (e) {
+      debugPrint('ReadingPracticeScreen TTS Init Error: $e');
+    }
   }
 
   void _initSpeech() async {

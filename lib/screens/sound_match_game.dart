@@ -35,15 +35,26 @@ class _SoundMatchGameState extends State<SoundMatchGame> {
   }
 
   void _initTts() async {
-    await _flutterTts.setLanguage('ta-IN');
-    await _flutterTts.setSpeechRate(0.5);
-    _playSound();
+    try {
+      await _flutterTts.setLanguage('ta-IN');
+      await _flutterTts.setSpeechRate(0.5);
+      _playSound();
+    } catch (e) {
+      debugPrint('TTS Initialization failed: $e');
+    }
   }
 
   Future<void> _playSound() async {
-    setState(() => _isPlaying = true);
-    await _flutterTts.speak(_data[_currentIndex]['correct']);
-    setState(() => _isPlaying = false);
+    try {
+      setState(() => _isPlaying = true);
+      await _flutterTts.speak(_data[_currentIndex]['correct']);
+    } catch (e) {
+      debugPrint('TTS play failed: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _isPlaying = false);
+      }
+    }
   }
 
   void _checkAnswer(String option) {
