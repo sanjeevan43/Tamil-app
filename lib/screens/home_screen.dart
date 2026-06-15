@@ -34,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   Thirukkural? _dailyKural;
   bool _isLoadingKural = true;
+  bool _isKuralExpanded = false;
   TamilProverb? _dailyProverb;
 
   @override
@@ -109,15 +110,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 16),
-                      _buildDailyKuralSection(),
-                      _buildDailyProverbSection(),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 20),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24.0),
                         child: _buildHeader(),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 20),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24.0),
                         child: _buildSearchBar(),
@@ -139,6 +137,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildQuickStats(),
+                        const SizedBox(height: 24),
+                        _buildDailyKuralSection(),
+                        _buildDailyProverbSection(),
                         const SizedBox(height: 32),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -655,133 +656,226 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildDailyKuralSection() {
     return Padding(
-      padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 16.0),
+      padding: const EdgeInsets.only(left: 24.0, right: 24.0, bottom: 16.0),
       child: Container(
-        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: AppTheme.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppTheme.primary.withOpacity(0.1), width: 1),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: AppTheme.primary.withOpacity(0.15), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: AppTheme.primary.withOpacity(0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              color: AppTheme.primary.withOpacity(0.06),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
-        child: _isLoadingKural 
-          ? const Center(child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2)),
-            ))
-          : _dailyKural == null
-              ? Text(
-                  'Today\'s Thirukkural is not available.',
-                  style: GoogleFonts.notoSansTamil(
-                    fontSize: 14,
-                    color: AppTheme.textGray,
-                  ),
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      _isKuralExpanded = !_isKuralExpanded;
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                    child: Row(
                       children: [
-                        Text(
-                          'Thirukkural #${_dailyKural!.number}',
-                          style: GoogleFonts.outfit(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w800,
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: AppTheme.primary.withOpacity(0.08),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: const Icon(
+                            Icons.menu_book_rounded,
                             color: AppTheme.primary,
-                            letterSpacing: 1,
+                            size: 22,
                           ),
                         ),
-                        const Icon(Icons.auto_awesome_rounded, size: 16, color: AppTheme.primary),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'இன்றைய திருக்குறள்',
+                                style: GoogleFonts.notoSansTamil(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppTheme.secondary,
+                                ),
+                              ),
+                              Text(
+                                _isLoadingKural 
+                                    ? 'Loading daily Kural...' 
+                                    : _dailyKural == null 
+                                        ? 'Not available' 
+                                        : 'Thirukkural #${_dailyKural!.number}',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppTheme.textGray,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        AnimatedRotation(
+                          turns: _isKuralExpanded ? 0.5 : 0.0,
+                          duration: const Duration(milliseconds: 200),
+                          child: const Icon(
+                            Icons.keyboard_arrow_down_rounded,
+                            color: AppTheme.primary,
+                            size: 26,
+                          ),
+                        ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      _dailyKural!.line1,
-                      style: GoogleFonts.notoSansTamil(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.secondary,
-                      ),
-                    ),
-                    Text(
-                      _dailyKural!.line2,
-                      style: GoogleFonts.notoSansTamil(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.secondary,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Theme(
-                      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-                      child: Column(
-                        children: [
-                          ExpansionTile(
-                            title: Text(
-                              'Show Tamil Explanation',
-                              style: GoogleFonts.outfit(
-                                fontSize: 12,
-                                color: AppTheme.primary,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            tilePadding: EdgeInsets.zero,
-                            childrenPadding: EdgeInsets.zero,
-                            collapsedIconColor: AppTheme.primary,
-                            iconColor: AppTheme.primary,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 4.0),
-                                child: Text(
-                                  _dailyKural!.explanation,
-                                  style: GoogleFonts.notoSansTamil(
-                                    fontSize: 13,
-                                    color: AppTheme.textGray,
-                                    height: 1.5,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          ExpansionTile(
-                            title: Text(
-                              'Show English Meaning',
-                              style: GoogleFonts.outfit(
-                                fontSize: 12,
-                                color: AppTheme.info,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            tilePadding: EdgeInsets.zero,
-                            childrenPadding: EdgeInsets.zero,
-                            collapsedIconColor: AppTheme.info,
-                            iconColor: AppTheme.info,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 4.0),
-                                child: Text(
-                                  _dailyKural!.englishMeaning,
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 13,
-                                    color: AppTheme.textGray,
-                                    height: 1.5,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
+              ),
+              AnimatedCrossFade(
+                firstChild: const SizedBox.shrink(),
+                secondChild: _isLoadingKural
+                    ? const Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 24.0),
+                          child: SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2.5),
+                          ),
+                        ),
+                      )
+                    : _dailyKural == null
+                        ? Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Text(
+                              'Today\'s Thirukkural is not available.',
+                              style: GoogleFonts.notoSansTamil(
+                                fontSize: 14,
+                                color: AppTheme.textGray,
+                              ),
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Divider(height: 1, color: AppTheme.borderLight),
+                                const SizedBox(height: 16),
+                                Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.offWhite,
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(color: AppTheme.borderLight),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        _dailyKural!.line1,
+                                        style: GoogleFonts.notoSansTamil(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppTheme.secondary,
+                                          height: 1.4,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        _dailyKural!.line2,
+                                        style: GoogleFonts.notoSansTamil(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppTheme.secondary,
+                                          height: 1.4,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Theme(
+                                  data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                                  child: Column(
+                                    children: [
+                                      ExpansionTile(
+                                        title: Text(
+                                          'Show Tamil Explanation',
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 13,
+                                            color: AppTheme.primary,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        tilePadding: EdgeInsets.zero,
+                                        childrenPadding: EdgeInsets.zero,
+                                        collapsedIconColor: AppTheme.primary,
+                                        iconColor: AppTheme.primary,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                                            child: Text(
+                                              _dailyKural!.explanation,
+                                              style: GoogleFonts.notoSansTamil(
+                                                fontSize: 13,
+                                                color: AppTheme.textSlate,
+                                                height: 1.5,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      ExpansionTile(
+                                        title: Text(
+                                          'Show English Meaning',
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 13,
+                                            color: AppTheme.info,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        tilePadding: EdgeInsets.zero,
+                                        childrenPadding: EdgeInsets.zero,
+                                        collapsedIconColor: AppTheme.info,
+                                        iconColor: AppTheme.info,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                                            child: Text(
+                                              _dailyKural!.englishMeaning,
+                                              style: GoogleFonts.outfit(
+                                                fontSize: 13,
+                                                color: AppTheme.textSlate,
+                                                height: 1.5,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                crossFadeState: _isKuralExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+                duration: const Duration(milliseconds: 250),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
