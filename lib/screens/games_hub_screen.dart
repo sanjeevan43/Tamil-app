@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_theme.dart';
+import 'package:provider/provider.dart';
+import '../providers/enhanced_progress_provider.dart';
+import 'riddle_academy_screen.dart';
 import 'letter_hunt_game.dart';
 import 'word_builder_game.dart';
 import 'memory_game_screen.dart';
-import 'quiz_screen.dart';
 import 'fill_blanks_game.dart';
 import 'sentence_builder_game.dart';
 import 'pronunciation_practice_game.dart';
@@ -19,11 +21,14 @@ class GamesHubScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final progress = Provider.of<EnhancedProgressProvider>(context, listen: false);
+    final childAge = progress.level + 5;
+
     final games = [
       {'name': 'Letter Hunt', 'tamil': 'எழுத்து வேட்டை', 'icon': '🎯', 'description': 'Find the correct letter', 'color': const Color(0xFFFF7043), 'screen': const LetterHuntGame()},
       {'name': 'Word Builder', 'tamil': 'சொல் கட்டுதல்', 'icon': '🔨', 'description': 'Build Tamil words', 'color': const Color(0xFF42A5F5), 'screen': const WordBuilderGame()},
       {'name': 'Memory Match', 'tamil': 'நினைவக போட்டி', 'icon': '🧠', 'description': 'Match Tamil letters', 'color': AppTheme.success, 'screen': const MemoryGameScreen()},
-      {'name': 'Quiz', 'tamil': 'வினாடி வினா', 'icon': '❓', 'description': 'Answer questions', 'color': const Color(0xFFAB47BC), 'screen': const QuizScreen()},
+      {'name': 'Riddle Academy', 'tamil': 'புதிர் அரங்கம்', 'icon': '💡', 'description': 'Solve Tamil riddles', 'color': const Color(0xFFAB47BC), 'screen': RiddleAcademyScreen(childAge: childAge)},
       {'name': 'Fill Blanks', 'tamil': 'இடம் நிரப்பு', 'icon': '📝', 'description': 'Complete the word', 'color': const Color(0xFFEF5350), 'screen': const FillBlanksGame()},
       {'name': 'Sentence Builder', 'tamil': 'வாக்கிய அமைப்பு', 'icon': '📚', 'description': 'Form sentences', 'color': const Color(0xFF26A69A), 'screen': const SentenceBuilderGame()},
       {'name': 'Pronunciation', 'tamil': 'உச்சரிப்பு பயிற்சி', 'icon': '🎤', 'description': 'Practice speaking', 'color': const Color(0xFFFF8A65), 'screen': const PronunciationPracticeGame()},
