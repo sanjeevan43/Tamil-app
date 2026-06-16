@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/auth_service.dart';
+import '../services/validation_service.dart';
 import '../constants/app_theme.dart';
 import '../providers/enhanced_progress_provider.dart';
 import 'admin_control_screen.dart';
@@ -18,12 +19,11 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _usernameController = TextEditingController();
+  final _ageController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
   bool _isLogin = true;
-  String _selectedRole = 'student';
-  final _adminKeyController = TextEditingController();
   bool _obscurePassword = true;
 
   @override
@@ -33,9 +33,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _usernameController.dispose();
+    _ageController.dispose();
     _passwordController.dispose();
-    _adminKeyController.dispose();
     super.dispose();
   }
 
@@ -80,27 +80,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
     String? error;
     if (_isLogin) {
-      error = await authService.signInWithEmail(
-        _emailController.text.trim(),
+      error = await authService.signInWithUsername(
+        _usernameController.text.trim(),
         _passwordController.text.trim(),
       );
     } else {
-      // Check for secret admin key
-      if (_selectedRole == 'admin' && _adminKeyController.text != 'TAMIL_ADMIN_2024') {
-        setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Invalid Admin Secret Key!'),
-            backgroundColor: AppTheme.error,
-          ),
-        );
-        return;
-      }
-
-      error = await authService.registerWithEmail(
-        _emailController.text.trim(),
+      final int age = int.tryParse(_ageController.text.trim()) ?? 0;
+      error = await authService.registerWithUsername(
+        _usernameController.text.trim(),
+        age,
         _passwordController.text.trim(),
-        role: _selectedRole,
       );
     }
 
@@ -116,25 +105,12 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Future<void> _handleGoogleSignIn() async {
-    setState(() => _isLoading = true);
-    final authService = Provider.of<AuthService>(context, listen: false);
-    final error = await authService.signInWithGoogle();
-
-    if (mounted) {
-      setState(() => _isLoading = false);
-      if (error != null && error != 'Sign in cancelled') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(error), backgroundColor: AppTheme.error),
-        );
-      } else if (error == null) {
-        _navigateToRoleBasedScreen(authService);
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final Size screenSize = MediaQuery.of(context).size;
+    final double screenWidth = screenSize.width;
+    final double screenHeight = screenSize.height;
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -147,24 +123,24 @@ class _LoginScreenState extends State<LoginScreen> {
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06, vertical: screenHeight * 0.02),
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 400),
+                constraints: BoxConstraints(maxWidth: screenWidth * 0.9 < 400.0 ? screenWidth * 0.9 : 400.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // Logo
                     Container(
-                      padding: const EdgeInsets.all(16),
-                      height: 120,
-                      width: 120,
+                      padding: EdgeInsets.all(screenWidth * 0.04),
+                      height: screenWidth * 0.3 < 120.0 ? screenWidth * 0.3 : 120.0,
+                      width: screenWidth * 0.3 < 120.0 ? screenWidth * 0.3 : 120.0,
                       decoration: AppTheme.whiteCard(),
                       child: Image.asset(
                         'assets/images/29099e40-2686-49d2-af50-5d939b785f80.png',
                         fit: BoxFit.contain,
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: screenHeight * 0.03),
 
                     // Form Card
                     Container(
@@ -199,14 +175,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               const SizedBox(height: 28),
 
-                              // Email
+                              // Username
                               TextFormField(
-                                controller: _emailController,
+                                controller: _usernameController,
                                 style: GoogleFonts.outfit(fontSize: 15, color: AppTheme.secondary),
                                 decoration: InputDecoration(
-                                  hintText: 'Email Address',
+                                  hintText: 'Username',
                                   hintStyle: GoogleFonts.outfit(color: AppTheme.textGray),
-                                  prefixIcon: const Icon(Icons.email_outlined, size: 20, color: AppTheme.textGray),
+                                  prefixIcon: const Icon(Icons.person_outline, size: 20, color: AppTheme.textGray),
                                   filled: true,
                                   fillColor: AppTheme.topoLight,
                                   border: OutlineInputBorder(
@@ -215,18 +191,35 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                   contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
                                 ),
-                                keyboardType: TextInputType.emailAddress,
-                                validator: (value) {
-                                  if (value == null || value.trim().isEmpty) {
-                                    return 'Please enter your email';
-                                  }
-                                  if (!value.trim().contains('@')) {
-                                    return 'Enter a valid email address';
-                                  }
-                                  return null;
-                                },
+                                validator: (value) => ValidationService.validateUsername(value),
                               ),
                               const SizedBox(height: 14),
+
+                              // Age (Register only)
+                              if (!_isLogin) ...[
+                                TextFormField(
+                                  controller: _ageController,
+                                  style: GoogleFonts.outfit(fontSize: 15, color: AppTheme.secondary),
+                                  decoration: InputDecoration(
+                                    hintText: 'Age',
+                                    hintStyle: GoogleFonts.outfit(color: AppTheme.textGray),
+                                    prefixIcon: const Icon(Icons.cake_outlined, size: 20, color: AppTheme.textGray),
+                                    filled: true,
+                                    fillColor: AppTheme.topoLight,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(18),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+                                  ),
+                                  keyboardType: TextInputType.number,
+                                  validator: (value) {
+                                    final val = int.tryParse(value ?? '');
+                                    return ValidationService.validateAge(val);
+                                  },
+                                ),
+                                const SizedBox(height: 14),
+                              ],
 
                               // Password
                               TextFormField(
@@ -253,65 +246,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
                                 ),
                                 obscureText: _obscurePassword,
-                                validator: (value) {
-                                  if (value == null || value.trim().isEmpty) {
-                                    return 'Please enter a password';
-                                  }
-                                  if (value.length < 6) {
-                                    return 'Password must be at least 6 characters';
-                                  }
-                                  return null;
-                                },
+                                validator: (value) => ValidationService.validatePassword(value),
                               ),
                               const SizedBox(height: 14),
-
-                              // Role Selector (Register only)
-                              if (!_isLogin) ...[
-                                DropdownButtonFormField<String>(
-                                  value: _selectedRole,
-                                  style: GoogleFonts.outfit(fontSize: 15, color: AppTheme.secondary),
-                                  decoration: InputDecoration(
-                                    hintText: 'I am a...',
-                                    hintStyle: GoogleFonts.outfit(color: AppTheme.textGray),
-                                    prefixIcon: const Icon(Icons.person_outline, size: 20, color: AppTheme.textGray),
-                                    filled: true,
-                                    fillColor: AppTheme.topoLight,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(18),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-                                  ),
-                                  items: ['student', 'teacher', 'parent', 'admin'].map((role) {
-                                    return DropdownMenuItem(
-                                      value: role,
-                                      child: Text(role[0].toUpperCase() + role.substring(1)),
-                                    );
-                                  }).toList(),
-                                  onChanged: (val) => setState(() => _selectedRole = val!),
-                                ),
-                                const SizedBox(height: 14),
-                                if (_selectedRole == 'admin') ...[
-                                  TextFormField(
-                                    controller: _adminKeyController,
-                                    decoration: InputDecoration(
-                                      hintText: 'Admin Secret Key',
-                                      prefixIcon: const Icon(Icons.vpn_key_outlined, size: 20),
-                                      filled: true,
-                                      fillColor: AppTheme.topoLight,
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(18),
-                                        borderSide: BorderSide.none,
-                                      ),
-                                    ),
-                                    obscureText: true,
-                                    validator: (val) => val == null || val.isEmpty ? 'Secret Key required' : null,
-                                  ),
-                                  const SizedBox(height: 14),
-                                ],
-                              ],
-
-
 
                               // Submit Button or Loading
                               if (_isLoading)
@@ -324,13 +261,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               else ...[
                                 SizedBox(
                                   width: double.infinity,
-                                  height: 58,
+                                  height: screenHeight * 0.07 < 58.0 ? screenHeight * 0.07 : 58.0,
                                   child: ElevatedButton(
                                     onPressed: _handleSubmit,
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppTheme.primary,
                                       foregroundColor: AppTheme.white,
-                                      
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(18),
                                       ),
@@ -341,51 +277,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                         fontWeight: FontWeight.w900,
                                         fontSize: 16,
                                         letterSpacing: 0.5,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
-
-                                // OR divider
-                                Row(
-                                  children: [
-                                    Expanded(child: Divider(color: AppTheme.textGray.withOpacity(0.3))),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                                      child: Text(
-                                        'OR',
-                                        style: GoogleFonts.outfit(
-                                          color: AppTheme.textGray,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(child: Divider(color: AppTheme.textGray.withOpacity(0.3))),
-                                  ],
-                                ),
-                                const SizedBox(height: 20),
-
-                                // Google Sign In
-                                SizedBox(
-                                  width: double.infinity,
-                                  height: 58,
-                                  child: OutlinedButton.icon(
-                                    onPressed: _handleGoogleSignIn,
-                                    icon: const Text('G', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.primary)),
-                                    label: Text(
-                                      'Continue with Google',
-                                      style: GoogleFonts.outfit(
-                                        color: AppTheme.secondary,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                    style: OutlinedButton.styleFrom(
-                                      side: BorderSide(color: AppTheme.textGray.withOpacity(0.3), width: 1.5),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(18),
                                       ),
                                     ),
                                   ),

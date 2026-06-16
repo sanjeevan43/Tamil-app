@@ -11,23 +11,27 @@ class FirestoreService {
       : _db = firestore ?? FirebaseFirestore.instance;
 
   // --- Users ---
-  Future<void> saveUser(User user, {String role = 'student'}) async {
+  Future<void> saveUser(User user, {String role = 'student', String? displayName, int? age}) async {
     final userRef = _db.collection('users').doc(user.uid);
     
     final doc = await userRef.get();
     if (doc.exists) {
-      await userRef.update({
+      final Map<String, dynamic> updateData = {
         'lastLogin': FieldValue.serverTimestamp(),
-      });
+      };
+      if (displayName != null) updateData['displayName'] = displayName;
+      if (age != null) updateData['age'] = age;
+      await userRef.update(updateData);
     } else {
       await userRef.set({
         'uid': user.uid,
         'email': user.email,
-        'displayName': user.displayName ?? 'Student',
+        'displayName': displayName ?? user.displayName ?? 'Student',
         'photoURL': user.photoURL ?? '',
         'lastLogin': FieldValue.serverTimestamp(),
         'createdAt': FieldValue.serverTimestamp(),
         'role': role,
+        if (age != null) 'age': age,
       });
     }
   }

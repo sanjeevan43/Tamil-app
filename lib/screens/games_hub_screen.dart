@@ -11,7 +11,6 @@ import 'fill_blanks_game.dart';
 import 'sentence_builder_game.dart';
 import 'pronunciation_practice_game.dart';
 import 'writing_practice_game.dart';
-import 'quiz_battle_game.dart';
 import 'word_scramble_game.dart';
 import 'sound_match_game.dart';
 import 'word_search_game.dart';
@@ -33,7 +32,6 @@ class GamesHubScreen extends StatelessWidget {
       {'name': 'Sentence Builder', 'tamil': 'வாக்கிய அமைப்பு', 'icon': '📚', 'description': 'Form sentences', 'color': const Color(0xFF26A69A), 'screen': const SentenceBuilderGame()},
       {'name': 'Pronunciation', 'tamil': 'உச்சரிப்பு பயிற்சி', 'icon': '🎤', 'description': 'Practice speaking', 'color': const Color(0xFFFF8A65), 'screen': const PronunciationPracticeGame()},
       {'name': 'Writing', 'tamil': 'எழுத்துப் பயிற்சி', 'icon': '✏️', 'description': 'Trace letters', 'color': const Color(0xFF5C6BC0), 'screen': const WritingPracticeGame()},
-      {'name': 'Quiz Battle', 'tamil': 'வினா போர்', 'icon': '⚔️', 'description': 'Speed quiz', 'color': const Color(0xFFEC407A), 'screen': const QuizBattleGame()},
       {'name': 'Scramble', 'tamil': 'சொல் கலைத்தல்', 'icon': '🧩', 'description': 'Unscramble words', 'color': const Color(0xFF7E57C2), 'screen': const WordScrambleGame()},
       {'name': 'Sound Match', 'tamil': 'ஒலி பொருத்தம்', 'icon': '🔊', 'description': 'Listen and match', 'color': const Color(0xFF29B6F6), 'screen': const SoundMatchGame()},
       {'name': 'Word Search', 'tamil': 'சொல் தேடல்', 'icon': '🔍', 'description': 'Find hidden words', 'color': const Color(0xFF9CCC65), 'screen': const WordSearchGame()},

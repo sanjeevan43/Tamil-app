@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'dart:async';
 import '../constants/app_theme.dart';
 import '../providers/enhanced_progress_provider.dart';
 
@@ -27,11 +28,20 @@ class _SoundMatchGameState extends State<SoundMatchGame> {
   bool _isPlaying = false;
   String? _selectedOption;
   bool? _isCorrect;
+  int _cooldownSeconds = 0;
+  Timer? _cooldownTimer;
 
   @override
   void initState() {
     super.initState();
     _initTts();
+  }
+
+  @override
+  void dispose() {
+    _cooldownTimer?.cancel();
+    _flutterTts.stop();
+    super.dispose();
   }
 
   void _initTts() async {
@@ -44,10 +54,32 @@ class _SoundMatchGameState extends State<SoundMatchGame> {
     }
   }
 
+  void _startCooldown() {
+    setState(() {
+      _cooldownSeconds = 120; // 2 minutes cooldown
+    });
+    _cooldownTimer?.cancel();
+    _cooldownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          if (_cooldownSeconds > 0) {
+            _cooldownSeconds--;
+          } else {
+            _cooldownTimer?.cancel();
+          }
+        });
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
   Future<void> _playSound() async {
+    if (_cooldownSeconds > 0) return;
     try {
       setState(() => _isPlaying = true);
       await _flutterTts.speak(_data[_currentIndex]['correct']);
+      _startCooldown();
     } catch (e) {
       debugPrint('TTS play failed: $e');
     } finally {
@@ -75,6 +107,8 @@ class _SoundMatchGameState extends State<SoundMatchGame> {
             _currentIndex = (_currentIndex + 1) % _data.length;
             _selectedOption = null;
             _isCorrect = null;
+            _cooldownSeconds = 0; // reset cooldown for next question
+            _cooldownTimer?.cancel();
             _playSound();
           });
         }
@@ -113,21 +147,32 @@ class _SoundMatchGameState extends State<SoundMatchGame> {
                     Text('LISTEN CAREFULLY', style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.textSlate.withOpacity(0.4), letterSpacing: 2)),
                     const SizedBox(height: 24),
                     GestureDetector(
-                      onTap: _isPlaying ? null : _playSound,
+                      onTap: (_isPlaying || _cooldownSeconds > 0) ? null : _playSound,
                       child: Container(
                         padding: const EdgeInsets.all(32),
                         decoration: BoxDecoration(
-                          color: AppTheme.primary.withOpacity(0.05),
+                          color: (_cooldownSeconds > 0) ? AppTheme.textGray.withOpacity(0.05) : AppTheme.primary.withOpacity(0.05),
                           shape: BoxShape.circle,
-                          border: Border.all(color: AppTheme.primary.withOpacity(0.1), width: 2),
+                          border: Border.all(color: (_cooldownSeconds > 0) ? AppTheme.textGray.withOpacity(0.1) : AppTheme.primary.withOpacity(0.1), width: 2),
                         ),
                         child: Icon(
-                          _isPlaying ? Icons.volume_up_rounded : Icons.play_arrow_rounded,
+                          _isPlaying ? Icons.volume_up_rounded : (_cooldownSeconds > 0 ? Icons.timer_outlined : Icons.play_arrow_rounded),
                           size: 64,
-                          color: AppTheme.primary,
+                          color: (_cooldownSeconds > 0) ? AppTheme.textGray : AppTheme.primary,
                         ),
                       ),
                     ),
+                    if (_cooldownSeconds > 0) ...[
+                      const SizedBox(height: 16),
+                      Text(
+                        'Wait ${_cooldownSeconds ~/ 60}:${(_cooldownSeconds % 60).toString().padLeft(2, '0')} before replaying',
+                        style: GoogleFonts.outfit(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.textGray,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),

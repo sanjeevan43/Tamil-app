@@ -10,6 +10,7 @@ class EnhancedProgressProvider extends ChangeNotifier {
 
   // Student Data
   String _userName = 'Student';
+  int _age = 0;
   String _avatar = '👦';
   String _region = 'India';
   int _level = 1;
@@ -45,6 +46,7 @@ class EnhancedProgressProvider extends ChangeNotifier {
   
   // Getters
   String get userName => _userName;
+  int get age => _age;
   String get avatar => _avatar;
   String get region => _region;
   int get level => _level;
@@ -73,6 +75,7 @@ class EnhancedProgressProvider extends ChangeNotifier {
   Future<void> initializeProgress({String? uid}) async {
     // Reset all in-memory values to defaults first to avoid carrying over state from other users
     _userName = 'Student';
+    _age = 0;
     _avatar = '👦';
     _region = 'India';
     _level = 1;
@@ -111,6 +114,11 @@ class EnhancedProgressProvider extends ChangeNotifier {
         if (cloudProgress != null) {
           _loadFromMap(cloudProgress);
         } else {
+          final profile = await _firestore.getUserProfile(_userId!);
+          if (profile != null) {
+            _userName = profile['displayName'] ?? _userName;
+            _age = profile['age'] ?? _age;
+          }
           await syncToCloud(); // Sync default local values to cloud
         }
         await _updateStreak();
@@ -123,6 +131,7 @@ class EnhancedProgressProvider extends ChangeNotifier {
 
   void _loadFromMap(Map<String, dynamic> data) {
     _userName = data['userName'] ?? _userName;
+    _age = data['age'] ?? _age;
     _avatar = data['avatar'] ?? _avatar;
     _region = data['region'] ?? _region;
     _level = data['level'] ?? _level;
@@ -158,6 +167,7 @@ class EnhancedProgressProvider extends ChangeNotifier {
     
     final progressMap = {
       'userName': _userName,
+      'age': _age,
       'avatar': _avatar,
       'region': _region,
       'level': _level,

@@ -106,7 +106,7 @@ class ProfileScreen extends StatelessWidget {
                   const Icon(Icons.shield_rounded, color: AppTheme.white, size: 18),
                   const SizedBox(width: 8),
                   Text(
-                    'LVL ${progress.level} TAMIL SCHOLAR',
+                    'LVL ${progress.level} TAMIL SCHOLAR | AGE: ${progress.age}',
                     style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w900, color: AppTheme.white, letterSpacing: 1.5),
                   ),
                 ],

@@ -41,55 +41,46 @@ class AuthService extends ChangeNotifier {
 
   bool get isAuthenticated => _user != null;
 
-  // Sign in with Email and Password
-  Future<String?> signInWithEmail(String email, String password) async {
+  // Sign in with Username and Password
+  Future<String?> signInWithUsername(String username, String password) async {
     try {
+      final email = '${username.trim().toLowerCase()}@tamilapp.com';
       final credential = await _auth.signInWithEmailAndPassword(email: email, password: password);
       if (credential.user != null) {
         await _fetchUserProfile(credential.user!.uid);
       }
       return null; // Success
     } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        return 'Username not found';
+      } else if (e.code == 'wrong-password') {
+        return 'Incorrect password';
+      }
       return e.message;
     } catch (e) {
       return e.toString();
     }
   }
 
-  // Register with Email and Password
-  Future<String?> registerWithEmail(String email, String password, {String role = 'student'}) async {
+  // Register with Username, Age, and Password
+  Future<String?> registerWithUsername(String username, int age, String password) async {
     try {
+      final email = '${username.trim().toLowerCase()}@tamilapp.com';
       final credential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       if (credential.user != null) {
-        await _firestore.saveUser(credential.user!, role: role);
+        await _firestore.saveUser(
+          credential.user!, 
+          role: 'student', 
+          displayName: username.trim(),
+          age: age,
+        );
         await _fetchUserProfile(credential.user!.uid);
       }
       return null; // Success
     } on FirebaseAuthException catch (e) {
-      return e.message;
-    } catch (e) {
-      return e.toString();
-    }
-  }
-
-  // Sign in with Google
-  Future<String?> signInWithGoogle() async {
-    try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.authenticate();
-      if (googleUser == null) return 'Sign in cancelled';
-
-      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        idToken: googleAuth.idToken,
-      );
-
-      final userCredential = await _auth.signInWithCredential(credential);
-      if (userCredential.user != null) {
-        await _firestore.saveUser(userCredential.user!);
-        await _fetchUserProfile(userCredential.user!.uid);
+      if (e.code == 'email-already-in-use') {
+        return 'Username is already taken';
       }
-      return null; // Success
-    } on FirebaseAuthException catch (e) {
       return e.message;
     } catch (e) {
       return e.toString();
@@ -98,22 +89,12 @@ class AuthService extends ChangeNotifier {
 
   // Sign out
   Future<void> signOut() async {
-    await _googleSignIn.signOut();
+    try {
+      await _googleSignIn.signOut();
+    } catch (_) {}
     await _auth.signOut();
     _user = null;
     _userProfile = null;
     notifyListeners();
-  }
-
-  // Password Reset
-  Future<String?> resetPassword(String email) async {
-    try {
-      await _auth.sendPasswordResetEmail(email: email);
-      return null;
-    } on FirebaseAuthException catch (e) {
-      return e.message;
-    } catch (e) {
-      return e.toString();
-    }
   }
 }
