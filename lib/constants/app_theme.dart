@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Logo-Inspired Palette (Black & Vibrant Red)
-  static const Color primary = Color(0xFFF44336); // Vibrant Red
-  static const Color primaryDark = Color(0xFFC62828); 
-  static const Color secondary = Color(0xFF0F1E36); // Premium Midnight Navy
-  static const Color accent = Color(0xFF424242); 
+  // Playful Design System Palette
+  static const Color primary = Color(0xFFFF7A00); // Playful Orange
+  static const Color primaryDark = Color(0xFFE05A00); 
+  static const Color secondary = Color(0xFF00C2FF); // Sky Blue
+  static const Color accent = Color(0xFFFFD93D); // Sunshine Yellow
   
   // Topographic Theme Accents
   static const Color topoSilver = Color(0xFFE0E0E0); // Light Gray
@@ -25,10 +25,10 @@ class AppTheme {
   static const Color borderLight = Color(0xFFEEEEEE);
   
   // Semantic
-  static const Color success = Color(0xFF43A047); 
-  static const Color warning = Color(0xFFFB8C00); 
-  static const Color error = Color(0xFFE53935); 
-  static const Color info = Color(0xFF1E88E5); 
+  static const Color success = Color(0xFF4CAF50); // Leaf Green
+  static const Color warning = Color(0xFFFFD93D); // Accent Yellow
+  static const Color error = Color(0xFFF44336); // Soft Red
+  static const Color info = Color(0xFF00C2FF); // Sky Blue
   static const Color gold = Color(0xFFFFD700);
 
   // Backward compatibility aliases

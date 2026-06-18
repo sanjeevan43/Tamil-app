@@ -9,7 +9,7 @@ import 'admin_control_screen.dart';
 import 'teacher_dashboard_screen.dart';
 import 'parent_dashboard_screen.dart';
 import 'main_navigation_container.dart';
-import 'login_screen.dart';
+import 'onboarding/onboarding_wizard.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -84,11 +84,15 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           if (_hasSavedProfile || (progress.userName != 'Student' && progress.userName.isNotEmpty)) {
             nextScreen = const MainNavigationContainer();
           } else {
-            nextScreen = const LoginScreen();
+            nextScreen = const OnboardingWizard();
           }
       }
     } else {
-      nextScreen = const LoginScreen();
+      if (_hasSavedProfile) {
+        nextScreen = const MainNavigationContainer();
+      } else {
+        nextScreen = const OnboardingWizard();
+      }
     }
 
     if (mounted) {

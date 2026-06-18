@@ -4,8 +4,13 @@ import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../providers/enhanced_progress_provider.dart';
 import '../services/auth_service.dart';
-import '../services/firestore_service.dart';
-import '../services/validation_service.dart';
+import '../services/audio_service.dart';
+import '../services/audio_feedback_service.dart';
+import '../services/thirukkural_service.dart';
+import '../services/proverb_service.dart';
+import '../widgets/premium_animations.dart';
+
+// Screens to navigate
 import 'games_hub_screen.dart';
 import 'tamil_letters_screen.dart';
 import 'stories_screen.dart';
@@ -13,17 +18,11 @@ import 'profile_screen.dart';
 import 'classroom_connect_screen.dart';
 import 'pronunciation_practice_game.dart';
 import 'admin_control_screen.dart';
-import '../services/thirukkural_service.dart';
-import '../services/proverb_service.dart';
-import 'rhymes_screen.dart';
 import 'community_forum_screen.dart';
 import 'lesson_screen.dart';
-
-// Newly renamed/split AI screens
-import 'ai_cognitive_academy_screen.dart';
 import 'riddle_academy_screen.dart';
 import 'linguistic_scanner_screen.dart';
-import '../widgets/premium_animations.dart';
+import 'ai_cognitive_academy_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -35,8 +34,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   Thirukkural? _dailyKural;
   bool _isLoadingKural = true;
-  bool _isKuralExpanded = false;
   TamilProverb? _dailyProverb;
+  bool _showAllQuickActions = false;
 
   @override
   void initState() {
@@ -73,738 +72,541 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  void _speakKural() {
+    if (_dailyKural != null) {
+      AudioFeedbackService.playPop();
+      AudioService.playWord('${_dailyKural!.line1} ${_dailyKural!.line2}');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final progress = Provider.of<EnhancedProgressProvider>(context);
+    final adaptiveAge = progress.level + 5;
+
     return Scaffold(
       backgroundColor: AppTheme.backgroundLight,
       body: Stack(
         children: [
+          // Background soft accent circle
           Positioned(
             top: -150,
             right: -100,
             child: Container(
-              width: 400,
-              height: 400,
+              width: 350,
+              height: 350,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    AppTheme.primary.withOpacity(0.08),
-                    AppTheme.primary.withOpacity(0.01),
-                    Colors.transparent,
-                  ],
-                ),
+                color: AppTheme.primary.withOpacity(0.05),
               ),
             ),
           ),
+          
           SafeArea(
-            child: CustomScrollView(
+            child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 20),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                        child: FadeInSlide(
-                          direction: SlideDirection.down,
-                          delay: const Duration(milliseconds: 100),
-                          child: _buildHeader(),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                    ],
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      FadeInSlide(
-                        direction: SlideDirection.up,
-                        delay: const Duration(milliseconds: 300),
-                        child: _buildQuickStats(),
-                      ),
-                      const SizedBox(height: 24),
-                      FadeInSlide(
-                        direction: SlideDirection.up,
-                        delay: const Duration(milliseconds: 400),
-                        child: _buildDailyKuralSection(),
-                      ),
-                      FadeInSlide(
-                        direction: SlideDirection.up,
-                        delay: const Duration(milliseconds: 450),
-                        child: _buildDailyProverbSection(),
-                      ),
-                      const SizedBox(height: 32),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                        child: FadeInSlide(
-                          direction: SlideDirection.up,
-                          delay: const Duration(milliseconds: 500),
-                          child: _buildSectionHeader('AI Cognitive Academy', Icons.auto_awesome_rounded),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                        child: FadeInSlide(
-                          direction: SlideDirection.up,
-                          delay: const Duration(milliseconds: 550),
-                          child: _buildAIAcademyCard(),
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                        child: FadeInSlide(
-                          direction: SlideDirection.up,
-                          delay: const Duration(milliseconds: 600),
-                          child: _buildSectionHeader('Fun & Games', Icons.sports_esports_rounded),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                  ),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  sliver: _buildFastAccessSliverGrid(),
-                ),
-                const SliverToBoxAdapter(
-                  child: SizedBox(height: 120), // Padding to scroll past the bottom bar
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-
-
-  Widget _buildHeader() {
-    return Consumer<EnhancedProgressProvider>(
-      builder: (context, progress, child) {
-        return Row(
-          children: [
-            SpringyTap(
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfileScreen())),
-              child: AnimatedPulse(
-                pulseOpacity: false,
-                minScale: 0.96,
-                maxScale: 1.04,
-                child: Hero(
-                  tag: 'profile_avatar',
-                  child: Container(
-                    padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppTheme.primary, width: 2),
-                      boxShadow: [
-                        BoxShadow(color: AppTheme.primary.withOpacity(0.2), blurRadius: 10, offset: const Offset(0, 4)),
-                      ],
-                    ),
-                    child: CircleAvatar(
-                      radius: 26,
-                      backgroundColor: AppTheme.offWhite,
-                      child: Text(progress.avatar, style: const TextStyle(fontSize: 24)),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
+              padding: const EdgeInsets.fromLTRB(24, 20, 24, 110),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Vanakkam,',
-                    style: GoogleFonts.outfit(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: AppTheme.textGray,
-                    ),
-                  ),
-                  Text(
-                    progress.userName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.outfit(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w900,
-                      color: AppTheme.secondary,
-                      height: 1.1,
-                    ),
-                  ),
+                  // Section 1: Greeting & Stats Row
+                  _buildGreetingAndStats(progress),
+                  const SizedBox(height: 28),
+                  
+                  // Section 2: Daily Mission Card
+                  _buildDailyMissions(progress),
+                  const SizedBox(height: 28),
+                  
+                  // Section 3: Daily Thirukkural (Glass Card + Audio)
+                  _buildDailyKuralSection(),
+                  const SizedBox(height: 28),
+                  
+                  // Proverb Section
+                  if (_dailyProverb != null) ...[
+                    _buildDailyProverbSection(),
+                    const SizedBox(height: 28),
+                  ],
+                  
+                  // Section 4: Quick Learning Grid (with View All)
+                  _buildQuickLearningGrid(context, adaptiveAge),
+                  const SizedBox(height: 28),
+                  
+                  // Section 5: Continue Learning (Recently played)
+                  _buildContinueLearning(context, progress),
                 ],
               ),
             ),
-            Container(
-              height: 54,
-              width: 54,
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppTheme.white,
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: AppTheme.topoSilver, width: 1),
-                boxShadow: [
-                  BoxShadow(color: AppTheme.textDark.withOpacity(0.05), blurRadius: 15, offset: const Offset(0, 8)),
-                ],
-              ),
-              child: Image.asset(
-                'assets/images/29099e40-2686-49d2-af50-5d939b785f80.png',
-                fit: BoxFit.contain,
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildQuickStats() {
-    return Consumer<EnhancedProgressProvider>(
-      builder: (context, progress, child) {
-        return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          physics: const BouncingScrollPhysics(),
-          child: Row(
-            children: [
-              _buildStatCard('🔥', '${progress.streakDays}', 'Streak', AppTheme.primary),
-              const SizedBox(width: 12),
-              _buildStatCard('🎯', '${progress.totalStars}', 'Stars', AppTheme.warning),
-              const SizedBox(width: 12),
-              _buildStatCard('💎', '${progress.totalCoins}', 'Coins', AppTheme.info),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildStatCard(String emoji, String value, String label, Color color) {
-    return Container(
-      width: 110,
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-      decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: color.withOpacity(0.1), width: 1.5),
-        boxShadow: [
-          BoxShadow(color: color.withOpacity(0.05), blurRadius: 12, offset: const Offset(0, 4)),
-        ],
-      ),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: color.withOpacity(0.1), shape: BoxShape.circle),
-            child: Text(emoji, style: const TextStyle(fontSize: 16)),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w900, color: AppTheme.secondary),
-          ),
-          Text(
-            label.toUpperCase(),
-            style: GoogleFonts.outfit(fontSize: 9, fontWeight: FontWeight.w800, color: AppTheme.textGray, letterSpacing: 0.5),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildFastAccessSliverGrid() {
-    return Consumer<EnhancedProgressProvider>(
-      builder: (context, progress, child) {
-        final adaptiveAge = progress.level + 5;
-        final items = [
-          _fastItem(context, 'Dictionary', 'New words', Icons.menu_book_rounded, AppTheme.success.withOpacity(0.1), AppTheme.success,
-              () => Navigator.push(context, MaterialPageRoute(builder: (_) => LinguisticScannerScreen(childAge: adaptiveAge)))),
-          _fastItem(context, 'Pronounce', 'Mic check', Icons.mic_rounded, const Color(0xFFFFF3E0), AppTheme.warning,
-              () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PronunciationPracticeGame()))),
-          _fastItem(context, 'Daily Word', 'Power word', Icons.wb_sunny_rounded, const Color(0xFFFFFDE7), AppTheme.warning,
-              () => Navigator.push(context, MaterialPageRoute(builder: (_) => RiddleAcademyScreen(childAge: adaptiveAge)))),
-          _fastItem(context, 'Q&A Forum', 'Ask others', Icons.forum_rounded, const Color(0xFFF1F8E9), AppTheme.success,
-              () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CommunityForumScreen()))),
-          _fastItem(context, 'Learn English', 'Duolingo style', Icons.language_rounded, const Color(0xFFE0F7FA), AppTheme.info,
-              () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LessonScreen(lessonId: 'animals_1')))),
-          _fastItem(context, 'Classrooms', 'Learn together', Icons.school_rounded, const Color(0xFFE8EAF6), AppTheme.secondary,
-              () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ClassroomConnectScreen()))),
-          if (Provider.of<AuthService>(context, listen: false).userRole == 'admin')
-            _fastItem(context, 'Admin', 'Manage app', Icons.admin_panel_settings_rounded, const Color(0xFFFFEBEE), AppTheme.primary,
-                () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminControlScreen()))),
-        ];
-
-        return SliverGrid(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 16,
-            crossAxisSpacing: 16,
-            childAspectRatio: 1.05,
-          ),
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              return FadeInSlide(
-                direction: SlideDirection.up,
-                delay: Duration(milliseconds: 650 + (index * 80)),
-                child: items[index],
-              );
-            },
-            childCount: items.length,
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _fastItem(BuildContext context, String title, String sub, IconData icon, Color bg, Color color, VoidCallback onTap) {
-    return SpringyTap(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: color.withOpacity(0.1), width: 1.5),
-          boxShadow: [
-            BoxShadow(color: color.withOpacity(0.05), blurRadius: 12, offset: const Offset(0, 4)),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(14)),
-              padding: const EdgeInsets.all(10),
-              child: Icon(icon, color: color, size: 22),
-            ),
-            const Spacer(),
-            Text(title, style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w800, color: AppTheme.secondary), maxLines: 1, overflow: TextOverflow.ellipsis),
-            Text(sub, style: GoogleFonts.outfit(fontSize: 10, color: AppTheme.textGray, fontWeight: FontWeight.w500), maxLines: 1, overflow: TextOverflow.ellipsis),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSectionHeader(String title, IconData icon) {
-    return Row(
+  Widget _buildGreetingAndStats(EnhancedProgressProvider progress) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(color: AppTheme.secondary.withOpacity(0.05), borderRadius: BorderRadius.circular(14)),
-          child: Icon(icon, color: AppTheme.secondary, size: 20),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Vanakkam,',
+                  style: GoogleFonts.outfit(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.textSlate,
+                  ),
+                ),
+                Text(
+                  '${progress.userName} 👋',
+                  style: GoogleFonts.outfit(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w900,
+                    color: AppTheme.textDark,
+                  ),
+                ),
+              ],
+            ),
+            GestureDetector(
+              onTap: () {
+                AudioFeedbackService.playTap();
+                Navigator.push(context, FadeInSlidePageRoute(page: const ProfileScreen()));
+              },
+              child: CircleAvatar(
+                radius: 28,
+                backgroundColor: AppTheme.primary.withOpacity(0.1),
+                child: Text(progress.avatar, style: const TextStyle(fontSize: 28)),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(_getTamilTitle(title), style: GoogleFonts.notoSansTamil(fontSize: 15, fontWeight: FontWeight.bold, color: AppTheme.secondary), maxLines: 1, overflow: TextOverflow.ellipsis),
-              Text(title.toUpperCase(), style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.textGray, letterSpacing: 1.5)),
-            ],
-          ),
+        const SizedBox(height: 16),
+        
+        // Stats Badges
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildStatBadge('🔥', '${progress.streakDays} Days', 'Streak', AppTheme.primary),
+            _buildStatBadge('⭐', '${progress.totalStars} Stars', 'Stars', AppTheme.accent),
+            _buildStatBadge('💎', '${progress.totalCoins} Coins', 'Coins', AppTheme.secondary),
+          ],
         ),
-        const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: AppTheme.topoSilver),
       ],
     );
   }
 
-  // Removed unwanted _buildDailyMission and _buildMainPath
-
-  Widget _buildAIAcademyCard() {
-    return Consumer<EnhancedProgressProvider>(
-      builder: (context, progress, child) {
-        return SpringyTap(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AICognitiveAcademyScreen(
-                childAge: progress.level + 5,
-                childName: progress.userName,
-              ),
+  Widget _buildStatBadge(String emoji, String val, String label, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withOpacity(0.2), width: 1.5),
+      ),
+      child: Row(
+        children: [
+          Text(emoji, style: const TextStyle(fontSize: 16)),
+          const SizedBox(width: 8),
+          Text(
+            val,
+            style: GoogleFonts.outfit(
+              fontSize: 14,
+              fontWeight: FontWeight.w900,
+              color: AppTheme.textDark,
             ),
           ),
-          child: Container(
-            width: double.infinity,
-            height: 160,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(28),
-              gradient: const LinearGradient(
-                colors: [Color(0xFF3F51B5), Color(0xFF5C6BC0)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              boxShadow: [
-                BoxShadow(color: const Color(0xFF3F51B5).withOpacity(0.3), blurRadius: 25, offset: const Offset(0, 15)),
-              ],
-            ),
-            child: Stack(
-              children: [
-                Positioned(right: -10, bottom: -10, child: Icon(Icons.auto_awesome_rounded, size: 130, color: Colors.white.withOpacity(0.06))),
-                Padding(
-                  padding: const EdgeInsets.all(28),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(color: AppTheme.primary, borderRadius: BorderRadius.circular(8)),
-                              child: Text('AI ACADEMY', style: GoogleFonts.outfit(fontSize: 9, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1)),
-                            ),
-                            const SizedBox(height: 12),
-                            Text('AI Cognitive Academy', style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.w900, color: Colors.white)),
-                            Text('Personalized learning powered by AI', style: GoogleFonts.outfit(fontSize: 13, color: Colors.white.withOpacity(0.7))),
-                          ],
-                        ),
-                      ),
-                      const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 32),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+        ],
+      ),
     );
   }
 
-  // Removed unwanted _buildLevelSection and _buildWeekendChallenge
-
-
-  String _getTamilTitle(String title) {
-    switch (title) {
-      case 'Daily Goal':
-        return 'தினசரி பணி';
-      case 'Leaderboard':
-        return 'முன்னணியில் உள்ளவர்கள்';
-      case 'Learning Journey':
-        return 'கற்றல் வழிகள்';
-      case 'AI Cognitive Academy':
-        return 'செயற்கை நுண்ணறிவு அகாடமி';
-      case 'Fun & Games':
-        return 'விளையாட்டுகள்';
-      case 'Community & Stories':
-        return 'சமூகம்';
-      case 'Your Achievements':
-        return 'வெற்றிகள்';
-      case 'Events':
-        return 'நிகழ்வுகள்';
-      case 'Your Progress':
-        return 'முன்னேற்றம்';
-      default:
-        return title;
-    }
+  Widget _buildDailyMissions(EnhancedProgressProvider progress) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: AppTheme.whiteCard(radius: 28).copyWith(
+        border: Border.all(color: AppTheme.primary.withOpacity(0.15), width: 1.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('🚀', style: TextStyle(fontSize: 20)),
+              const SizedBox(width: 8),
+              Text(
+                'TODAY\'S ADVENTURE',
+                style: GoogleFonts.outfit(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w900,
+                  color: AppTheme.primary,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          
+          // Checklist
+          _buildMissionItem('Learn 3 new words today', true),
+          _buildMissionItem('Read 1 Tamil moral story', progress.totalStars > 5),
+          _buildMissionItem('Play any 1 educational game', progress.quizScore > 0),
+          
+          const SizedBox(height: 16),
+          // Progress bar
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: LinearProgressIndicator(
+              value: 0.66,
+              minHeight: 8,
+              backgroundColor: AppTheme.topoSilver.withOpacity(0.4),
+              valueColor: const AlwaysStoppedAnimation(AppTheme.primary),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
-
-
-  Widget _buildDailyProverbSection() {
-    if (_dailyProverb == null) return const SizedBox.shrink();
-
+  Widget _buildMissionItem(String desc, bool done) {
     return Padding(
-      padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 16.0),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [AppTheme.warning.withOpacity(0.05), AppTheme.white],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        children: [
+          Icon(
+            done ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+            color: done ? AppTheme.success : AppTheme.textGray,
+            size: 20,
           ),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppTheme.warning.withOpacity(0.2), width: 1),
-          boxShadow: [
-            BoxShadow(
-              color: AppTheme.warning.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppTheme.warning.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: const Text('💡', style: TextStyle(fontSize: 16)),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'இன்றைய பழமொழி',
-                    style: GoogleFonts.notoSansTamil(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w800,
-                      color: AppTheme.warning.withOpacity(0.9),
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    _dailyProverb!.proverb,
-                    style: GoogleFonts.notoSansTamil(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.secondary,
-                    ),
-                  ),
-                ],
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              desc,
+              style: GoogleFonts.outfit(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: done ? AppTheme.textDark : AppTheme.textSlate,
+                decoration: done ? TextDecoration.lineThrough : null,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildDailyKuralSection() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 24.0, right: 24.0, bottom: 16.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: AppTheme.primary.withOpacity(0.15), width: 1.5),
-          boxShadow: [
-            BoxShadow(
-              color: AppTheme.primary.withOpacity(0.06),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    if (_isLoadingKural) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (_dailyKural == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: AppTheme.glassCard(opacity: 0.9, radius: 28).copyWith(
+        border: Border.all(color: AppTheme.secondary.withOpacity(0.2), width: 1.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    setState(() {
-                      _isKuralExpanded = !_isKuralExpanded;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: AppTheme.primary.withOpacity(0.08),
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: const Icon(
-                            Icons.menu_book_rounded,
-                            color: AppTheme.primary,
-                            size: 22,
-                          ),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'இன்றைய திருக்குறள்',
-                                style: GoogleFonts.notoSansTamil(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppTheme.secondary,
-                                ),
-                              ),
-                              Text(
-                                _isLoadingKural 
-                                    ? 'Loading daily Kural...' 
-                                    : _dailyKural == null 
-                                        ? 'Not available' 
-                                        : 'Thirukkural #${_dailyKural!.number}',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppTheme.textGray,
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        AnimatedRotation(
-                          turns: _isKuralExpanded ? 0.5 : 0.0,
-                          duration: const Duration(milliseconds: 200),
-                          child: const Icon(
-                            Icons.keyboard_arrow_down_rounded,
-                            color: AppTheme.primary,
-                            size: 26,
-                          ),
-                        ),
-                      ],
+              Row(
+                children: [
+                  const Text('📜', style: TextStyle(fontSize: 20)),
+                  const SizedBox(width: 8),
+                  Text(
+                    'DAILY THIRUKKURAL',
+                    style: GoogleFonts.outfit(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w900,
+                      color: AppTheme.secondary,
+                      letterSpacing: 0.5,
                     ),
                   ),
+                ],
+              ),
+              IconButton(
+                icon: const Icon(Icons.volume_up_rounded, color: AppTheme.secondary, size: 24),
+                onPressed: _speakKural,
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Text(
+            _dailyKural!.line1,
+            style: GoogleFonts.notoSansTamil(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.textDark,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            _dailyKural!.line2,
+            style: GoogleFonts.notoSansTamil(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.textDark,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            _dailyKural!.explanation,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.notoSansTamil(
+              fontSize: 13,
+              color: AppTheme.textSlate,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDailyProverbSection() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: AppTheme.whiteCard(radius: 28).copyWith(
+        border: Border.all(color: AppTheme.accent.withOpacity(0.3), width: 1.5),
+      ),
+      child: Row(
+        children: [
+          const Text('💡', style: TextStyle(fontSize: 24)),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'DAILY PROVERB',
+                  style: GoogleFonts.outfit(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w900,
+                    color: AppTheme.primary,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  _dailyProverb!.proverb,
+                  style: GoogleFonts.notoSansTamil(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.textDark,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickLearningGrid(BuildContext context, int adaptiveAge) {
+    final actions = [
+      _quickActionItem('Dictionary', 'New words', Icons.menu_book_rounded, Colors.green,
+          () => Navigator.push(context, FadeInSlidePageRoute(page: LinguisticScannerScreen(childAge: adaptiveAge)))),
+      _quickActionItem('Learn English', 'Duolingo style', Icons.language_rounded, Colors.blue,
+          () => Navigator.push(context, FadeInSlidePageRoute(page: const LessonScreen(lessonId: 'animals_1')))),
+      _quickActionItem('Q&A Forum', 'Ask others', Icons.forum_rounded, Colors.purple,
+          () => Navigator.push(context, FadeInSlidePageRoute(page: const CommunityForumScreen()))),
+      _quickActionItem('Classrooms', 'Learn together', Icons.school_rounded, Colors.orange,
+          () => Navigator.push(context, FadeInSlidePageRoute(page: const ClassroomConnectScreen()))),
+      if (_showAllQuickActions) ...[
+        _quickActionItem('Pronounce', 'Mic check', Icons.mic_rounded, Colors.teal,
+            () => Navigator.push(context, FadeInSlidePageRoute(page: const PronunciationPracticeGame()))),
+        _quickActionItem('Daily Word', 'Power word', Icons.wb_sunny_rounded, Colors.indigo,
+            () => Navigator.push(context, FadeInSlidePageRoute(page: RiddleAcademyScreen(childAge: adaptiveAge)))),
+        if (Provider.of<AuthService>(context, listen: false).userRole == 'admin')
+          _quickActionItem('Admin Panel', 'Manage app', Icons.admin_panel_settings_rounded, Colors.red,
+              () => Navigator.push(context, FadeInSlidePageRoute(page: const AdminControlScreen()))),
+      ],
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'QUICK LEARNING',
+          style: GoogleFonts.outfit(
+            fontSize: 14,
+            fontWeight: FontWeight.w900,
+            color: AppTheme.textSlate,
+            letterSpacing: 1.0,
+          ),
+        ),
+        const SizedBox(height: 14),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 14,
+            mainAxisSpacing: 14,
+            childAspectRatio: 1.25,
+          ),
+          itemCount: actions.length,
+          itemBuilder: (context, index) => actions[index],
+        ),
+        const SizedBox(height: 14),
+        Center(
+          child: TextButton.icon(
+            onPressed: () {
+              AudioFeedbackService.playTap();
+              setState(() {
+                _showAllQuickActions = !_showAllQuickActions;
+              });
+            },
+            icon: Icon(
+              _showAllQuickActions ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
+              color: AppTheme.primary,
+            ),
+            label: Text(
+              _showAllQuickActions ? 'VIEW LESS' : 'VIEW ALL',
+              style: GoogleFonts.outfit(
+                fontWeight: FontWeight.w900,
+                color: AppTheme.primary,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _quickActionItem(String title, String desc, IconData icon, Color color, VoidCallback onTap) {
+    return Container(
+      decoration: AppTheme.whiteCard(radius: 20).copyWith(
+        border: Border.all(color: color.withOpacity(0.15), width: 1.5),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: () {
+            AudioFeedbackService.playTap();
+            onTap();
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: color, size: 22),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  title,
+                  style: GoogleFonts.outfit(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: AppTheme.textDark,
+                  ),
+                ),
+                Text(
+                  desc,
+                  style: GoogleFonts.outfit(
+                    fontSize: 10,
+                    color: AppTheme.textGray,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContinueLearning(BuildContext context, EnhancedProgressProvider progress) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'CONTINUE LEARNING',
+          style: GoogleFonts.outfit(
+            fontSize: 14,
+            fontWeight: FontWeight.w900,
+            color: AppTheme.textSlate,
+            letterSpacing: 1.0,
+          ),
+        ),
+        const SizedBox(height: 14),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(20),
+          decoration: AppTheme.whiteCard(radius: 24),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppTheme.accent.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Text('🎓', style: TextStyle(fontSize: 24)),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Tamil Letters Path',
+                      style: GoogleFonts.outfit(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 16,
+                        color: AppTheme.textDark,
+                      ),
+                    ),
+                    Text(
+                      'Level ${progress.level} | Continue where you left off',
+                      style: GoogleFonts.outfit(
+                        fontSize: 12,
+                        color: AppTheme.textGray,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              AnimatedCrossFade(
-                firstChild: const SizedBox.shrink(),
-                secondChild: _isLoadingKural
-                    ? const Center(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 24.0),
-                          child: SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2.5),
-                          ),
-                        ),
-                      )
-                    : _dailyKural == null
-                        ? Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Text(
-                              'Today\'s Thirukkural is not available.',
-                              style: GoogleFonts.notoSansTamil(
-                                fontSize: 14,
-                                color: AppTheme.textGray,
-                              ),
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Divider(height: 1, color: AppTheme.borderLight),
-                                const SizedBox(height: 16),
-                                Container(
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.offWhite,
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(color: AppTheme.borderLight),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        _dailyKural!.line1,
-                                        style: GoogleFonts.notoSansTamil(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppTheme.secondary,
-                                          height: 1.4,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        _dailyKural!.line2,
-                                        style: GoogleFonts.notoSansTamil(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppTheme.secondary,
-                                          height: 1.4,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                Theme(
-                                  data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-                                  child: Column(
-                                    children: [
-                                      ExpansionTile(
-                                        title: Text(
-                                          'Show Tamil Explanation',
-                                          style: GoogleFonts.outfit(
-                                            fontSize: 13,
-                                            color: AppTheme.primary,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        tilePadding: EdgeInsets.zero,
-                                        childrenPadding: EdgeInsets.zero,
-                                        collapsedIconColor: AppTheme.primary,
-                                        iconColor: AppTheme.primary,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                                            child: Text(
-                                              _dailyKural!.explanation,
-                                              style: GoogleFonts.notoSansTamil(
-                                                fontSize: 13,
-                                                color: AppTheme.textSlate,
-                                                height: 1.5,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      ExpansionTile(
-                                        title: Text(
-                                          'Show English Meaning',
-                                          style: GoogleFonts.outfit(
-                                            fontSize: 13,
-                                            color: AppTheme.info,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        tilePadding: EdgeInsets.zero,
-                                        childrenPadding: EdgeInsets.zero,
-                                        collapsedIconColor: AppTheme.info,
-                                        iconColor: AppTheme.info,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                                            child: Text(
-                                              _dailyKural!.englishMeaning,
-                                              style: GoogleFonts.outfit(
-                                                fontSize: 13,
-                                                color: AppTheme.textSlate,
-                                                height: 1.5,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                crossFadeState: _isKuralExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-                duration: const Duration(milliseconds: 250),
+              ElevatedButton(
+                onPressed: () {
+                  AudioFeedbackService.playTap();
+                  Navigator.push(context, FadeInSlidePageRoute(page: const TamilLettersScreen()));
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primary,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: Text(
+                  'RESUME',
+                  style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 13),
+                ),
               ),
             ],
           ),
         ),
-      ),
+      ],
     );
   }
 }

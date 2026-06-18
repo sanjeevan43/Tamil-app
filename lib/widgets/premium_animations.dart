@@ -264,3 +264,42 @@ class _AnimatedPulseState extends State<AnimatedPulse> with SingleTickerProvider
     return result;
   }
 }
+
+/// A PageRoute that transitions by fading and sliding up,
+/// matching the entry animations of components like FadeInSlide.
+class FadeInSlidePageRoute<T> extends PageRouteBuilder<T> {
+  final Widget page;
+
+  FadeInSlidePageRoute({required this.page})
+      : super(
+          pageBuilder: (context, animation, secondaryAnimation) => page,
+          transitionDuration: const Duration(milliseconds: 550),
+          reverseTransitionDuration: const Duration(milliseconds: 400),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            final fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+              CurvedAnimation(
+                parent: animation,
+                curve: const Interval(0.0, 0.8, curve: Curves.easeIn),
+              ),
+            );
+
+            final slideAnimation = Tween<Offset>(
+              begin: const Offset(0.0, 0.15),
+              end: Offset.zero,
+            ).animate(
+              CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOutCubic,
+              ),
+            );
+
+            return FadeTransition(
+              opacity: fadeAnimation,
+              child: SlideTransition(
+                position: slideAnimation,
+                child: child,
+              ),
+            );
+          },
+        );
+}
