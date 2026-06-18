@@ -56,7 +56,7 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
             Positioned(
               right: -50,
               top: -20,
-              child: Icon(Icons.forum_rounded, size: 200, color: AppTheme.white.withOpacity(0.05)),
+              child: Icon(Icons.forum_rounded, size: 200, color: AppTheme.white.withValues(alpha: 0.05)),
             ),
           ],
         ),
@@ -75,7 +75,7 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: AppTheme.topoSilver),
             boxShadow: [
-              BoxShadow(color: AppTheme.textDark.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4)),
+              BoxShadow(color: AppTheme.textDark.withValues(alpha: 0.02), blurRadius: 10, offset: const Offset(0, 4)),
             ],
           ),
           child: TextField(
@@ -96,6 +96,33 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
     return StreamBuilder<QuerySnapshot>(
       stream: _firestore.getQuestionsStream(),
       builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return SliverFillRemaining(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('⚠️', style: TextStyle(fontSize: 48)),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Failed to load questions',
+                      style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textGray),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Firebase error: ${snapshot.error}',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.outfit(color: AppTheme.textGray.withValues(alpha: 0.8), fontSize: 13),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+
         if (!snapshot.hasData) {
           return const SliverFillRemaining(child: Center(child: CircularProgressIndicator()));
         }
@@ -144,7 +171,7 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
           borderRadius: BorderRadius.circular(24),
           border: Border.all(color: AppTheme.topoSilver),
           boxShadow: [
-            BoxShadow(color: AppTheme.textDark.withOpacity(0.02), blurRadius: 8, offset: const Offset(0, 2)),
+            BoxShadow(color: AppTheme.textDark.withValues(alpha: 0.02), blurRadius: 8, offset: const Offset(0, 2)),
           ],
         ),
         child: Column(
@@ -154,7 +181,7 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
               children: [
                 Container(
                   padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(color: AppTheme.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+                  decoration: BoxDecoration(color: AppTheme.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
                   child: const Text('❓', style: TextStyle(fontSize: 14)),
                 ),
                 const SizedBox(width: 12),
@@ -260,30 +287,43 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
              ),
              const SizedBox(height: 16),
              SizedBox(
-               width: double.infinity,
-               height: 54,
-               child: ElevatedButton(
-                 onPressed: () async {
+                width: double.infinity,
+                height: 54,
+                child: ElevatedButton(
+                  onPressed: () async {
                     if (titleController.text.isNotEmpty && contentController.text.isNotEmpty) {
-                      await _firestore.addQuestion(
-                        titleController.text,
-                        contentController.text,
-                        progress.userId ?? 'anonymous',
-                        progress.userName,
-                      );
-                      if (context.mounted) {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Question posted!')));
+                      try {
+                        await _firestore.addQuestion(
+                          titleController.text,
+                          contentController.text,
+                          progress.userId ?? 'anonymous',
+                          progress.userName,
+                        );
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Question posted!')),
+                          );
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error: $e'),
+                              backgroundColor: Colors.redAccent,
+                            ),
+                          );
+                        }
                       }
                     }
                   },
-                 style: ElevatedButton.styleFrom(
-                   backgroundColor: AppTheme.primary,
-                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                 ),
-                 child: Text('POST QUESTION', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: AppTheme.white)),
-               ),
-             ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primary,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
+                  child: Text('POST QUESTION', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: AppTheme.white)),
+                ),
+              ),
            ],
         ),
       ),
@@ -349,7 +389,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
       decoration: BoxDecoration(
         color: AppTheme.white,
         borderRadius: BorderRadius.circular(28),
-        boxShadow: [BoxShadow(color: AppTheme.textDark.withOpacity(0.04), blurRadius: 20)],
+        boxShadow: [BoxShadow(color: AppTheme.textDark.withValues(alpha: 0.04), blurRadius: 20)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -380,6 +420,18 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
     return StreamBuilder<QuerySnapshot>(
       stream: _firestore.getAnswersStream(widget.questionId),
       builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20.0),
+              child: Text(
+                'Error loading answers: ${snapshot.error}',
+                style: GoogleFonts.outfit(color: Colors.redAccent, fontSize: 13),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        }
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
         final docs = snapshot.data!.docs;
         
@@ -396,7 +448,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
               decoration: BoxDecoration(
                 color: AppTheme.white,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppTheme.topoSilver.withOpacity(0.5)),
+                border: Border.all(color: AppTheme.topoSilver.withValues(alpha: 0.5)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -428,7 +480,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
       padding: EdgeInsets.only(left: 20, right: 20, top: 16, bottom: MediaQuery.of(context).padding.bottom + 16),
       decoration: BoxDecoration(
         color: AppTheme.white,
-        boxShadow: [BoxShadow(color: AppTheme.textDark.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -4))],
+        boxShadow: [BoxShadow(color: AppTheme.textDark.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -4))],
       ),
       child: Row(
         children: [
@@ -446,17 +498,28 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
           GestureDetector(
             onTap: () async {
               if (_answerController.text.isNotEmpty) {
-                await _firestore.addAnswer(widget.questionId, _answerController.text, progress.userId ?? 'anonymous', progress.userName);
-                if (context.mounted) {
-                  _answerController.clear();
-                  FocusScope.of(context).unfocus();
+                try {
+                  await _firestore.addAnswer(widget.questionId, _answerController.text, progress.userId ?? 'anonymous', progress.userName);
+                  if (context.mounted) {
+                    _answerController.clear();
+                    FocusScope.of(context).unfocus();
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error: $e'),
+                        backgroundColor: Colors.redAccent,
+                      ),
+                    );
+                  }
                 }
               }
             },
             child: Container(
               width: 50,
               height: 50,
-              decoration: const BoxDecoration(color: AppTheme.primary, shape: BoxShape.circle),
+              decoration:  BoxDecoration(color: AppTheme.primary, shape: BoxShape.circle),
               child: const Icon(Icons.send_rounded, color: AppTheme.white, size: 20),
             ),
           ),
