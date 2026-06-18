@@ -49,13 +49,7 @@ class _WordScrambleGameState extends State<WordScrambleGame> {
   }
 
   List<String> _splitTamilWord(String word) {
-    // Basic Tamil letter splitting logic
-    // In a real app, this should handle complex characters better
-    List<String> letters = [];
-    for (int i = 0; i < word.length; i++) {
-      letters.add(word[i]);
-    }
-    return letters;
+    return word.characters.toList();
   }
 
   void _onLetterTap(int index) {

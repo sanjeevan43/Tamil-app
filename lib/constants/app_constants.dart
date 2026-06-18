@@ -1,6 +1,6 @@
 class AppConstants {
   // App Info
-  static const String appName = 'அகரவளம்';
+  static const String appName = 'Tamil Kids Park';
   static const String appVersion = '2.0.0';
   static const String appBuild = '2';
 

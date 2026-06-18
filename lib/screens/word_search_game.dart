@@ -27,15 +27,8 @@ class _WordSearchGameState extends State<WordSearchGame> {
     _generateGrid();
   }
 
-  // Basic Tamil splitting to handle character combinations correctly in the grid
   List<String> _splitTamil(String word) {
-    // In a production app, use a more robust Tamil character splitter
-    // For this game, we'll assume the characters are simple enough or provided as units
-    List<String> units = [];
-    for (int i = 0; i < word.length; i++) {
-       units.add(word[i]);
-    }
-    return units;
+    return word.characters.toList();
   }
 
   void _generateGrid() {
@@ -110,7 +103,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
     // Check if currently selected letters form any of the words
     String selectedWord = _selectedIndices.map((o) => _grid[o.dx.toInt()][o.dy.toInt()]).join('');
     // Also check reverse
-    String reversedWord = selectedWord.split('').reversed.join('');
+    String reversedWord = selectedWord.characters.toList().reversed.join('');
 
     if (_wordsToFind.contains(selectedWord) && !_foundWords.contains(selectedWord)) {
       _onWordFound(selectedWord);

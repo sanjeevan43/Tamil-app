@@ -5,7 +5,7 @@ import '../constants/app_theme.dart';
 import '../providers/enhanced_progress_provider.dart';
 import '../services/auth_service.dart';
 import 'avatar_shop_screen.dart';
-import 'login_screen.dart';
+import 'splash_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -404,7 +404,7 @@ class ProfileScreen extends StatelessWidget {
             progress.clearProgress();
             Provider.of<AuthService>(context, listen: false).signOut();
             Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (_) => const LoginScreen()),
+              MaterialPageRoute(builder: (_) => const SplashScreen()),
               (route) => false,
             );
           },

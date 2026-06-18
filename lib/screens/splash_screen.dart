@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../services/auth_service.dart';
 import '../providers/enhanced_progress_provider.dart';
-import 'login_screen.dart';
 import 'admin_control_screen.dart';
 import 'teacher_dashboard_screen.dart';
 import 'parent_dashboard_screen.dart';
@@ -39,6 +38,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     // Run heavy initialization tasks in parallel with a safety timeout
     debugPrint('SplashScreen: Starting initialization...');
     try {
+      if (!authService.isAuthenticated) {
+        debugPrint('SplashScreen: Authenticating anonymously in background...');
+        await authService.signInAnonymously();
+      }
+
       await Future.wait([
         if (authService.isAuthenticated)
           progress.initializeProgress(uid: authService.user?.uid).then((_) => debugPrint('SplashScreen: Progress initialized')).catchError((e) => debugPrint('SplashScreen: Progress error: $e')),
@@ -69,7 +73,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           nextScreen = const MainNavigationContainer();
       }
     } else {
-      nextScreen = const LoginScreen();
+      nextScreen = const MainNavigationContainer();
     }
 
     if (mounted) {
@@ -165,7 +169,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   
                   // Text Branding
                   Text(
-                    'அகரவளம்',
+                    'Tamil Kids Park',
                     style: GoogleFonts.outfit(
                       fontSize: 32,
                       fontWeight: FontWeight.w900,

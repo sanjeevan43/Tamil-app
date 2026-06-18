@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:characters/characters.dart';
 import '../data/tamil_data.dart';
 
 class GameLogic {
@@ -28,7 +29,7 @@ class GameLogic {
     final words = categories[_random.nextInt(categories.length)];
     final wordData = words[_random.nextInt(words.length)];
     final word = wordData['tamil']!;
-    final scrambled = word.split('')..shuffle();
+    final scrambled = word.characters.toList()..shuffle();
     
     return {
       'word': word,
@@ -44,8 +45,9 @@ class GameLogic {
     final words = categories[_random.nextInt(categories.length)];
     final wordData = words[_random.nextInt(words.length)];
     final word = wordData['tamil']!;
-    final blankIndex = _random.nextInt(word.length);
-    final correctLetter = word[blankIndex];
+    final wordChars = word.characters.toList();
+    final blankIndex = _random.nextInt(wordChars.length);
+    final correctLetter = wordChars[blankIndex];
     
     final options = [correctLetter];
     while (options.length < 4) {
@@ -158,8 +160,9 @@ class GameLogic {
 
   // Get hint for current question
   static String getHint(String word) {
-    if (word.length <= 2) return word;
-    return word[0] + '*' * (word.length - 2) + word[word.length - 1];
+    final wordChars = word.characters.toList();
+    if (wordChars.length <= 2) return word;
+    return wordChars.first + '*' * (wordChars.length - 2) + wordChars.last;
   }
 
   // Sound Match Game
@@ -214,11 +217,11 @@ class GameLogic {
     final words = categories[_random.nextInt(categories.length)];
     final wordData = words[_random.nextInt(words.length)];
     final word = wordData['tamil']!;
-    final scrambled = word.split('')..shuffle();
+    final scrambled = (word.characters.toList()..shuffle()).join('');
     
     return {
       'word': word,
-      'scrambled': scrambled.join(''),
+      'scrambled': scrambled,
       'english': wordData['english'],
       'emoji': wordData['emoji'],
       'hint': getHint(word),

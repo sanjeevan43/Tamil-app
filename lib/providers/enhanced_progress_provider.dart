@@ -226,6 +226,12 @@ class EnhancedProgressProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> setAge(int ageVal) async {
+    _age = ageVal;
+    await syncToCloud();
+    notifyListeners();
+  }
+
   Future<void> updateAvatar(String emoji) async {
     _avatar = emoji;
     await syncToCloud();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../services/game_logic.dart';
@@ -164,23 +165,34 @@ class _FillBlanksGameState extends State<FillBlanksGame> {
               decoration: AppTheme.glassCard(),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate((_currentRound['word'] as String).length, (index) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    width: 50,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: index == _currentRound['blankIndex'] ? AppTheme.warning : AppTheme.primaryRed,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Center(
-                      child: Text(
-                        index == _currentRound['blankIndex'] ? '?' : (_currentRound['word'] as String)[index],
-                        style: const TextStyle(fontSize: 32, color: AppTheme.white, fontWeight: FontWeight.bold),
+                children: () {
+                  final wordChars = (_currentRound['word'] as String).characters.toList();
+                  return List.generate(wordChars.length, (index) {
+                    return Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      width: 58,
+                      height: 65,
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: index == _currentRound['blankIndex'] ? AppTheme.warning : AppTheme.primaryRed,
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                    ),
-                  );
-                }),
+                      child: Center(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            index == _currentRound['blankIndex'] ? '?' : wordChars[index],
+                            style: GoogleFonts.notoSansTamil(
+                              fontSize: 32,
+                              color: AppTheme.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  });
+                }(),
               ),
             ),
             const SizedBox(height: 60),

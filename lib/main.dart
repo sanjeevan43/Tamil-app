@@ -80,7 +80,7 @@ class TamilMasterApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'அகரவளம்',
+      title: 'Tamil Kids Park',
       debugShowCheckedModeBanner: false,
       // Use the centralized theme data from AppTheme for consistent styling
       theme: AppTheme.themeData,

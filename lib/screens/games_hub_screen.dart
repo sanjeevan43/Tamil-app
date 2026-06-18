@@ -14,6 +14,8 @@ import 'writing_practice_game.dart';
 import 'word_scramble_game.dart';
 import 'sound_match_game.dart';
 import 'word_search_game.dart';
+import 'odd_one_out_game.dart';
+import '../widgets/premium_animations.dart';
 
 class GamesHubScreen extends StatelessWidget {
   const GamesHubScreen({super.key});
@@ -35,6 +37,7 @@ class GamesHubScreen extends StatelessWidget {
       {'name': 'Scramble', 'tamil': 'சொல் கலைத்தல்', 'icon': '🧩', 'description': 'Unscramble words', 'color': const Color(0xFF7E57C2), 'screen': const WordScrambleGame()},
       {'name': 'Sound Match', 'tamil': 'ஒலி பொருத்தம்', 'icon': '🔊', 'description': 'Listen and match', 'color': const Color(0xFF29B6F6), 'screen': const SoundMatchGame()},
       {'name': 'Word Search', 'tamil': 'சொல் தேடல்', 'icon': '🔍', 'description': 'Find hidden words', 'color': const Color(0xFF9CCC65), 'screen': const WordSearchGame()},
+      {'name': 'Odd One Out', 'tamil': 'வேறுபட்டதைத் தேடு', 'icon': '🦄', 'description': 'Find the odd word', 'color': const Color(0xFFEC407A), 'screen': const OddOneOutGame()},
     ];
 
     return Scaffold(
@@ -118,7 +121,11 @@ class GamesHubScreen extends StatelessWidget {
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   final game = games[index];
-                  return _buildGameCard(context, game);
+                  return FadeInSlide(
+                    direction: SlideDirection.up,
+                    delay: Duration(milliseconds: 100 + (index * 60)),
+                    child: _buildGameCard(context, game),
+                  );
                 },
                 childCount: games.length,
               ),
@@ -132,7 +139,7 @@ class GamesHubScreen extends StatelessWidget {
 
   Widget _buildGameCard(BuildContext context, Map<String, dynamic> game) {
     final color = game['color'] as Color;
-    return GestureDetector(
+    return SpringyTap(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => game['screen'] as Widget)),
       child: Container(
         decoration: BoxDecoration(

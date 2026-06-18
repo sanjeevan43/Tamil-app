@@ -87,6 +87,26 @@ class AuthService extends ChangeNotifier {
     }
   }
 
+  // Sign in Anonymously
+  Future<String?> signInAnonymously() async {
+    try {
+      final credential = await _auth.signInAnonymously();
+      if (credential.user != null) {
+        await _firestore.saveUser(
+          credential.user!,
+          role: 'student',
+          displayName: 'Student',
+        );
+        await _fetchUserProfile(credential.user!.uid);
+      }
+      return null; // Success
+    } on FirebaseAuthException catch (e) {
+      return e.message;
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
   // Sign out
   Future<void> signOut() async {
     try {

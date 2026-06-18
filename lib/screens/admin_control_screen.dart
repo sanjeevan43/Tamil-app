@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import 'admin_classrooms_tab.dart';
 import '../data/moral_stories_data.dart';
 import '../data/tamil_data.dart';
-import 'login_screen.dart';
+import 'splash_screen.dart';
 
 class AdminControlScreen extends StatefulWidget {
   const AdminControlScreen({super.key});
@@ -196,7 +196,7 @@ class _AdminControlScreenState extends State<AdminControlScreen> with SingleTick
               Provider.of<EnhancedProgressProvider>(context, listen: false).clearProgress();
               Provider.of<AuthService>(context, listen: false).signOut();
               Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                MaterialPageRoute(builder: (_) => const SplashScreen()),
                 (route) => false,
               );
             },

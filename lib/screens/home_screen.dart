@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../providers/enhanced_progress_provider.dart';
 import '../services/auth_service.dart';
+import '../services/firestore_service.dart';
+import '../services/validation_service.dart';
 import 'games_hub_screen.dart';
 import 'tamil_letters_screen.dart';
 import 'stories_screen.dart';
@@ -21,6 +23,7 @@ import 'lesson_screen.dart';
 import 'ai_cognitive_academy_screen.dart';
 import 'riddle_academy_screen.dart';
 import 'linguistic_scanner_screen.dart';
+import '../widgets/premium_animations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,8 +33,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String _searchQuery = '';
-  final TextEditingController _searchController = TextEditingController();
   Thirukkural? _dailyKural;
   bool _isLoadingKural = true;
   bool _isKuralExpanded = false;
@@ -42,6 +43,38 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _fetchKural();
     _fetchProverb();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAndShowSetupDialog();
+    });
+  }
+
+  void _checkAndShowSetupDialog() {
+    final progress = Provider.of<EnhancedProgressProvider>(context, listen: false);
+    if (progress.userName == 'Student' || progress.userName.isEmpty) {
+      _showSetupDialog();
+    }
+  }
+
+  void _showSetupDialog() {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black.withOpacity(0.85),
+      transitionDuration: const Duration(milliseconds: 600),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return const _SetupDialogContent();
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curve = CurvedAnimation(parent: animation, curve: Curves.easeOutBack);
+        return ScaleTransition(
+          scale: curve,
+          child: FadeTransition(
+            opacity: animation,
+            child: child,
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _fetchProverb() async {
@@ -74,7 +107,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
-    _searchController.dispose();
     super.dispose();
   }
 
@@ -113,60 +145,74 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(height: 20),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                        child: _buildHeader(),
-                      ),
-                      const SizedBox(height: 20),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                        child: _buildSearchBar(),
+                        child: FadeInSlide(
+                          direction: SlideDirection.down,
+                          delay: const Duration(milliseconds: 100),
+                          child: _buildHeader(),
+                        ),
                       ),
                       const SizedBox(height: 24),
                     ],
                   ),
                 ),
-                if (_searchQuery.isNotEmpty)
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    sliver: SliverToBoxAdapter(
-                      child: _buildSearchResults(),
-                    ),
-                  )
-                else ...[
-                  SliverToBoxAdapter(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildQuickStats(),
-                        const SizedBox(height: 24),
-                        _buildDailyKuralSection(),
-                        _buildDailyProverbSection(),
-                        const SizedBox(height: 32),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      FadeInSlide(
+                        direction: SlideDirection.up,
+                        delay: const Duration(milliseconds: 300),
+                        child: _buildQuickStats(),
+                      ),
+                      const SizedBox(height: 24),
+                      FadeInSlide(
+                        direction: SlideDirection.up,
+                        delay: const Duration(milliseconds: 400),
+                        child: _buildDailyKuralSection(),
+                      ),
+                      FadeInSlide(
+                        direction: SlideDirection.up,
+                        delay: const Duration(milliseconds: 450),
+                        child: _buildDailyProverbSection(),
+                      ),
+                      const SizedBox(height: 32),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                        child: FadeInSlide(
+                          direction: SlideDirection.up,
+                          delay: const Duration(milliseconds: 500),
                           child: _buildSectionHeader('AI Cognitive Academy', Icons.auto_awesome_rounded),
                         ),
-                        const SizedBox(height: 16),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      ),
+                      const SizedBox(height: 16),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                        child: FadeInSlide(
+                          direction: SlideDirection.up,
+                          delay: const Duration(milliseconds: 550),
                           child: _buildAIAcademyCard(),
                         ),
-                        const SizedBox(height: 32),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      ),
+                      const SizedBox(height: 32),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                        child: FadeInSlide(
+                          direction: SlideDirection.up,
+                          delay: const Duration(milliseconds: 600),
                           child: _buildSectionHeader('Fun & Games', Icons.sports_esports_rounded),
                         ),
-                        const SizedBox(height: 16),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
                   ),
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    sliver: _buildFastAccessSliverGrid(),
-                  ),
-                  const SliverToBoxAdapter(
-                    child: SizedBox(height: 120), // Padding to scroll past the bottom bar
-                  ),
-                ],
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  sliver: _buildFastAccessSliverGrid(),
+                ),
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: 120), // Padding to scroll past the bottom bar
+                ),
               ],
             ),
           ),
@@ -175,77 +221,35 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSearchBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-      decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: AppTheme.topoSilver.withOpacity(0.5), width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.textDark.withOpacity(0.04),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: TextField(
-        controller: _searchController,
-        onChanged: (value) => setState(() => _searchQuery = value),
-        decoration: InputDecoration(
-          hintText: 'Search letters, stories, rhymes...',
-          hintStyle: GoogleFonts.outfit(
-            color: AppTheme.textGray.withOpacity(0.6),
-            fontSize: 15,
-            fontWeight: FontWeight.w500,
-          ),
-          border: InputBorder.none,
-          icon: const Icon(Icons.search_rounded, color: AppTheme.primary, size: 22),
-          suffixIcon: _searchQuery.isNotEmpty 
-            ? IconButton(
-                icon: const Icon(Icons.close_rounded, size: 18),
-                onPressed: () {
-                  _searchController.clear();
-                  setState(() => _searchQuery = '');
-                },
-              )
-            : Container(
-                margin: const EdgeInsets.all(8),
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: AppTheme.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(Icons.tune_rounded, color: AppTheme.primary, size: 16),
-              ),
-        ),
-      ),
-    );
-  }
+
 
   Widget _buildHeader() {
     return Consumer<EnhancedProgressProvider>(
       builder: (context, progress, child) {
         return Row(
           children: [
-            GestureDetector(
+            SpringyTap(
               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfileScreen())),
-              child: Hero(
-                tag: 'profile_avatar',
-                child: Container(
-                  padding: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppTheme.primary, width: 2),
-                    boxShadow: [
-                      BoxShadow(color: AppTheme.primary.withOpacity(0.2), blurRadius: 10, offset: const Offset(0, 4)),
-                    ],
-                  ),
-                  child: CircleAvatar(
-                    radius: 26,
-                    backgroundColor: AppTheme.offWhite,
-                    child: Text(progress.avatar, style: const TextStyle(fontSize: 24)),
+              child: AnimatedPulse(
+                pulseOpacity: false,
+                minScale: 0.96,
+                maxScale: 1.04,
+                child: Hero(
+                  tag: 'profile_avatar',
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppTheme.primary, width: 2),
+                      boxShadow: [
+                        BoxShadow(color: AppTheme.primary.withOpacity(0.2), blurRadius: 10, offset: const Offset(0, 4)),
+                      ],
+                    ),
+                    child: CircleAvatar(
+                      radius: 26,
+                      backgroundColor: AppTheme.offWhite,
+                      child: Text(progress.avatar, style: const TextStyle(fontSize: 24)),
+                    ),
                   ),
                 ),
               ),
@@ -384,7 +388,13 @@ class _HomeScreenState extends State<HomeScreen> {
             childAspectRatio: 1.05,
           ),
           delegate: SliverChildBuilderDelegate(
-            (context, index) => items[index],
+            (context, index) {
+              return FadeInSlide(
+                direction: SlideDirection.up,
+                delay: Duration(milliseconds: 650 + (index * 80)),
+                child: items[index],
+              );
+            },
             childCount: items.length,
           ),
         );
@@ -393,7 +403,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _fastItem(BuildContext context, String title, String sub, IconData icon, Color bg, Color color, VoidCallback onTap) {
-    return GestureDetector(
+    return SpringyTap(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(14),
@@ -450,7 +460,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildAIAcademyCard() {
     return Consumer<EnhancedProgressProvider>(
       builder: (context, progress, child) {
-        return GestureDetector(
+        return SpringyTap(
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
@@ -537,57 +547,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Widget _buildSearchResults() {
-    return Consumer<EnhancedProgressProvider>(
-      builder: (context, progress, child) {
-        final adaptiveAge = progress.level + 5;
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Results for "$_searchQuery"',
-                style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.secondary),
-              ),
-              const SizedBox(height: 20),
-              _buildSearchItem('Stories', Icons.auto_stories_rounded, AppTheme.primary, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const StoriesScreen()))),
-              _buildSearchItem('Rhymes', Icons.music_note_rounded, AppTheme.primary, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RhymesScreen()))),
-              _buildSearchItem('Games Hub', Icons.sports_esports_rounded, AppTheme.warning, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GamesHubScreen()))),
-              _buildSearchItem('Tamil Letters', Icons.translate_rounded, AppTheme.info, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TamilLettersScreen()))),
-              _buildSearchItem('Daily Word', Icons.wb_sunny_rounded, AppTheme.warning, () => Navigator.push(context, MaterialPageRoute(builder: (_) => RiddleAcademyScreen(childAge: adaptiveAge)))),
-              _buildSearchItem('Leaderboard', Icons.leaderboard_rounded, AppTheme.primaryDark, () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Top rankings are dynamically calculated from Firestore! 🏆', style: GoogleFonts.outfit(fontWeight: FontWeight.w600))),
-                );
-              }),
-            ],
-          ),
-        );
-      },
-    );
-  }
 
-  Widget _buildSearchItem(String title, IconData icon, Color color, VoidCallback onTap) {
-    if (!title.toLowerCase().contains(_searchQuery.toLowerCase())) return const SizedBox.shrink();
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(color: AppTheme.white, borderRadius: BorderRadius.circular(20), border: Border.all(color: color.withOpacity(0.1))),
-        child: Row(
-          children: [
-            Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withOpacity(0.1), shape: BoxShape.circle), child: Icon(icon, color: color, size: 20)),
-            const SizedBox(width: 16),
-            Text(title, style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: AppTheme.secondary)),
-            const Spacer(),
-            const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: AppTheme.topoSilver),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildDailyProverbSection() {
     if (_dailyProverb == null) return const SizedBox.shrink();
@@ -874,6 +834,287 @@ class _HomeScreenState extends State<HomeScreen> {
                 duration: const Duration(milliseconds: 250),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SetupDialogContent extends StatefulWidget {
+  const _SetupDialogContent();
+
+  @override
+  State<_SetupDialogContent> createState() => _SetupDialogContentState();
+}
+
+class _SetupDialogContentState extends State<_SetupDialogContent> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _ageController = TextEditingController();
+  String _selectedGender = 'boy'; // 'boy' or 'girl'
+  bool _isSaving = false;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _ageController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleSave() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _isSaving = true);
+
+    try {
+      final name = _nameController.text.trim();
+      final age = int.tryParse(_ageController.text.trim()) ?? 6;
+      final avatarEmoji = _selectedGender == 'boy' ? '👦' : '👧';
+
+      final authService = Provider.of<AuthService>(context, listen: false);
+      final progress = Provider.of<EnhancedProgressProvider>(context, listen: false);
+
+      if (authService.user != null) {
+        final firestore = FirestoreService();
+        await firestore.saveUser(
+          authService.user!,
+          role: 'student',
+          displayName: name,
+          age: age,
+        );
+      }
+
+      await progress.setUserName(name);
+      await progress.setAge(age);
+      await progress.updateAvatar(avatarEmoji);
+
+      if (mounted) {
+        Navigator.of(context).pop(); // Dismiss setup pop-up
+      }
+    } catch (e) {
+      debugPrint('Error saving user profile: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Size screenSize = MediaQuery.of(context).size;
+    final double screenWidth = screenSize.width;
+    final double screenHeight = screenSize.height;
+
+    return Center(
+      child: Material(
+        color: Colors.transparent,
+        child: Container(
+          width: screenWidth * 0.9 < 420.0 ? screenWidth * 0.9 : 420.0,
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 32),
+          decoration: BoxDecoration(
+            color: AppTheme.white,
+            borderRadius: BorderRadius.circular(40),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                blurRadius: 30,
+                offset: const Offset(0, 15),
+              ),
+            ],
+            border: Border.all(color: AppTheme.topoSilver, width: 2),
+          ),
+          child: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Title
+                  Text(
+                    'Choose Your Character!',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.outfit(
+                      fontSize: 26,
+                      fontWeight: FontWeight.w900,
+                      color: AppTheme.secondary,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Let\'s build your profile to start learning',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.outfit(
+                      fontSize: 14,
+                      color: AppTheme.textGray,
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+
+                  // Gender/Character Selector (Boy / Girl)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      // Boy card
+                      _buildCharacterCard(
+                        gender: 'boy',
+                        imagePath: 'assets/images/avatar_boy.png',
+                        label: 'Boy',
+                        accentColor: const Color(0xFF42A5F5),
+                      ),
+                      const SizedBox(width: 16),
+                      // Girl card
+                      _buildCharacterCard(
+                        gender: 'girl',
+                        imagePath: 'assets/images/avatar_girl.png',
+                        label: 'Girl',
+                        accentColor: const Color(0xFFEC407A),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 28),
+
+                  // Name Input
+                  TextFormField(
+                    controller: _nameController,
+                    style: GoogleFonts.outfit(fontSize: 15, color: AppTheme.secondary),
+                    decoration: InputDecoration(
+                      hintText: 'Your Name',
+                      hintStyle: GoogleFonts.outfit(color: AppTheme.textGray),
+                      prefixIcon: const Icon(Icons.person_outline, size: 20, color: AppTheme.textGray),
+                      filled: true,
+                      fillColor: AppTheme.topoLight,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(18),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+                    ),
+                    validator: (val) => ValidationService.validateName(val),
+                  ),
+                  const SizedBox(height: 14),
+
+                  // Age Input
+                  TextFormField(
+                    controller: _ageController,
+                    style: GoogleFonts.outfit(fontSize: 15, color: AppTheme.secondary),
+                    decoration: InputDecoration(
+                      hintText: 'Your Age',
+                      hintStyle: GoogleFonts.outfit(color: AppTheme.textGray),
+                      prefixIcon: const Icon(Icons.cake_outlined, size: 20, color: AppTheme.textGray),
+                      filled: true,
+                      fillColor: AppTheme.topoLight,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(18),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+                    ),
+                    keyboardType: TextInputType.number,
+                    validator: (val) {
+                      final age = int.tryParse(val ?? '');
+                      return ValidationService.validateAge(age);
+                    },
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Let's Go Button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 58,
+                    child: ElevatedButton(
+                      onPressed: _isSaving ? null : _handleSave,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primary,
+                        foregroundColor: AppTheme.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                        elevation: 4,
+                      ),
+                      child: _isSaving
+                          ? const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(Colors.white))
+                          : Text(
+                              'LET\'S GO!',
+                              style: GoogleFonts.outfit(
+                                fontWeight: FontWeight.w900,
+                                fontSize: 16,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCharacterCard({
+    required String gender,
+    required String imagePath,
+    required String label,
+    required Color accentColor,
+  }) {
+    final isSelected = _selectedGender == gender;
+
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            _selectedGender = gender;
+          });
+        },
+        child: AnimatedScale(
+          scale: isSelected ? 1.05 : 0.95,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOutBack,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 250),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isSelected ? accentColor.withOpacity(0.08) : AppTheme.topoLight,
+              borderRadius: BorderRadius.circular(28),
+              border: Border.all(
+                color: isSelected ? accentColor : AppTheme.topoSilver,
+                width: isSelected ? 3.0 : 1.5,
+              ),
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: accentColor.withOpacity(0.2),
+                        blurRadius: 16,
+                        offset: const Offset(0, 8),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Column(
+              children: [
+                // Illustration
+                Container(
+                  height: 100,
+                  child: Image.asset(
+                    imagePath,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                // Label
+                Text(
+                  label,
+                  style: GoogleFonts.outfit(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 16,
+                    color: isSelected ? accentColor : AppTheme.secondary,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
