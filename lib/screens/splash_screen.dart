@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/app_theme.dart';
 import '../services/auth_service.dart';
 import '../providers/enhanced_progress_provider.dart';
@@ -9,6 +9,7 @@ import 'admin_control_screen.dart';
 import 'teacher_dashboard_screen.dart';
 import 'parent_dashboard_screen.dart';
 import 'main_navigation_container.dart';
+import 'login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,6 +20,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  bool _hasSavedProfile = false;
 
   @override
   void initState() {
@@ -38,7 +40,16 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     // Run heavy initialization tasks in parallel with a safety timeout
     debugPrint('SplashScreen: Starting initialization...');
     try {
-      if (!authService.isAuthenticated) {
+      final prefs = await SharedPreferences.getInstance();
+      final savedUsername = prefs.getString('auto_login_username');
+      final savedAge = prefs.getInt('auto_login_age');
+
+      if (savedUsername != null && savedAge != null) {
+        debugPrint('SplashScreen: Auto-logging in with saved username: $savedUsername');
+        _hasSavedProfile = true;
+        final password = savedAge.toString().padLeft(6, '0');
+        await authService.signInWithUsername(savedUsername, password);
+      } else if (!authService.isAuthenticated) {
         debugPrint('SplashScreen: Authenticating anonymously in background...');
         await authService.signInAnonymously();
       }
@@ -70,10 +81,14 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           nextScreen = const ParentDashboardScreen();
           break;
         default:
-          nextScreen = const MainNavigationContainer();
+          if (_hasSavedProfile || (progress.userName != 'Student' && progress.userName.isNotEmpty)) {
+            nextScreen = const MainNavigationContainer();
+          } else {
+            nextScreen = const LoginScreen();
+          }
       }
     } else {
-      nextScreen = const MainNavigationContainer();
+      nextScreen = const LoginScreen();
     }
 
     if (mounted) {
