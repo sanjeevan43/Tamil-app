@@ -47,10 +47,11 @@ class _OnboardingWizardState extends State<OnboardingWizard> {
     }
     if (_currentStep == 3) {
       final age = int.tryParse(_ageController.text.trim());
-      if (age == null || age < 4 || age > 12) {
+      final validationError = ValidationService.validateAge(age);
+      if (validationError != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Please enter a valid age between 4 and 12!', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
+            content: Text(validationError, style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
             backgroundColor: AppTheme.error,
           ),
         );

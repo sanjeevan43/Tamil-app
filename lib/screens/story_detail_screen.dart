@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_theme.dart';
 import '../services/audio_service.dart';
@@ -20,20 +22,110 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
   List<Map<String, dynamic>> get _scenes => 
       (widget.story['scenes'] as List).map((e) => e as Map<String, dynamic>).toList();
 
+  bool _isAutoReading = false;
+  bool _ignoreCompletion = false;
+  Timer? _autoReadTimer;
+
   @override
   void initState() {
     super.initState();
-    // Auto-play first scene audio if desired
-    // _playCurrentSceneAudio();
+    AudioService.setCompletionHandler(() {
+      if (!mounted) return;
+      if (_ignoreCompletion) return;
+
+      if (_isAutoReading) {
+        _advancePage();
+      }
+    });
   }
 
-  void _playCurrentSceneAudio() {
+  @override
+  void dispose() {
+    _autoReadTimer?.cancel();
+    AudioService.setCompletionHandler(() {});
+    AudioService.stop();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _advancePage() {
+    _autoReadTimer?.cancel();
+    if (_currentSceneIndex < _scenes.length - 1) {
+      setState(() {
+        _ignoreCompletion = true;
+      });
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      setState(() {
+        _isAutoReading = false;
+      });
+      AudioService.stop();
+      _showQuizPrompt();
+    }
+  }
+
+  void _startAutoReadTimer(String text) {
+    _autoReadTimer?.cancel();
+    // Estimate reading time: 1 character takes ~0.15 seconds at 0.4 speech rate.
+    // Clamped between 5 and 25 seconds.
+    final durationSeconds = (text.length * 0.15).clamp(5.0, 25.0).toInt();
+    
+    _autoReadTimer = Timer(Duration(seconds: durationSeconds), () {
+      if (!mounted) return;
+      if (_isAutoReading) {
+        _advancePage();
+      }
+    });
+  }
+
+  void _playCurrentSceneAudio() async {
+    _autoReadTimer?.cancel();
     final text = _scenes[_currentSceneIndex]['content'] as String;
-    AudioService.playWord(text); // Using playWord for TTS
+    
+    setState(() {
+      _ignoreCompletion = true;
+    });
+    
+    await AudioService.playWord(text);
+    
+    _startAutoReadTimer(text);
+    
+    // Allow any stop completion events to fire and clear
+    await Future.delayed(const Duration(milliseconds: 150));
+    if (mounted) {
+      setState(() {
+        _ignoreCompletion = false;
+      });
+    }
+  }
+
+  void _toggleAutoRead() {
+    if (_isAutoReading) {
+      _autoReadTimer?.cancel();
+      setState(() {
+        _ignoreCompletion = true;
+        _isAutoReading = false;
+      });
+      AudioService.stop();
+    } else {
+      setState(() {
+        _ignoreCompletion = false;
+        _isAutoReading = true;
+      });
+      _playCurrentSceneAudio();
+    }
   }
 
   void _nextScene() {
+    _autoReadTimer?.cancel();
     if (_currentSceneIndex < _scenes.length - 1) {
+      setState(() {
+        _ignoreCompletion = true;
+        _isAutoReading = false;
+      });
       _pageController.nextPage(
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeInOut,
@@ -45,7 +137,12 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
   }
 
   void _previousScene() {
+    _autoReadTimer?.cancel();
     if (_currentSceneIndex > 0) {
+      setState(() {
+        _ignoreCompletion = true;
+        _isAutoReading = false;
+      });
       _pageController.previousPage(
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeInOut,
@@ -110,9 +207,26 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
               controller: _pageController,
               itemCount: _scenes.length,
               onPageChanged: (index) {
-                setState(() => _currentSceneIndex = index);
-                // Optional: Auto-play audio on slide change
-                // _playCurrentSceneAudio(); 
+                // Check if user drag caused this page change
+                bool isUserGesture = false;
+                if (_pageController.hasClients) {
+                  isUserGesture = _pageController.position.userScrollDirection != ScrollDirection.idle;
+                }
+
+                setState(() {
+                  _currentSceneIndex = index;
+                  if (isUserGesture) {
+                    _autoReadTimer?.cancel();
+                    _ignoreCompletion = true;
+                    _isAutoReading = false;
+                  }
+                });
+
+                if (_isAutoReading) {
+                  _playCurrentSceneAudio();
+                } else {
+                  AudioService.stop();
+                }
               },
               itemBuilder: (context, index) {
                 final scene = _scenes[index];
@@ -147,10 +261,12 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: ElevatedButton.icon(
-                      onPressed: _playCurrentSceneAudio,
-                      icon: const Icon(Icons.volume_up),
-                      label: const Text('Read for Me'),
+                      onPressed: _toggleAutoRead,
+                      icon: Icon(_isAutoReading ? Icons.stop : Icons.volume_up),
+                      label: Text(_isAutoReading ? 'Stop Reading' : 'Read for Me'),
                       style: ElevatedButton.styleFrom(
+                        backgroundColor: _isAutoReading ? AppTheme.error : AppTheme.secondary,
+                        foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),

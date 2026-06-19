@@ -12,12 +12,27 @@ class AudioService {
     'ஃ': 'அக்',
   };
 
+  static VoidCallback? _onStart;
+  static VoidCallback? _onCompletion;
+
   static Future<void> initialize() async {
     try {
       await _flutterTts.setLanguage('ta-IN');
       await _flutterTts.setSpeechRate(0.4);
       await _flutterTts.setVolume(1.0);
       await _flutterTts.setPitch(1.0);
+      
+      _flutterTts.setStartHandler(() {
+        if (_onStart != null) {
+          _onStart!();
+        }
+      });
+      
+      _flutterTts.setCompletionHandler(() {
+        if (_onCompletion != null) {
+          _onCompletion!();
+        }
+      });
       
       // Attempt to set a more natural voice if available
       var voices = await _flutterTts.getVoices;
@@ -75,5 +90,12 @@ class AudioService {
     await _flutterTts.setPitch(pitch);
   }
 
+  static void setStartHandler(VoidCallback callback) {
+    _onStart = callback;
+  }
+
+  static void setCompletionHandler(VoidCallback callback) {
+    _onCompletion = callback;
+  }
 }
 

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -35,13 +36,66 @@ class _HomeScreenState extends State<HomeScreen> {
   Thirukkural? _dailyKural;
   bool _isLoadingKural = true;
   TamilProverb? _dailyProverb;
-  bool _showAllQuickActions = false;
+  int _selectedWisdomTab = 0; // 0 for Thirukkural, 1 for Proverb
+  final ScrollController _quickActionsScrollController = ScrollController();
+  final ScrollController _homeScrollController = ScrollController();
+  Timer? _carouselTimer;
+  bool _showWisdomCard = true;
 
   @override
   void initState() {
     super.initState();
     _fetchKural();
     _fetchProverb();
+    _homeScrollController.addListener(_onHomeScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _startCarouselTimer();
+    });
+  }
+
+  void _onHomeScroll() {
+    if (!mounted) return;
+    if (_homeScrollController.offset > 180.0 && _showWisdomCard) {
+      setState(() {
+        _showWisdomCard = false;
+      });
+    } else if (_homeScrollController.offset <= 180.0 && !_showWisdomCard) {
+      setState(() {
+        _showWisdomCard = true;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _carouselTimer?.cancel();
+    _quickActionsScrollController.dispose();
+    _homeScrollController.removeListener(_onHomeScroll);
+    _homeScrollController.dispose();
+    super.dispose();
+  }
+
+  void _startCarouselTimer() {
+    _carouselTimer?.cancel();
+    _carouselTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (!mounted) return;
+      if (!_quickActionsScrollController.hasClients) return;
+
+      final maxScroll = _quickActionsScrollController.position.maxScrollExtent;
+      final currentScroll = _quickActionsScrollController.offset;
+      
+      // Card width (140) + margin (12) = 152
+      double nextScroll = currentScroll + 152.0;
+      if (nextScroll > maxScroll + 10.0) {
+        nextScroll = 0.0; // Wrap around to the start
+      }
+
+      _quickActionsScrollController.animateTo(
+        nextScroll,
+        duration: const Duration(milliseconds: 800),
+        curve: Curves.easeInOutCubic,
+      );
+    });
   }
 
   Future<void> _fetchProverb() async {
@@ -104,35 +158,29 @@ class _HomeScreenState extends State<HomeScreen> {
           
           SafeArea(
             child: SingleChildScrollView(
+              controller: _homeScrollController,
               physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(24, 20, 24, 110),
+              padding: const EdgeInsets.fromLTRB(24, 20, 24, 120),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Section 1: Greeting & Stats Row
                   _buildGreetingAndStats(progress),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 24),
                   
-                  // Section 2: Daily Mission Card
-                  _buildDailyMissions(progress),
-                  const SizedBox(height: 28),
-                  
-                  // Section 3: Daily Thirukkural (Glass Card + Audio)
-                  _buildDailyKuralSection(),
-                  const SizedBox(height: 28),
-                  
-                  // Proverb Section
-                  if (_dailyProverb != null) ...[
-                    _buildDailyProverbSection(),
-                    const SizedBox(height: 28),
-                  ],
-                  
-                  // Section 4: Quick Learning Grid (with View All)
-                  _buildQuickLearningGrid(context, adaptiveAge),
-                  const SizedBox(height: 28),
-                  
-                  // Section 5: Continue Learning (Recently played)
+                  // Section 2: Continue Learning Banner (Primary CTA)
                   _buildContinueLearning(context, progress),
+                  const SizedBox(height: 24),
+
+                  // Section 3: Daily Wisdom Tabbed Section (Thirukkural/Proverb)
+                  _buildWisdomSection(),
+                  
+                  // Section 4: Quick Learning Tools (Horizontal Scroll)
+                  _buildQuickLearningTools(context, adaptiveAge),
+                  const SizedBox(height: 24),
+                  
+                  // Section 5: Daily Mission Card
+                  _buildDailyMissions(progress),
                 ],
               ),
             ),
@@ -149,49 +197,72 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Vanakkam,',
-                  style: GoogleFonts.outfit(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: AppTheme.textSlate,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'VANAKKAM,',
+                    style: GoogleFonts.outfit(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w900,
+                      color: AppTheme.primary,
+                      letterSpacing: 1.5,
+                    ),
                   ),
-                ),
-                Text(
-                  '${progress.userName} 👋',
-                  style: GoogleFonts.outfit(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w900,
-                    color: AppTheme.textDark,
+                  const SizedBox(height: 2),
+                  Text(
+                    progress.userName,
+                    style: GoogleFonts.outfit(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w900,
+                      color: AppTheme.textDark,
+                    ),
                   ),
-                ),
-              ],
+                  Text(
+                    'Level ${progress.level} Scholar',
+                    style: GoogleFonts.outfit(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.textGray,
+                    ),
+                  ),
+                ],
+              ),
             ),
             GestureDetector(
               onTap: () {
                 AudioFeedbackService.playTap();
                 Navigator.push(context, FadeInSlidePageRoute(page: const ProfileScreen()));
               },
-              child: CircleAvatar(
-                radius: 28,
-                backgroundColor: AppTheme.primary.withOpacity(0.1),
-                child: Text(progress.avatar, style: const TextStyle(fontSize: 28)),
+              child: Hero(
+                tag: 'profile_avatar',
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppTheme.primary.withOpacity(0.2), width: 2),
+                  ),
+                  child: CircleAvatar(
+                    radius: 28,
+                    backgroundColor: AppTheme.primary.withOpacity(0.08),
+                    child: Text(progress.avatar, style: const TextStyle(fontSize: 28)),
+                  ),
+                ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 18),
         
-        // Stats Badges
+        // Stats Row (Compact cards)
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildStatBadge('🔥', '${progress.streakDays} Days', 'Streak', AppTheme.primary),
-            _buildStatBadge('⭐', '${progress.totalStars} Stars', 'Stars', AppTheme.accent),
-            _buildStatBadge('💎', '${progress.totalCoins} Coins', 'Coins', AppTheme.secondary),
+            Expanded(child: _buildStatBadge('🔥', '${progress.streakDays} days', 'Streak', AppTheme.primary)),
+            const SizedBox(width: 8),
+            Expanded(child: _buildStatBadge('⭐', '${progress.totalStars} stars', 'Stars', AppTheme.accent)),
+            const SizedBox(width: 8),
+            Expanded(child: _buildStatBadge('💎', '${progress.totalCoins} coins', 'Coins', AppTheme.secondary)),
           ],
         ),
       ],
@@ -200,22 +271,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildStatBadge(String emoji, String val, String label, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withOpacity(0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.2), width: 1.5),
+        border: Border.all(color: color.withOpacity(0.15), width: 1.2),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 16)),
-          const SizedBox(width: 8),
-          Text(
-            val,
-            style: GoogleFonts.outfit(
-              fontSize: 14,
-              fontWeight: FontWeight.w900,
-              color: AppTheme.textDark,
+          Text(emoji, style: const TextStyle(fontSize: 14)),
+          const SizedBox(width: 6),
+          Flexible(
+            child: Text(
+              val,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.outfit(
+                fontSize: 13,
+                fontWeight: FontWeight.w900,
+                color: AppTheme.textDark,
+              ),
             ),
           ),
         ],
@@ -227,7 +302,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: AppTheme.whiteCard(radius: 28).copyWith(
-        border: Border.all(color: AppTheme.primary.withOpacity(0.15), width: 1.5),
+        border: Border.all(color: AppTheme.primary.withOpacity(0.1), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,7 +314,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Text(
                 'TODAY\'S ADVENTURE',
                 style: GoogleFonts.outfit(
-                  fontSize: 15,
+                  fontSize: 14,
                   fontWeight: FontWeight.w900,
                   color: AppTheme.primary,
                   letterSpacing: 0.5,
@@ -297,112 +372,288 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildDailyKuralSection() {
+  Widget _buildWisdomSection() {
     if (_isLoadingKural) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    if (_dailyKural == null) {
-      return const SizedBox.shrink();
+      return AnimatedSize(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 300),
+          opacity: _showWisdomCard ? 1.0 : 0.0,
+          child: _showWisdomCard
+              ? Container(
+                  height: 180,
+                  margin: const EdgeInsets.only(bottom: 24),
+                  decoration: AppTheme.whiteCard(radius: 28),
+                  child: const Center(child: CircularProgressIndicator()),
+                )
+              : const SizedBox(width: double.infinity, height: 0),
+        ),
+      );
     }
 
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: AppTheme.glassCard(opacity: 0.9, radius: 28).copyWith(
-        border: Border.all(color: AppTheme.secondary.withOpacity(0.2), width: 1.5),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  const Text('📜', style: TextStyle(fontSize: 20)),
-                  const SizedBox(width: 8),
-                  Text(
-                    'DAILY THIRUKKURAL',
-                    style: GoogleFonts.outfit(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w900,
-                      color: AppTheme.secondary,
-                      letterSpacing: 0.5,
-                    ),
+    final hasKural = _dailyKural != null;
+    final hasProverb = _dailyProverb != null;
+
+    if (!hasKural && !hasProverb) return const SizedBox.shrink();
+
+    // Default to whichever is available, or use the selected index
+    int activeTab = _selectedWisdomTab;
+    if (!hasKural) activeTab = 1;
+    if (!hasProverb) activeTab = 0;
+
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 300),
+        opacity: _showWisdomCard ? 1.0 : 0.0,
+        child: _showWisdomCard
+            ? Padding(
+                padding: const EdgeInsets.only(bottom: 24.0),
+                child: Container(
+                  key: const ValueKey('wisdom_card_visible'),
+                  decoration: AppTheme.whiteCard(radius: 28).copyWith(
+                    border: Border.all(color: AppTheme.primary.withOpacity(0.1), width: 1.5),
                   ),
-                ],
-              ),
-              IconButton(
-                icon: const Icon(Icons.volume_up_rounded, color: AppTheme.secondary, size: 24),
-                onPressed: _speakKural,
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Text(
-            _dailyKural!.line1,
-            style: GoogleFonts.notoSansTamil(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: AppTheme.textDark,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            _dailyKural!.line2,
-            style: GoogleFonts.notoSansTamil(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: AppTheme.textDark,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            _dailyKural!.explanation,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.notoSansTamil(
-              fontSize: 13,
-              color: AppTheme.textSlate,
-              height: 1.5,
-            ),
-          ),
-        ],
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Tab bar switcher
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                        child: Row(
+                          children: [
+                            if (hasKural)
+                              GestureDetector(
+                                onTap: () {
+                                  AudioFeedbackService.playPop();
+                                  setState(() {
+                                    _selectedWisdomTab = 0;
+                                  });
+                                },
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: activeTab == 0 ? AppTheme.primary.withOpacity(0.1) : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      const Text('📜 ', style: TextStyle(fontSize: 14)),
+                                      Text(
+                                        'THIRUKKURAL',
+                                        style: GoogleFonts.outfit(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w900,
+                                          color: activeTab == 0 ? AppTheme.primary : AppTheme.textSlate,
+                                          letterSpacing: 0.5,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            if (hasKural && hasProverb) const SizedBox(width: 8),
+                            if (hasProverb)
+                              GestureDetector(
+                                onTap: () {
+                                  AudioFeedbackService.playPop();
+                                  setState(() {
+                                    _selectedWisdomTab = 1;
+                                  });
+                                },
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: activeTab == 1 ? AppTheme.primary.withOpacity(0.1) : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      const Text('💡 ', style: TextStyle(fontSize: 14)),
+                                      Text(
+                                        'PROVERB',
+                                        style: GoogleFonts.outfit(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w900,
+                                          color: activeTab == 1 ? AppTheme.primary : AppTheme.textSlate,
+                                          letterSpacing: 0.5,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            const Spacer(),
+                            if (activeTab == 0)
+                              IconButton(
+                                icon: const Icon(Icons.volume_up_rounded, color: AppTheme.primary, size: 20),
+                                onPressed: _speakKural,
+                                constraints: const BoxConstraints(),
+                                padding: EdgeInsets.zero,
+                              ),
+                          ],
+                        ),
+                      ),
+                      
+                      const Divider(color: AppTheme.borderLight, height: 1),
+
+                      // Content body
+                      Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 250),
+                          child: activeTab == 0
+                              ? Column(
+                                  key: const ValueKey('kural_content'),
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      _dailyKural!.line1,
+                                      style: GoogleFonts.notoSansTamil(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppTheme.textDark,
+                                        height: 1.4,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      _dailyKural!.line2,
+                                      style: GoogleFonts.notoSansTamil(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppTheme.textDark,
+                                        height: 1.4,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      _dailyKural!.explanation,
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.notoSansTamil(
+                                        fontSize: 12,
+                                        color: AppTheme.textSlate,
+                                        height: 1.5,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Column(
+                                  key: const ValueKey('proverb_content'),
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      _dailyProverb!.proverb,
+                                      style: GoogleFonts.notoSansTamil(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppTheme.textDark,
+                                        height: 1.4,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      _dailyProverb!.meaning,
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 13,
+                                        color: AppTheme.textSlate,
+                                        height: 1.5,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : const SizedBox(width: double.infinity, height: 0),
       ),
     );
   }
 
-  Widget _buildDailyProverbSection() {
+  Widget _buildContinueLearning(BuildContext context, EnhancedProgressProvider progress) {
     return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: AppTheme.whiteCard(radius: 28).copyWith(
-        border: Border.all(color: AppTheme.accent.withOpacity(0.3), width: 1.5),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [AppTheme.secondary, Color(0xFF00A2E2)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.secondary.withOpacity(0.2),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
-      child: Row(
+      child: Stack(
         children: [
-          const Text('💡', style: TextStyle(fontSize: 24)),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          // Decorative background pattern
+          Positioned(
+            right: -20,
+            top: -20,
+            child: Opacity(
+              opacity: 0.1,
+              child: Icon(Icons.school, size: 120, color: Colors.white),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
               children: [
-                Text(
-                  'DAILY PROVERB',
-                  style: GoogleFonts.outfit(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w900,
-                    color: AppTheme.primary,
-                    letterSpacing: 0.5,
+                CircleAvatar(
+                  radius: 24,
+                  backgroundColor: Colors.white.withOpacity(0.2),
+                  child: const Text('🎓', style: TextStyle(fontSize: 24)),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Tamil Letters Path',
+                        style: GoogleFonts.outfit(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        'Level ${progress.level} | Resume where you left off',
+                        style: GoogleFonts.outfit(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white.withOpacity(0.9),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  _dailyProverb!.proverb,
-                  style: GoogleFonts.notoSansTamil(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.textDark,
+                ElevatedButton(
+                  onPressed: () {
+                    AudioFeedbackService.playTap();
+                    Navigator.push(context, FadeInSlidePageRoute(page: const TamilLettersScreen()));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: AppTheme.secondary,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
+                  child: Text(
+                    'RESUME',
+                    style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 13, color: AppTheme.secondary),
                   ),
                 ),
               ],
@@ -413,73 +664,53 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildQuickLearningGrid(BuildContext context, int adaptiveAge) {
-    final actions = [
-      _quickActionItem('Dictionary', 'New words', Icons.menu_book_rounded, Colors.green,
+  Widget _buildQuickLearningTools(BuildContext context, int adaptiveAge) {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final isAdmin = authService.userRole == 'admin';
+
+    final items = [
+      _quickActionItem('Dictionary', 'Explore words', Icons.menu_book_rounded, Colors.green,
           () => Navigator.push(context, FadeInSlidePageRoute(page: LinguisticScannerScreen(childAge: adaptiveAge)))),
-      _quickActionItem('Learn English', 'Duolingo style', Icons.language_rounded, Colors.blue,
+      _quickActionItem('Stories', 'Read moral tales', Icons.auto_stories_rounded, Colors.pink,
+          () => Navigator.push(context, FadeInSlidePageRoute(page: const StoriesScreen()))),
+      _quickActionItem('Lessons', 'Step-by-step', Icons.language_rounded, Colors.blue,
           () => Navigator.push(context, FadeInSlidePageRoute(page: const LessonScreen(lessonId: 'animals_1')))),
-      _quickActionItem('Q&A Forum', 'Ask others', Icons.forum_rounded, Colors.purple,
+      _quickActionItem('Q&A Forum', 'Ask community', Icons.forum_rounded, Colors.purple,
           () => Navigator.push(context, FadeInSlidePageRoute(page: const CommunityForumScreen()))),
       _quickActionItem('Classrooms', 'Learn together', Icons.school_rounded, Colors.orange,
           () => Navigator.push(context, FadeInSlidePageRoute(page: const ClassroomConnectScreen()))),
-      if (_showAllQuickActions) ...[
-        _quickActionItem('Pronounce', 'Mic check', Icons.mic_rounded, Colors.teal,
-            () => Navigator.push(context, FadeInSlidePageRoute(page: const PronunciationPracticeGame()))),
-        _quickActionItem('Daily Word', 'Power word', Icons.wb_sunny_rounded, Colors.indigo,
-            () => Navigator.push(context, FadeInSlidePageRoute(page: RiddleAcademyScreen(childAge: adaptiveAge)))),
-        if (Provider.of<AuthService>(context, listen: false).userRole == 'admin')
-          _quickActionItem('Admin Panel', 'Manage app', Icons.admin_panel_settings_rounded, Colors.red,
-              () => Navigator.push(context, FadeInSlidePageRoute(page: const AdminControlScreen()))),
-      ],
+      _quickActionItem('Pronounce', 'Mic practice', Icons.mic_rounded, Colors.teal,
+          () => Navigator.push(context, FadeInSlidePageRoute(page: const PronunciationPracticeGame()))),
+      _quickActionItem('Riddle Hub', 'Solve puzzles', Icons.wb_sunny_rounded, Colors.indigo,
+          () => Navigator.push(context, FadeInSlidePageRoute(page: RiddleAcademyScreen(childAge: adaptiveAge)))),
+      if (isAdmin)
+        _quickActionItem('Admin Panel', 'Manage app', Icons.admin_panel_settings_rounded, Colors.red,
+            () => Navigator.push(context, FadeInSlidePageRoute(page: const AdminControlScreen()))),
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'QUICK LEARNING',
+          'QUICK LEARNING TOOLS',
           style: GoogleFonts.outfit(
-            fontSize: 14,
+            fontSize: 12,
             fontWeight: FontWeight.w900,
             color: AppTheme.textSlate,
-            letterSpacing: 1.0,
+            letterSpacing: 1.2,
           ),
         ),
-        const SizedBox(height: 14),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 14,
-            mainAxisSpacing: 14,
-            childAspectRatio: 1.25,
-          ),
-          itemCount: actions.length,
-          itemBuilder: (context, index) => actions[index],
-        ),
-        const SizedBox(height: 14),
-        Center(
-          child: TextButton.icon(
-            onPressed: () {
-              AudioFeedbackService.playTap();
-              setState(() {
-                _showAllQuickActions = !_showAllQuickActions;
-              });
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 136,
+          child: ListView.builder(
+            controller: _quickActionsScrollController,
+            scrollDirection: Axis.horizontal,
+            itemCount: items.length,
+            physics: const BouncingScrollPhysics(),
+            itemBuilder: (context, index) {
+              return items[index];
             },
-            icon: Icon(
-              _showAllQuickActions ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
-              color: AppTheme.primary,
-            ),
-            label: Text(
-              _showAllQuickActions ? 'VIEW LESS' : 'VIEW ALL',
-              style: GoogleFonts.outfit(
-                fontWeight: FontWeight.w900,
-                color: AppTheme.primary,
-                letterSpacing: 0.5,
-              ),
-            ),
           ),
         ),
       ],
@@ -488,6 +719,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _quickActionItem(String title, String desc, IconData icon, Color color, VoidCallback onTap) {
     return Container(
+      width: 140,
+      margin: const EdgeInsets.only(right: 12),
       decoration: AppTheme.whiteCard(radius: 20).copyWith(
         border: Border.all(color: color.withOpacity(0.15), width: 1.5),
       ),
@@ -506,24 +739,29 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
                     color: color.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(icon, color: color, size: 22),
+                  child: Icon(icon, color: color, size: 20),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 10),
                 Text(
                   title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.outfit(
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                    fontSize: 13,
                     color: AppTheme.textDark,
                   ),
                 ),
+                const SizedBox(height: 2),
                 Text(
                   desc,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.outfit(
                     fontSize: 10,
                     color: AppTheme.textGray,
@@ -534,79 +772,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildContinueLearning(BuildContext context, EnhancedProgressProvider progress) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'CONTINUE LEARNING',
-          style: GoogleFonts.outfit(
-            fontSize: 14,
-            fontWeight: FontWeight.w900,
-            color: AppTheme.textSlate,
-            letterSpacing: 1.0,
-          ),
-        ),
-        const SizedBox(height: 14),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(20),
-          decoration: AppTheme.whiteCard(radius: 24),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppTheme.accent.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Text('🎓', style: TextStyle(fontSize: 24)),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Tamil Letters Path',
-                      style: GoogleFonts.outfit(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 16,
-                        color: AppTheme.textDark,
-                      ),
-                    ),
-                    Text(
-                      'Level ${progress.level} | Continue where you left off',
-                      style: GoogleFonts.outfit(
-                        fontSize: 12,
-                        color: AppTheme.textGray,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  AudioFeedbackService.playTap();
-                  Navigator.push(context, FadeInSlidePageRoute(page: const TamilLettersScreen()));
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primary,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                child: Text(
-                  'RESUME',
-                  style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 13),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

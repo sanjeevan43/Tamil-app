@@ -153,7 +153,8 @@ class _VowelsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     const letters = TamilData.uyirEzhuthukkal;
     return GridView.builder(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 100),
+      physics: const AlwaysScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         crossAxisSpacing: 14,
@@ -183,7 +184,8 @@ class _ConsonantsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     const letters = TamilData.meiEzhuthukkal;
     return GridView.builder(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 100),
+      physics: const AlwaysScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         crossAxisSpacing: 14,
@@ -210,7 +212,8 @@ class _CombinedList extends StatelessWidget {
     const combinations = TamilData.uyirMeiEzhuthukkal;
 
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 100),
+      physics: const AlwaysScrollableScrollPhysics(),
       itemCount: baseCon.length,
       itemBuilder: (context, i) {
         return Card(
@@ -267,12 +270,14 @@ class _SpecialGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const letters = TamilData.aayudhaEzhuthu;
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.only(left: 24, right: 24, top: 24, bottom: 100),
+      child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const SizedBox(height: 40),
             SizedBox(
               height: 160,
               width: 160,
