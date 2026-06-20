@@ -54,16 +54,11 @@ class GamesHubScreen extends StatefulWidget {
 class _GamesHubScreenState extends State<GamesHubScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  int _selectedTab = 0;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _tabController.addListener(() {
-      if (_tabController.indexIsChanging) return;
-      setState(() => _selectedTab = _tabController.index);
-    });
   }
 
   @override
@@ -650,10 +645,10 @@ class _GamesHubScreenState extends State<GamesHubScreen>
         decoration: BoxDecoration(
           color: AppTheme.white,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: color.withOpacity(0.12), width: 1.5),
+          border: Border.all(color: color.withValues(alpha: 0.12), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.08),
+              color: color.withValues(alpha: 0.05),
               blurRadius: 16,
               offset: const Offset(0, 8),
             ),
@@ -671,7 +666,7 @@ class _GamesHubScreenState extends State<GamesHubScreen>
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppTheme.primary.withOpacity(0.08),
+                      color: AppTheme.primary.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -683,7 +678,7 @@ class _GamesHubScreenState extends State<GamesHubScreen>
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                       decoration: BoxDecoration(
-                        color: AppTheme.secondary.withOpacity(0.15),
+                        color: AppTheme.secondary.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text('NEW',
@@ -709,7 +704,11 @@ class _GamesHubScreenState extends State<GamesHubScreen>
                   width: 72,
                   height: 72,
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.08),
+                    gradient: LinearGradient(
+                      colors: [color.withValues(alpha: 0.12), color.withValues(alpha: 0.04)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -747,17 +746,17 @@ class _GamesHubScreenState extends State<GamesHubScreen>
               // Play Button
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 9),
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [color, color.withOpacity(0.8)],
+                    colors: [color, color.withValues(alpha: 0.85)],
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                   ),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: color.withOpacity(0.3),
+                      color: color.withValues(alpha: 0.25),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -806,12 +805,13 @@ class _CategoryTabDelegate extends SliverPersistentHeaderDelegate {
         height: 56,
         decoration: BoxDecoration(
           color: AppTheme.topoLight,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: AppTheme.topoSilver),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppTheme.topoSilver.withValues(alpha: 0.5)),
         ),
         child: TabBar(
           controller: tabController,
           indicatorSize: TabBarIndicatorSize.tab,
+          indicatorPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
           indicator: BoxDecoration(
             gradient: LinearGradient(
               colors: [
@@ -819,10 +819,10 @@ class _CategoryTabDelegate extends SliverPersistentHeaderDelegate {
                 categories[tabController.index].gradientColors[1],
               ],
             ),
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: categories[tabController.index].gradientColors[0].withOpacity(0.3),
+                color: categories[tabController.index].gradientColors[0].withValues(alpha: 0.3),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),
