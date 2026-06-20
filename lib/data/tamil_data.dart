@@ -113,15 +113,7 @@ class TamilData {
     ],
   };
 
-  static const List<Map<String, dynamic>> lessons = [
-    {'id': 1, 'title': 'உயிர் எழுத்துக்கள்', 'english': 'Vowel Letters', 'level': 'Beginner', 'locked': false},
-    {'id': 2, 'title': 'மெய் எழுத்துக்கள்', 'english': 'Consonant Letters', 'level': 'Beginner', 'locked': false},
-    {'id': 3, 'title': 'விலங்குகள்', 'english': 'Animals', 'level': 'Beginner', 'locked': false},
-    {'id': 4, 'title': 'பழங்கள்', 'english': 'Fruits', 'level': 'Intermediate', 'locked': true},
-    {'id': 5, 'title': 'நிறங்கள்', 'english': 'Colors', 'level': 'Intermediate', 'locked': true},
-    {'id': 6, 'title': 'எண்கள்', 'english': 'Numbers', 'level': 'Intermediate', 'locked': true},
-    {'id': 7, 'title': 'வாக்கியங்கள்', 'english': 'Sentences', 'level': 'Advanced', 'locked': true},
-  ];
+
 
   static const List<Map<String, dynamic>> games = [
     {'id': 1, 'name': 'Letter Hunt', 'tamilName': 'எழுத்து வேட்டை', 'icon': '🎯', 'description': 'Find the correct letter'},

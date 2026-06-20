@@ -110,19 +110,28 @@ class _AdminControlScreenState extends State<AdminControlScreen> with SingleTick
     );
 
     try {
+      final pool = TamilData.lessonQuestions;
+      final Set<String> categories = pool.map((q) => (q['category'] ?? 'General') as String).toSet();
+      
       final batch = FirebaseFirestore.instance.batch();
-      for (final topic in TamilData.lessons) {
-        final docId = topic['id'].toString();
+      int index = 1;
+      for (final category in categories) {
+        final docId = category.toLowerCase();
         final docRef = FirebaseFirestore.instance.collection('topics').doc(docId);
         batch.set(docRef, {
-          ...topic,
+          'id': index,
+          'title': category,
+          'english': category,
+          'level': index <= 2 ? 'Beginner' : (index <= 4 ? 'Intermediate' : 'Advanced'),
+          'locked': false,
           'createdAt': FieldValue.serverTimestamp(),
         });
+        index++;
       }
       await batch.commit();
       if (mounted) {
         Navigator.pop(context); // Dismiss loading
-        _showSnackBar('Successfully seeded Learning Topics!', AppTheme.success);
+        _showSnackBar('Successfully seeded Word Quest Categories!', AppTheme.success);
       }
     } catch (e) {
       if (mounted) {
