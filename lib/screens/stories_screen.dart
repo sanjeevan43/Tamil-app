@@ -85,7 +85,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
           SliverPadding(
             padding: const EdgeInsets.only(top: 20, bottom: 120),
             sliver: SliverList(
-              delegate: SliverChildListExpandedDelegate([
+              delegate: SliverChildListDelegate([
                 // Category 1: Continue Reading
                 _buildNetflixSection(
                   title: 'CONTINUE READING',
@@ -280,24 +280,5 @@ class _StoriesScreenState extends State<StoriesScreen> {
         ),
       ),
     );
-  }
-}
-
-class SliverChildListExpandedDelegate extends SliverChildDelegate {
-  final List<Widget> children;
-  SliverChildListExpandedDelegate(this.children);
-
-  @override
-  Widget? build(BuildContext context, int index) {
-    if (index < 0 || index >= children.length) return null;
-    return children[index];
-  }
-
-  @override
-  int get estimateChildCount => children.length;
-
-  @override
-  bool shouldRebuild(covariant SliverChildListExpandedDelegate oldDelegate) {
-    return oldDelegate.children != children;
   }
 }

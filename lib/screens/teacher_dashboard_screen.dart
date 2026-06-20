@@ -5,7 +5,6 @@ import '../constants/app_theme.dart';
 import '../providers/enhanced_progress_provider.dart';
 import '../services/firestore_service.dart';
 import 'teaching_guide_screen.dart';
-import 'classroom_connect_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TeacherDashboardScreen extends StatelessWidget {
@@ -71,8 +70,6 @@ class TeacherDashboardScreen extends StatelessWidget {
               _buildLessonControl(context, progress),
               const SizedBox(height: 24),
               _buildHomework(context),
-              const SizedBox(height: 24),
-              _buildClassroomHub(context),
               const SizedBox(height: 24),
               _buildReports(context),
               const SizedBox(height: 24),
@@ -394,35 +391,6 @@ class TeacherDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildClassroomHub(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: AppTheme.glassCard(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'வகுப்பறை மையம் (Classroom Hub)',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.info),
-          ),
-          const SizedBox(height: 8),
-          const Text('கேள்விகளுக்கு பதிலளிக்கவும் மற்றும் வினாடி வினாக்களை அனுப்பவும்.', style: TextStyle(fontSize: 13)),
-          const SizedBox(height: 16),
-          ElevatedButton.icon(
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ClassroomConnectScreen())),
-            icon: const Icon(Icons.forum_rounded),
-            label: const Text('மையத்திற்குச் செல்லவும் (Go to Hub)'),
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 50),
-              backgroundColor: AppTheme.info,
-              foregroundColor: AppTheme.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildReports(BuildContext context) {
     return Container(

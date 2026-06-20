@@ -126,14 +126,7 @@ class ProfileScreen extends StatelessWidget {
               color: AppTheme.textDark,
             ),
           ),
-          const SizedBox(height: 4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(5, (index) {
-              return const Icon(Icons.star_rounded, color: AppTheme.accent, size: 18);
-            }),
-          ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
             decoration: BoxDecoration(
@@ -255,12 +248,11 @@ class ProfileScreen extends StatelessWidget {
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 3,
+      crossAxisCount: 2,
       crossAxisSpacing: 12,
       mainAxisSpacing: 12,
-      childAspectRatio: 0.9,
+      childAspectRatio: 1.3,
       children: [
-        _buildStatCard('🎯', '${progress.totalStars}', 'STARS'),
         _buildStatCard('🔥', '${progress.streakDays}', 'STREAK'),
         _buildStatCard('💎', '${progress.totalCoins}', 'COINS'),
       ],

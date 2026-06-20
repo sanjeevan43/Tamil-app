@@ -201,8 +201,6 @@ class ParentDashboardScreen extends StatelessWidget {
               children: [
                 _buildStatItem('Level', '${progress.level}'),
                 Container(width: 1, height: 24, color: AppTheme.white.withOpacity(0.3)),
-                _buildStatItem('Stars', '${progress.totalStars}'),
-                Container(width: 1, height: 24, color: AppTheme.white.withOpacity(0.3)),
                 _buildStatItem('Learned', '${progress.totalLettersLearned}'),
               ],
             ),
@@ -337,8 +335,7 @@ class ParentDashboardScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Total Stars: ${progress.totalStars}', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w700, color: AppTheme.primary)),
-              Text('Letters: ${progress.totalLettersLearned}', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w700, color: AppTheme.textGray)),
+              Text('Letters Learned: ${progress.totalLettersLearned}', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w700, color: AppTheme.primary)),
             ],
           ),
         ],

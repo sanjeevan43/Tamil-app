@@ -6,7 +6,6 @@ import '../constants/app_theme.dart';
 import '../services/auth_service.dart';
 import '../providers/enhanced_progress_provider.dart';
 import 'package:provider/provider.dart';
-import 'admin_classrooms_tab.dart';
 import '../data/moral_stories_data.dart';
 import '../data/tamil_data.dart';
 import 'splash_screen.dart';
@@ -30,7 +29,7 @@ class _AdminControlScreenState extends State<AdminControlScreen> with SingleTick
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -208,9 +207,7 @@ class _AdminControlScreenState extends State<AdminControlScreen> with SingleTick
           indicatorColor: AppTheme.white,
           isScrollable: true,
           tabs: const [
-
             Tab(icon: Icon(Icons.topic_outlined), text: 'Topics'),
-            Tab(icon: Icon(Icons.school_outlined), text: 'Classrooms'),
             Tab(icon: Icon(Icons.people_outline), text: 'Users'),
           ],
         ),
@@ -218,9 +215,7 @@ class _AdminControlScreenState extends State<AdminControlScreen> with SingleTick
       body: TabBarView(
         controller: _tabController,
         children: [
-
           _buildTopicsTab(),
-          const AdminClassroomsTab(),
           _buildUsersTab(),
         ],
       ),

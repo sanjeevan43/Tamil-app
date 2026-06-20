@@ -11,15 +11,12 @@ import '../services/thirukkural_service.dart';
 import '../services/proverb_service.dart';
 import '../widgets/premium_animations.dart';
 
-// Screens to navigate
 import 'games_hub_screen.dart';
 import 'tamil_letters_screen.dart';
 import 'stories_screen.dart';
 import 'profile_screen.dart';
-import 'classroom_connect_screen.dart';
 import 'pronunciation_practice_game.dart';
 import 'admin_control_screen.dart';
-import 'community_forum_screen.dart';
 import 'lesson_screen.dart';
 import 'riddle_academy_screen.dart';
 import 'linguistic_scanner_screen.dart';
@@ -39,7 +36,6 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedWisdomTab = 0; // 0 for Thirukkural, 1 for Proverb
   final ScrollController _quickActionsScrollController = ScrollController();
   final ScrollController _homeScrollController = ScrollController();
-  Timer? _carouselTimer;
   bool _showWisdomCard = true;
 
   @override
@@ -48,9 +44,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _fetchKural();
     _fetchProverb();
     _homeScrollController.addListener(_onHomeScroll);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _startCarouselTimer();
-    });
   }
 
   void _onHomeScroll() {
@@ -68,35 +61,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
-    _carouselTimer?.cancel();
     _quickActionsScrollController.dispose();
     _homeScrollController.removeListener(_onHomeScroll);
     _homeScrollController.dispose();
     super.dispose();
   }
 
-  void _startCarouselTimer() {
-    _carouselTimer?.cancel();
-    _carouselTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
-      if (!mounted) return;
-      if (!_quickActionsScrollController.hasClients) return;
 
-      final maxScroll = _quickActionsScrollController.position.maxScrollExtent;
-      final currentScroll = _quickActionsScrollController.offset;
-      
-      // Card width (140) + margin (12) = 152
-      double nextScroll = currentScroll + 152.0;
-      if (nextScroll > maxScroll + 10.0) {
-        nextScroll = 0.0; // Wrap around to the start
-      }
-
-      _quickActionsScrollController.animateTo(
-        nextScroll,
-        duration: const Duration(milliseconds: 800),
-        curve: Curves.easeInOutCubic,
-      );
-    });
-  }
 
   Future<void> _fetchProverb() async {
     final proverb = await ProverbService.getDailyProverb();
@@ -168,9 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   _buildGreetingAndStats(progress),
                   const SizedBox(height: 24),
                   
-                  // Section 2: Continue Learning Banner (Primary CTA)
-                  _buildContinueLearning(context, progress),
-                  const SizedBox(height: 24),
+
 
                   // Section 3: Daily Wisdom Tabbed Section (Thirukkural/Proverb)
                   _buildWisdomSection(),
@@ -259,8 +228,6 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(
           children: [
             Expanded(child: _buildStatBadge('🔥', '${progress.streakDays} days', 'Streak', AppTheme.primary)),
-            const SizedBox(width: 8),
-            Expanded(child: _buildStatBadge('⭐', '${progress.totalStars} stars', 'Stars', AppTheme.accent)),
             const SizedBox(width: 8),
             Expanded(child: _buildStatBadge('💎', '${progress.totalCoins} coins', 'Coins', AppTheme.secondary)),
           ],
@@ -578,91 +545,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildContinueLearning(BuildContext context, EnhancedProgressProvider progress) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppTheme.secondary, Color(0xFF00A2E2)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.secondary.withOpacity(0.2),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          // Decorative background pattern
-          Positioned(
-            right: -20,
-            top: -20,
-            child: Opacity(
-              opacity: 0.1,
-              child: Icon(Icons.school, size: 120, color: Colors.white),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 24,
-                  backgroundColor: Colors.white.withOpacity(0.2),
-                  child: const Text('🎓', style: TextStyle(fontSize: 24)),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Tamil Letters Path',
-                        style: GoogleFonts.outfit(
-                          fontWeight: FontWeight.w900,
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text(
-                        'Level ${progress.level} | Resume where you left off',
-                        style: GoogleFonts.outfit(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white.withOpacity(0.9),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    AudioFeedbackService.playTap();
-                    Navigator.push(context, FadeInSlidePageRoute(page: const TamilLettersScreen()));
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: AppTheme.secondary,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  ),
-                  child: Text(
-                    'RESUME',
-                    style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 13, color: AppTheme.secondary),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+
 
   Widget _buildQuickLearningTools(BuildContext context, int adaptiveAge) {
     final authService = Provider.of<AuthService>(context, listen: false);
@@ -675,10 +558,6 @@ class _HomeScreenState extends State<HomeScreen> {
           () => Navigator.push(context, FadeInSlidePageRoute(page: const StoriesScreen()))),
       _quickActionItem('Lessons', 'Step-by-step', Icons.language_rounded, Colors.blue,
           () => Navigator.push(context, FadeInSlidePageRoute(page: const LessonScreen(lessonId: 'animals_1')))),
-      _quickActionItem('Q&A Forum', 'Ask community', Icons.forum_rounded, Colors.purple,
-          () => Navigator.push(context, FadeInSlidePageRoute(page: const CommunityForumScreen()))),
-      _quickActionItem('Classrooms', 'Learn together', Icons.school_rounded, Colors.orange,
-          () => Navigator.push(context, FadeInSlidePageRoute(page: const ClassroomConnectScreen()))),
       _quickActionItem('Pronounce', 'Mic practice', Icons.mic_rounded, Colors.teal,
           () => Navigator.push(context, FadeInSlidePageRoute(page: const PronunciationPracticeGame()))),
       _quickActionItem('Riddle Hub', 'Solve puzzles', Icons.wb_sunny_rounded, Colors.indigo,
