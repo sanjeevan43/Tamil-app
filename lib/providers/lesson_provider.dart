@@ -1,11 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math';
 import '../models/app_models.dart';
+import '../data/tamil_data.dart';
 
 class LessonProvider with ChangeNotifier {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
-  
   List<LessonQuestion> _questions = [];
   int _currentIndex = 0;
   int _xpEarned = 0;
@@ -31,52 +30,92 @@ class LessonProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final snapshot = await _db
-          .collection('questions')
-          .where('lessonId', isEqualTo: lessonId)
-          .get();
-
-      _questions = snapshot.docs.map((doc) => LessonQuestion.fromFirestore(doc)).toList();
-      
-      // MOCK DATA for testing if Firestore is empty
-      if (_questions.isEmpty) {
-        _loadMockData();
+      final allWords = TamilData.masterWords;
+      if (allWords.isEmpty) {
+        await TamilData.loadData();
       }
+
+      final List<LessonQuestion> generated = [];
+
+      final pool = TamilData.masterWords;
+      if (pool.isNotEmpty) {
+        final shuffledPool = List<Map<String, dynamic>>.from(pool)..shuffle();
+        
+        for (int i = 0; i < shuffledPool.length; i++) {
+          final wordData = shuffledPool[i];
+          final String englishWord = wordData['english'] as String;
+          final String correctTamil = wordData['tamil'] as String;
+
+          final wrongOptions = pool
+              .where((w) => w['tamil'] != correctTamil)
+              .map((w) => w['tamil'] as String)
+              .toList()
+            ..shuffle();
+
+          final options = [correctTamil];
+          for (int k = 0; k < 3 && k < wrongOptions.length; k++) {
+            options.add(wrongOptions[k]);
+          }
+          options.shuffle();
+
+          generated.add(
+            LessonQuestion(
+              id: wordData['id'] ?? 'lesson_q_$i',
+              lessonId: lessonId,
+              type: QuestionType.mcq,
+              englishText: englishWord,
+              options: options,
+              correctAnswer: correctTamil,
+            ),
+          );
+        }
+      }
+
+      if (generated.isEmpty) {
+        generated.addAll([
+          LessonQuestion(
+            id: 'q1',
+            lessonId: lessonId,
+            type: QuestionType.mcq,
+            englishText: 'Dog',
+            options: ['நாய்', 'பூனை', 'ஆடு'],
+            correctAnswer: 'நாய்',
+          ),
+          LessonQuestion(
+            id: 'q2',
+            lessonId: lessonId,
+            type: QuestionType.mcq,
+            englishText: 'Cat',
+            options: ['பூனை', 'நாய்', 'மாடு'],
+            correctAnswer: 'பூனை',
+          ),
+        ]);
+      } else {
+        generated.shuffle();
+      }
+
+      // Limit to 15 questions per lesson run, drawing from the 1000+ unique questions
+      _questions = generated.take(15).toList();
+
     } catch (e) {
-      debugPrint('Error fetching questions: $e');
-      _loadMockData();
+      debugPrint('Error generating dynamic questions: $e');
+      _questions = [
+        LessonQuestion(
+          id: 'q1',
+          lessonId: lessonId,
+          type: QuestionType.mcq,
+          englishText: 'Dog',
+          options: ['நாய்', 'பூனை', 'ஆடு'],
+          correctAnswer: 'நாய்',
+        ),
+      ];
     }
 
     _isLoading = false;
+    _currentIndex = 0;
+    _isLessonFinished = false;
+    _isCorrect = null;
     notifyListeners();
-  }
-
-  void _loadMockData() {
-    _questions = [
-      LessonQuestion(
-        id: 'q1',
-        lessonId: 'animals_1',
-        type: QuestionType.mcq,
-        tamilText: 'நாய்',
-        options: ['Dog', 'Cat', 'Car'],
-        correctAnswer: 'Dog',
-      ),
-      LessonQuestion(
-        id: 'q2',
-        lessonId: 'animals_1',
-        type: QuestionType.mcq,
-        englishText: 'Cat',
-        options: ['பூனை', 'நாய்', 'மாடு'],
-        correctAnswer: 'பூனை',
-      ),
-      LessonQuestion(
-        id: 'q3',
-        lessonId: 'animals_1',
-        type: QuestionType.speaking,
-        englishText: 'This is a dog',
-        correctAnswer: 'This is a dog',
-      ),
-    ];
   }
 
   void checkAnswer(String selectedAnswer) {
@@ -117,4 +156,3 @@ class LessonProvider with ChangeNotifier {
     notifyListeners();
   }
 }
-
