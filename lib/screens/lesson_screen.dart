@@ -17,8 +17,11 @@ class _LessonScreenState extends State<LessonScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() =>
-        context.read<LessonProvider>().fetchQuestions(widget.lessonId));
+    Future.microtask(() {
+      if (mounted) {
+        context.read<LessonProvider>().fetchQuestions(widget.lessonId);
+      }
+    });
   }
 
   @override

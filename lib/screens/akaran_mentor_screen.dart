@@ -380,7 +380,7 @@ class _AkaranMentorScreenState extends State<AkaranMentorScreen> {
                   scale: 0.8,
                   child: Switch(
                     value: _regionalMode,
-                    activeColor: AppTheme.primary,
+                    activeThumbColor: AppTheme.primary,
                     onChanged: (val) {
                       setState(() => _regionalMode = val);
                     },

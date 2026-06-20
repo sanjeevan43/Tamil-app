@@ -45,7 +45,7 @@ class TeacherDashboardScreen extends StatelessWidget {
           Switch(
             value: progress.isTeacherMode,
             onChanged: (_) => progress.toggleTeacherMode(),
-            activeColor: AppTheme.primary,
+            activeThumbColor: AppTheme.primary,
           ),
           const SizedBox(width: 8),
         ],

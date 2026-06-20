@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/app_theme.dart';
 import '../services/auth_service.dart';
-import '../services/firestore_service.dart';
 import '../services/validation_service.dart';
 import '../providers/enhanced_progress_provider.dart';
 import 'main_navigation_container.dart';

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
-import '../providers/enhanced_progress_provider.dart';
 import '../widgets/safe_image.dart';
 import '../data/moral_stories_data.dart';
 import '../widgets/premium_animations.dart';
@@ -21,8 +19,6 @@ class _StoriesScreenState extends State<StoriesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final progress = Provider.of<EnhancedProgressProvider>(context);
-
     // Categories
     final continueReading = _allStories.take(2).toList();
     final moralTales = _allStories;

@@ -68,6 +68,7 @@ class _PronunciationPracticeGameState extends State<PronunciationPracticeGame> {
     }
     
     if (!_speechEnabled) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Speech recognition is not enabled or mic permission denied.'),
@@ -90,9 +91,11 @@ class _PronunciationPracticeGameState extends State<PronunciationPracticeGame> {
           _evaluateSpeech(_recognizedText);
         }
       },
-      localeId: 'ta_IN',
-      listenFor: const Duration(seconds: 5),
-      pauseFor: const Duration(seconds: 3),
+      listenOptions: SpeechListenOptions(
+        localeId: 'ta_IN',
+        listenFor: const Duration(seconds: 5),
+        pauseFor: const Duration(seconds: 3),
+      ),
     );
   }
 

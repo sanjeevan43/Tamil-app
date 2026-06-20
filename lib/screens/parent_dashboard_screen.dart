@@ -285,7 +285,7 @@ class ParentDashboardScreen extends StatelessWidget {
     return SwitchListTile(
       value: value,
       onChanged: onChanged,
-      activeColor: AppTheme.primaryRed,
+      activeThumbColor: AppTheme.primaryRed,
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       title: Row(
         children: [

@@ -18,7 +18,6 @@ class OnboardingWizard extends StatefulWidget {
 
 class _OnboardingWizardState extends State<OnboardingWizard> {
   final PageController _pageController = PageController();
-  final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _ageController = TextEditingController();
   
@@ -115,7 +114,7 @@ class _OnboardingWizardState extends State<OnboardingWizard> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(error!, style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
+              content: Text(error, style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
               backgroundColor: AppTheme.error,
             ),
           );

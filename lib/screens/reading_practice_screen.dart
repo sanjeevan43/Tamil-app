@@ -95,9 +95,11 @@ class _ReadingPracticeScreenState extends State<ReadingPracticeScreen> with Sing
               }
             });
           },
-          localeId: 'ta_IN',
-          listenFor: const Duration(seconds: 10),
-          pauseFor: const Duration(seconds: 3),
+          listenOptions: stt.SpeechListenOptions(
+            localeId: 'ta_IN',
+            listenFor: const Duration(seconds: 10),
+            pauseFor: const Duration(seconds: 3),
+          ),
         );
       } else {
         setState(() {
@@ -123,11 +125,17 @@ class _ReadingPracticeScreenState extends State<ReadingPracticeScreen> with Sing
   }
 
   void _checkPronunciation(String recognized, String target) {
-      bool correct = recognized.contains(target) || recognized.isNotEmpty; 
-      setState(() {
-          _isCorrect = correct;
-          _showFeedback = true;
-      });
+    // Normalize both strings for comparison: trim whitespace and compare
+    final normalizedRecognized = recognized.trim();
+    final normalizedTarget = target.trim();
+    // Check if the recognized speech contains the target word or is an exact match
+    final bool correct = normalizedRecognized.isNotEmpty &&
+        (normalizedRecognized.contains(normalizedTarget) ||
+         normalizedTarget.contains(normalizedRecognized));
+    setState(() {
+      _isCorrect = correct;
+      _showFeedback = true;
+    });
   }
 
   void _nextWord() {
