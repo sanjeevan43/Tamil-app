@@ -358,6 +358,7 @@ class TamilData {
   ];
 
   static List<Map<String, dynamic>> masterWords = [];
+  static List<Map<String, dynamic>> lessonQuestions = [];
 
   static Future<void> loadDatabase() async {
     try {
@@ -391,6 +392,9 @@ class TamilData {
         'english': item['prompt'] as String,
         'emoji': '📝'
       }).toList();
+
+      final String lessonsString = await rootBundle.loadString('assets/data/lessons.json');
+      lessonQuestions = List<Map<String, dynamic>>.from(jsonDecode(lessonsString));
       
       print('Database loaded successfully from JSON files!');
     } catch (e) {

@@ -11,16 +11,13 @@ import '../services/thirukkural_service.dart';
 import '../services/proverb_service.dart';
 import '../widgets/premium_animations.dart';
 
-import 'games_hub_screen.dart';
-import 'tamil_letters_screen.dart';
 import 'stories_screen.dart';
 import 'profile_screen.dart';
 import 'pronunciation_practice_game.dart';
 import 'admin_control_screen.dart';
-import 'lesson_screen.dart';
 import 'riddle_academy_screen.dart';
 import 'linguistic_scanner_screen.dart';
-import 'ai_cognitive_academy_screen.dart';
+import 'word_quest_hub_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -556,8 +553,8 @@ class _HomeScreenState extends State<HomeScreen> {
           () => Navigator.push(context, FadeInSlidePageRoute(page: LinguisticScannerScreen(childAge: adaptiveAge)))),
       _quickActionItem('Stories', 'Read moral tales', Icons.auto_stories_rounded, Colors.pink,
           () => Navigator.push(context, FadeInSlidePageRoute(page: const StoriesScreen()))),
-      _quickActionItem('Lessons', 'Step-by-step', Icons.language_rounded, Colors.blue,
-          () => Navigator.push(context, FadeInSlidePageRoute(page: const LessonScreen(lessonId: 'animals_1')))),
+      _quickActionItem('Word Quest', 'Vocabulary hub', Icons.casino_rounded, Colors.blue,
+          () => Navigator.push(context, FadeInSlidePageRoute(page: const WordQuestHubScreen()))),
       _quickActionItem('Pronounce', 'Mic practice', Icons.mic_rounded, Colors.teal,
           () => Navigator.push(context, FadeInSlidePageRoute(page: const PronunciationPracticeGame()))),
       _quickActionItem('Riddle Hub', 'Solve puzzles', Icons.wb_sunny_rounded, Colors.indigo,

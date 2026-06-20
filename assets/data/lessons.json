@@ -1,0 +1,7202 @@
+[
+  {
+    "id": 1,
+    "question": "ஆப்பிள்",
+    "options": [
+      "Apple",
+      "Banana",
+      "Mango",
+      "Orange"
+    ],
+    "correct_answer": "Apple",
+    "category": "Fruits"
+  },
+  {
+    "id": 2,
+    "question": "வாழைப்பழம்",
+    "options": [
+      "Mango",
+      "Banana",
+      "Orange",
+      "Grapes"
+    ],
+    "correct_answer": "Banana",
+    "category": "Fruits"
+  },
+  {
+    "id": 3,
+    "question": "மாம்பழம்",
+    "options": [
+      "Orange",
+      "Grapes",
+      "Mango",
+      "Guava"
+    ],
+    "correct_answer": "Mango",
+    "category": "Fruits"
+  },
+  {
+    "id": 4,
+    "question": "ஆரஞ்சு",
+    "options": [
+      "Grapes",
+      "Guava",
+      "Papaya",
+      "Orange"
+    ],
+    "correct_answer": "Orange",
+    "category": "Fruits"
+  },
+  {
+    "id": 5,
+    "question": "திராட்சை",
+    "options": [
+      "Grapes",
+      "Guava",
+      "Papaya",
+      "Lemon"
+    ],
+    "correct_answer": "Grapes",
+    "category": "Fruits"
+  },
+  {
+    "id": 6,
+    "question": "கொய்யாப்பழம்",
+    "options": [
+      "Papaya",
+      "Guava",
+      "Lemon",
+      "Pineapple"
+    ],
+    "correct_answer": "Guava",
+    "category": "Fruits"
+  },
+  {
+    "id": 7,
+    "question": "பப்பாளி",
+    "options": [
+      "Lemon",
+      "Pineapple",
+      "Papaya",
+      "Watermelon"
+    ],
+    "correct_answer": "Papaya",
+    "category": "Fruits"
+  },
+  {
+    "id": 8,
+    "question": "எலுமிச்சை",
+    "options": [
+      "Pineapple",
+      "Watermelon",
+      "Pear",
+      "Lemon"
+    ],
+    "correct_answer": "Lemon",
+    "category": "Fruits"
+  },
+  {
+    "id": 9,
+    "question": "அன்னாசி",
+    "options": [
+      "Pineapple",
+      "Watermelon",
+      "Pear",
+      "Sapota"
+    ],
+    "correct_answer": "Pineapple",
+    "category": "Fruits"
+  },
+  {
+    "id": 10,
+    "question": "தர்பூசணி",
+    "options": [
+      "Pear",
+      "Watermelon",
+      "Sapota",
+      "Dog"
+    ],
+    "correct_answer": "Watermelon",
+    "category": "Fruits"
+  },
+  {
+    "id": 11,
+    "question": "பேரிக்காய்",
+    "options": [
+      "Sapota",
+      "Dog",
+      "Pear",
+      "Cat"
+    ],
+    "correct_answer": "Pear",
+    "category": "Fruits"
+  },
+  {
+    "id": 12,
+    "question": "சப்போட்டா",
+    "options": [
+      "Dog",
+      "Cat",
+      "Cow",
+      "Sapota"
+    ],
+    "correct_answer": "Sapota",
+    "category": "Fruits"
+  },
+  {
+    "id": 13,
+    "question": "நாய்",
+    "options": [
+      "Dog",
+      "Cat",
+      "Cow",
+      "Horse"
+    ],
+    "correct_answer": "Dog",
+    "category": "Animals"
+  },
+  {
+    "id": 14,
+    "question": "பூனை",
+    "options": [
+      "Cow",
+      "Cat",
+      "Horse",
+      "Goat"
+    ],
+    "correct_answer": "Cat",
+    "category": "Animals"
+  },
+  {
+    "id": 15,
+    "question": "பசு",
+    "options": [
+      "Horse",
+      "Goat",
+      "Cow",
+      "Rabbit"
+    ],
+    "correct_answer": "Cow",
+    "category": "Animals"
+  },
+  {
+    "id": 16,
+    "question": "குதிரை",
+    "options": [
+      "Goat",
+      "Rabbit",
+      "Elephant",
+      "Horse"
+    ],
+    "correct_answer": "Horse",
+    "category": "Animals"
+  },
+  {
+    "id": 17,
+    "question": "ஆடு",
+    "options": [
+      "Goat",
+      "Rabbit",
+      "Elephant",
+      "Lion"
+    ],
+    "correct_answer": "Goat",
+    "category": "Animals"
+  },
+  {
+    "id": 18,
+    "question": "முயல்",
+    "options": [
+      "Elephant",
+      "Rabbit",
+      "Lion",
+      "Tiger"
+    ],
+    "correct_answer": "Rabbit",
+    "category": "Animals"
+  },
+  {
+    "id": 19,
+    "question": "யானை",
+    "options": [
+      "Lion",
+      "Tiger",
+      "Elephant",
+      "Bear"
+    ],
+    "correct_answer": "Elephant",
+    "category": "Animals"
+  },
+  {
+    "id": 20,
+    "question": "சிங்கம்",
+    "options": [
+      "Tiger",
+      "Bear",
+      "Fox",
+      "Lion"
+    ],
+    "correct_answer": "Lion",
+    "category": "Animals"
+  },
+  {
+    "id": 21,
+    "question": "புலி",
+    "options": [
+      "Tiger",
+      "Bear",
+      "Fox",
+      "Wolf"
+    ],
+    "correct_answer": "Tiger",
+    "category": "Animals"
+  },
+  {
+    "id": 22,
+    "question": "கரடி",
+    "options": [
+      "Fox",
+      "Bear",
+      "Wolf",
+      "Red"
+    ],
+    "correct_answer": "Bear",
+    "category": "Animals"
+  },
+  {
+    "id": 23,
+    "question": "நரி",
+    "options": [
+      "Wolf",
+      "Red",
+      "Fox",
+      "Blue"
+    ],
+    "correct_answer": "Fox",
+    "category": "Animals"
+  },
+  {
+    "id": 24,
+    "question": "ஓநாய்",
+    "options": [
+      "Red",
+      "Blue",
+      "Green",
+      "Wolf"
+    ],
+    "correct_answer": "Wolf",
+    "category": "Animals"
+  },
+  {
+    "id": 25,
+    "question": "சிவப்பு",
+    "options": [
+      "Red",
+      "Blue",
+      "Green",
+      "Yellow"
+    ],
+    "correct_answer": "Red",
+    "category": "Colors"
+  },
+  {
+    "id": 26,
+    "question": "நீலம்",
+    "options": [
+      "Green",
+      "Blue",
+      "Yellow",
+      "Black"
+    ],
+    "correct_answer": "Blue",
+    "category": "Colors"
+  },
+  {
+    "id": 27,
+    "question": "பச்சை",
+    "options": [
+      "Yellow",
+      "Black",
+      "Green",
+      "White"
+    ],
+    "correct_answer": "Green",
+    "category": "Colors"
+  },
+  {
+    "id": 28,
+    "question": "மஞ்சள்",
+    "options": [
+      "Black",
+      "White",
+      "Purple",
+      "Yellow"
+    ],
+    "correct_answer": "Yellow",
+    "category": "Colors"
+  },
+  {
+    "id": 29,
+    "question": "கருப்பு",
+    "options": [
+      "Black",
+      "White",
+      "Purple",
+      "Pink"
+    ],
+    "correct_answer": "Black",
+    "category": "Colors"
+  },
+  {
+    "id": 30,
+    "question": "வெள்ளை",
+    "options": [
+      "Purple",
+      "White",
+      "Pink",
+      "Brown"
+    ],
+    "correct_answer": "White",
+    "category": "Colors"
+  },
+  {
+    "id": 31,
+    "question": "ஊதா",
+    "options": [
+      "Pink",
+      "Brown",
+      "Purple",
+      "Gray"
+    ],
+    "correct_answer": "Purple",
+    "category": "Colors"
+  },
+  {
+    "id": 32,
+    "question": "இளஞ்சிவப்பு",
+    "options": [
+      "Brown",
+      "Gray",
+      "Gold",
+      "Pink"
+    ],
+    "correct_answer": "Pink",
+    "category": "Colors"
+  },
+  {
+    "id": 33,
+    "question": "பழுப்பு",
+    "options": [
+      "Brown",
+      "Gray",
+      "Gold",
+      "Silver"
+    ],
+    "correct_answer": "Brown",
+    "category": "Colors"
+  },
+  {
+    "id": 34,
+    "question": "சாம்பல்",
+    "options": [
+      "Gold",
+      "Gray",
+      "Silver",
+      "Father"
+    ],
+    "correct_answer": "Gray",
+    "category": "Colors"
+  },
+  {
+    "id": 35,
+    "question": "தங்கம்",
+    "options": [
+      "Silver",
+      "Father",
+      "Gold",
+      "Mother"
+    ],
+    "correct_answer": "Gold",
+    "category": "Colors"
+  },
+  {
+    "id": 36,
+    "question": "வெள்ளி",
+    "options": [
+      "Father",
+      "Mother",
+      "Brother",
+      "Silver"
+    ],
+    "correct_answer": "Silver",
+    "category": "Colors"
+  },
+  {
+    "id": 37,
+    "question": "தந்தை",
+    "options": [
+      "Father",
+      "Mother",
+      "Brother",
+      "Sister"
+    ],
+    "correct_answer": "Father",
+    "category": "Family"
+  },
+  {
+    "id": 38,
+    "question": "தாய்",
+    "options": [
+      "Brother",
+      "Mother",
+      "Sister",
+      "Grandfather"
+    ],
+    "correct_answer": "Mother",
+    "category": "Family"
+  },
+  {
+    "id": 39,
+    "question": "அண்ணன்",
+    "options": [
+      "Sister",
+      "Grandfather",
+      "Brother",
+      "Grandmother"
+    ],
+    "correct_answer": "Brother",
+    "category": "Family"
+  },
+  {
+    "id": 40,
+    "question": "அக்கா",
+    "options": [
+      "Grandfather",
+      "Grandmother",
+      "Uncle",
+      "Sister"
+    ],
+    "correct_answer": "Sister",
+    "category": "Family"
+  },
+  {
+    "id": 41,
+    "question": "தாத்தா",
+    "options": [
+      "Grandfather",
+      "Grandmother",
+      "Uncle",
+      "Aunt"
+    ],
+    "correct_answer": "Grandfather",
+    "category": "Family"
+  },
+  {
+    "id": 42,
+    "question": "பாட்டி",
+    "options": [
+      "Uncle",
+      "Grandmother",
+      "Aunt",
+      "Son"
+    ],
+    "correct_answer": "Grandmother",
+    "category": "Family"
+  },
+  {
+    "id": 43,
+    "question": "மாமா",
+    "options": [
+      "Aunt",
+      "Son",
+      "Uncle",
+      "Daughter"
+    ],
+    "correct_answer": "Uncle",
+    "category": "Family"
+  },
+  {
+    "id": 44,
+    "question": "அத்தை",
+    "options": [
+      "Son",
+      "Daughter",
+      "Husband",
+      "Aunt"
+    ],
+    "correct_answer": "Aunt",
+    "category": "Family"
+  },
+  {
+    "id": 45,
+    "question": "மகன்",
+    "options": [
+      "Son",
+      "Daughter",
+      "Husband",
+      "Wife"
+    ],
+    "correct_answer": "Son",
+    "category": "Family"
+  },
+  {
+    "id": 46,
+    "question": "மகள்",
+    "options": [
+      "Husband",
+      "Daughter",
+      "Wife",
+      "Book"
+    ],
+    "correct_answer": "Daughter",
+    "category": "Family"
+  },
+  {
+    "id": 47,
+    "question": "கணவர்",
+    "options": [
+      "Wife",
+      "Book",
+      "Husband",
+      "Pen"
+    ],
+    "correct_answer": "Husband",
+    "category": "Family"
+  },
+  {
+    "id": 48,
+    "question": "மனைவி",
+    "options": [
+      "Book",
+      "Pen",
+      "Pencil",
+      "Wife"
+    ],
+    "correct_answer": "Wife",
+    "category": "Family"
+  },
+  {
+    "id": 49,
+    "question": "புத்தகம்",
+    "options": [
+      "Book",
+      "Pen",
+      "Pencil",
+      "School"
+    ],
+    "correct_answer": "Book",
+    "category": "School"
+  },
+  {
+    "id": 50,
+    "question": "பேனா",
+    "options": [
+      "Pencil",
+      "Pen",
+      "School",
+      "Teacher"
+    ],
+    "correct_answer": "Pen",
+    "category": "School"
+  },
+  {
+    "id": 51,
+    "question": "பென்சில்",
+    "options": [
+      "School",
+      "Teacher",
+      "Pencil",
+      "Student"
+    ],
+    "correct_answer": "Pencil",
+    "category": "School"
+  },
+  {
+    "id": 52,
+    "question": "பள்ளி",
+    "options": [
+      "Teacher",
+      "Student",
+      "Table",
+      "School"
+    ],
+    "correct_answer": "School",
+    "category": "School"
+  },
+  {
+    "id": 53,
+    "question": "ஆசிரியர்",
+    "options": [
+      "Teacher",
+      "Student",
+      "Table",
+      "Chair"
+    ],
+    "correct_answer": "Teacher",
+    "category": "School"
+  },
+  {
+    "id": 54,
+    "question": "மாணவர்",
+    "options": [
+      "Table",
+      "Student",
+      "Chair",
+      "Bag"
+    ],
+    "correct_answer": "Student",
+    "category": "School"
+  },
+  {
+    "id": 55,
+    "question": "மேசை",
+    "options": [
+      "Chair",
+      "Bag",
+      "Table",
+      "Board"
+    ],
+    "correct_answer": "Table",
+    "category": "School"
+  },
+  {
+    "id": 56,
+    "question": "நாற்காலி",
+    "options": [
+      "Bag",
+      "Board",
+      "Eraser",
+      "Chair"
+    ],
+    "correct_answer": "Chair",
+    "category": "School"
+  },
+  {
+    "id": 57,
+    "question": "பை",
+    "options": [
+      "Bag",
+      "Board",
+      "Eraser",
+      "Ruler"
+    ],
+    "correct_answer": "Bag",
+    "category": "School"
+  },
+  {
+    "id": 58,
+    "question": "பலகை",
+    "options": [
+      "Eraser",
+      "Board",
+      "Ruler",
+      "Apple"
+    ],
+    "correct_answer": "Board",
+    "category": "School"
+  },
+  {
+    "id": 59,
+    "question": "அழிப்பான்",
+    "options": [
+      "Ruler",
+      "Apple",
+      "Eraser",
+      "Banana"
+    ],
+    "correct_answer": "Eraser",
+    "category": "School"
+  },
+  {
+    "id": 60,
+    "question": "அளவுகோல்",
+    "options": [
+      "Apple",
+      "Banana",
+      "Mango",
+      "Ruler"
+    ],
+    "correct_answer": "Ruler",
+    "category": "School"
+  },
+  {
+    "id": 61,
+    "question": "ஆப்பிள்",
+    "options": [
+      "Apple",
+      "Banana",
+      "Mango",
+      "Orange"
+    ],
+    "correct_answer": "Apple",
+    "category": "Fruits"
+  },
+  {
+    "id": 62,
+    "question": "வாழைப்பழம்",
+    "options": [
+      "Mango",
+      "Banana",
+      "Orange",
+      "Grapes"
+    ],
+    "correct_answer": "Banana",
+    "category": "Fruits"
+  },
+  {
+    "id": 63,
+    "question": "மாம்பழம்",
+    "options": [
+      "Orange",
+      "Grapes",
+      "Mango",
+      "Guava"
+    ],
+    "correct_answer": "Mango",
+    "category": "Fruits"
+  },
+  {
+    "id": 64,
+    "question": "ஆரஞ்சு",
+    "options": [
+      "Grapes",
+      "Guava",
+      "Papaya",
+      "Orange"
+    ],
+    "correct_answer": "Orange",
+    "category": "Fruits"
+  },
+  {
+    "id": 65,
+    "question": "திராட்சை",
+    "options": [
+      "Grapes",
+      "Guava",
+      "Papaya",
+      "Lemon"
+    ],
+    "correct_answer": "Grapes",
+    "category": "Fruits"
+  },
+  {
+    "id": 66,
+    "question": "கொய்யாப்பழம்",
+    "options": [
+      "Papaya",
+      "Guava",
+      "Lemon",
+      "Pineapple"
+    ],
+    "correct_answer": "Guava",
+    "category": "Fruits"
+  },
+  {
+    "id": 67,
+    "question": "பப்பாளி",
+    "options": [
+      "Lemon",
+      "Pineapple",
+      "Papaya",
+      "Watermelon"
+    ],
+    "correct_answer": "Papaya",
+    "category": "Fruits"
+  },
+  {
+    "id": 68,
+    "question": "எலுமிச்சை",
+    "options": [
+      "Pineapple",
+      "Watermelon",
+      "Pear",
+      "Lemon"
+    ],
+    "correct_answer": "Lemon",
+    "category": "Fruits"
+  },
+  {
+    "id": 69,
+    "question": "அன்னாசி",
+    "options": [
+      "Pineapple",
+      "Watermelon",
+      "Pear",
+      "Sapota"
+    ],
+    "correct_answer": "Pineapple",
+    "category": "Fruits"
+  },
+  {
+    "id": 70,
+    "question": "தர்பூசணி",
+    "options": [
+      "Pear",
+      "Watermelon",
+      "Sapota",
+      "Dog"
+    ],
+    "correct_answer": "Watermelon",
+    "category": "Fruits"
+  },
+  {
+    "id": 71,
+    "question": "பேரிக்காய்",
+    "options": [
+      "Sapota",
+      "Dog",
+      "Pear",
+      "Cat"
+    ],
+    "correct_answer": "Pear",
+    "category": "Fruits"
+  },
+  {
+    "id": 72,
+    "question": "சப்போட்டா",
+    "options": [
+      "Dog",
+      "Cat",
+      "Cow",
+      "Sapota"
+    ],
+    "correct_answer": "Sapota",
+    "category": "Fruits"
+  },
+  {
+    "id": 73,
+    "question": "நாய்",
+    "options": [
+      "Dog",
+      "Cat",
+      "Cow",
+      "Horse"
+    ],
+    "correct_answer": "Dog",
+    "category": "Animals"
+  },
+  {
+    "id": 74,
+    "question": "பூனை",
+    "options": [
+      "Cow",
+      "Cat",
+      "Horse",
+      "Goat"
+    ],
+    "correct_answer": "Cat",
+    "category": "Animals"
+  },
+  {
+    "id": 75,
+    "question": "பசு",
+    "options": [
+      "Horse",
+      "Goat",
+      "Cow",
+      "Rabbit"
+    ],
+    "correct_answer": "Cow",
+    "category": "Animals"
+  },
+  {
+    "id": 76,
+    "question": "குதிரை",
+    "options": [
+      "Goat",
+      "Rabbit",
+      "Elephant",
+      "Horse"
+    ],
+    "correct_answer": "Horse",
+    "category": "Animals"
+  },
+  {
+    "id": 77,
+    "question": "ஆடு",
+    "options": [
+      "Goat",
+      "Rabbit",
+      "Elephant",
+      "Lion"
+    ],
+    "correct_answer": "Goat",
+    "category": "Animals"
+  },
+  {
+    "id": 78,
+    "question": "முயல்",
+    "options": [
+      "Elephant",
+      "Rabbit",
+      "Lion",
+      "Tiger"
+    ],
+    "correct_answer": "Rabbit",
+    "category": "Animals"
+  },
+  {
+    "id": 79,
+    "question": "யானை",
+    "options": [
+      "Lion",
+      "Tiger",
+      "Elephant",
+      "Bear"
+    ],
+    "correct_answer": "Elephant",
+    "category": "Animals"
+  },
+  {
+    "id": 80,
+    "question": "சிங்கம்",
+    "options": [
+      "Tiger",
+      "Bear",
+      "Fox",
+      "Lion"
+    ],
+    "correct_answer": "Lion",
+    "category": "Animals"
+  },
+  {
+    "id": 81,
+    "question": "புலி",
+    "options": [
+      "Tiger",
+      "Bear",
+      "Fox",
+      "Wolf"
+    ],
+    "correct_answer": "Tiger",
+    "category": "Animals"
+  },
+  {
+    "id": 82,
+    "question": "கரடி",
+    "options": [
+      "Fox",
+      "Bear",
+      "Wolf",
+      "Red"
+    ],
+    "correct_answer": "Bear",
+    "category": "Animals"
+  },
+  {
+    "id": 83,
+    "question": "நரி",
+    "options": [
+      "Wolf",
+      "Red",
+      "Fox",
+      "Blue"
+    ],
+    "correct_answer": "Fox",
+    "category": "Animals"
+  },
+  {
+    "id": 84,
+    "question": "ஓநாய்",
+    "options": [
+      "Red",
+      "Blue",
+      "Green",
+      "Wolf"
+    ],
+    "correct_answer": "Wolf",
+    "category": "Animals"
+  },
+  {
+    "id": 85,
+    "question": "சிவப்பு",
+    "options": [
+      "Red",
+      "Blue",
+      "Green",
+      "Yellow"
+    ],
+    "correct_answer": "Red",
+    "category": "Colors"
+  },
+  {
+    "id": 86,
+    "question": "நீலம்",
+    "options": [
+      "Green",
+      "Blue",
+      "Yellow",
+      "Black"
+    ],
+    "correct_answer": "Blue",
+    "category": "Colors"
+  },
+  {
+    "id": 87,
+    "question": "பச்சை",
+    "options": [
+      "Yellow",
+      "Black",
+      "Green",
+      "White"
+    ],
+    "correct_answer": "Green",
+    "category": "Colors"
+  },
+  {
+    "id": 88,
+    "question": "மஞ்சள்",
+    "options": [
+      "Black",
+      "White",
+      "Purple",
+      "Yellow"
+    ],
+    "correct_answer": "Yellow",
+    "category": "Colors"
+  },
+  {
+    "id": 89,
+    "question": "கருப்பு",
+    "options": [
+      "Black",
+      "White",
+      "Purple",
+      "Pink"
+    ],
+    "correct_answer": "Black",
+    "category": "Colors"
+  },
+  {
+    "id": 90,
+    "question": "வெள்ளை",
+    "options": [
+      "Purple",
+      "White",
+      "Pink",
+      "Brown"
+    ],
+    "correct_answer": "White",
+    "category": "Colors"
+  },
+  {
+    "id": 91,
+    "question": "ஊதா",
+    "options": [
+      "Pink",
+      "Brown",
+      "Purple",
+      "Gray"
+    ],
+    "correct_answer": "Purple",
+    "category": "Colors"
+  },
+  {
+    "id": 92,
+    "question": "இளஞ்சிவப்பு",
+    "options": [
+      "Brown",
+      "Gray",
+      "Gold",
+      "Pink"
+    ],
+    "correct_answer": "Pink",
+    "category": "Colors"
+  },
+  {
+    "id": 93,
+    "question": "பழுப்பு",
+    "options": [
+      "Brown",
+      "Gray",
+      "Gold",
+      "Silver"
+    ],
+    "correct_answer": "Brown",
+    "category": "Colors"
+  },
+  {
+    "id": 94,
+    "question": "சாம்பல்",
+    "options": [
+      "Gold",
+      "Gray",
+      "Silver",
+      "Father"
+    ],
+    "correct_answer": "Gray",
+    "category": "Colors"
+  },
+  {
+    "id": 95,
+    "question": "தங்கம்",
+    "options": [
+      "Silver",
+      "Father",
+      "Gold",
+      "Mother"
+    ],
+    "correct_answer": "Gold",
+    "category": "Colors"
+  },
+  {
+    "id": 96,
+    "question": "வெள்ளி",
+    "options": [
+      "Father",
+      "Mother",
+      "Brother",
+      "Silver"
+    ],
+    "correct_answer": "Silver",
+    "category": "Colors"
+  },
+  {
+    "id": 97,
+    "question": "தந்தை",
+    "options": [
+      "Father",
+      "Mother",
+      "Brother",
+      "Sister"
+    ],
+    "correct_answer": "Father",
+    "category": "Family"
+  },
+  {
+    "id": 98,
+    "question": "தாய்",
+    "options": [
+      "Brother",
+      "Mother",
+      "Sister",
+      "Grandfather"
+    ],
+    "correct_answer": "Mother",
+    "category": "Family"
+  },
+  {
+    "id": 99,
+    "question": "அண்ணன்",
+    "options": [
+      "Sister",
+      "Grandfather",
+      "Brother",
+      "Grandmother"
+    ],
+    "correct_answer": "Brother",
+    "category": "Family"
+  },
+  {
+    "id": 100,
+    "question": "அக்கா",
+    "options": [
+      "Grandfather",
+      "Grandmother",
+      "Uncle",
+      "Sister"
+    ],
+    "correct_answer": "Sister",
+    "category": "Family"
+  },
+  {
+    "id": 101,
+    "question": "தாத்தா",
+    "options": [
+      "Grandfather",
+      "Grandmother",
+      "Uncle",
+      "Aunt"
+    ],
+    "correct_answer": "Grandfather",
+    "category": "Family"
+  },
+  {
+    "id": 102,
+    "question": "பாட்டி",
+    "options": [
+      "Uncle",
+      "Grandmother",
+      "Aunt",
+      "Son"
+    ],
+    "correct_answer": "Grandmother",
+    "category": "Family"
+  },
+  {
+    "id": 103,
+    "question": "மாமா",
+    "options": [
+      "Aunt",
+      "Son",
+      "Uncle",
+      "Daughter"
+    ],
+    "correct_answer": "Uncle",
+    "category": "Family"
+  },
+  {
+    "id": 104,
+    "question": "அத்தை",
+    "options": [
+      "Son",
+      "Daughter",
+      "Husband",
+      "Aunt"
+    ],
+    "correct_answer": "Aunt",
+    "category": "Family"
+  },
+  {
+    "id": 105,
+    "question": "மகன்",
+    "options": [
+      "Son",
+      "Daughter",
+      "Husband",
+      "Wife"
+    ],
+    "correct_answer": "Son",
+    "category": "Family"
+  },
+  {
+    "id": 106,
+    "question": "மகள்",
+    "options": [
+      "Husband",
+      "Daughter",
+      "Wife",
+      "Book"
+    ],
+    "correct_answer": "Daughter",
+    "category": "Family"
+  },
+  {
+    "id": 107,
+    "question": "கணவர்",
+    "options": [
+      "Wife",
+      "Book",
+      "Husband",
+      "Pen"
+    ],
+    "correct_answer": "Husband",
+    "category": "Family"
+  },
+  {
+    "id": 108,
+    "question": "மனைவி",
+    "options": [
+      "Book",
+      "Pen",
+      "Pencil",
+      "Wife"
+    ],
+    "correct_answer": "Wife",
+    "category": "Family"
+  },
+  {
+    "id": 109,
+    "question": "புத்தகம்",
+    "options": [
+      "Book",
+      "Pen",
+      "Pencil",
+      "School"
+    ],
+    "correct_answer": "Book",
+    "category": "School"
+  },
+  {
+    "id": 110,
+    "question": "பேனா",
+    "options": [
+      "Pencil",
+      "Pen",
+      "School",
+      "Teacher"
+    ],
+    "correct_answer": "Pen",
+    "category": "School"
+  },
+  {
+    "id": 111,
+    "question": "பென்சில்",
+    "options": [
+      "School",
+      "Teacher",
+      "Pencil",
+      "Student"
+    ],
+    "correct_answer": "Pencil",
+    "category": "School"
+  },
+  {
+    "id": 112,
+    "question": "பள்ளி",
+    "options": [
+      "Teacher",
+      "Student",
+      "Table",
+      "School"
+    ],
+    "correct_answer": "School",
+    "category": "School"
+  },
+  {
+    "id": 113,
+    "question": "ஆசிரியர்",
+    "options": [
+      "Teacher",
+      "Student",
+      "Table",
+      "Chair"
+    ],
+    "correct_answer": "Teacher",
+    "category": "School"
+  },
+  {
+    "id": 114,
+    "question": "மாணவர்",
+    "options": [
+      "Table",
+      "Student",
+      "Chair",
+      "Bag"
+    ],
+    "correct_answer": "Student",
+    "category": "School"
+  },
+  {
+    "id": 115,
+    "question": "மேசை",
+    "options": [
+      "Chair",
+      "Bag",
+      "Table",
+      "Board"
+    ],
+    "correct_answer": "Table",
+    "category": "School"
+  },
+  {
+    "id": 116,
+    "question": "நாற்காலி",
+    "options": [
+      "Bag",
+      "Board",
+      "Eraser",
+      "Chair"
+    ],
+    "correct_answer": "Chair",
+    "category": "School"
+  },
+  {
+    "id": 117,
+    "question": "பை",
+    "options": [
+      "Bag",
+      "Board",
+      "Eraser",
+      "Ruler"
+    ],
+    "correct_answer": "Bag",
+    "category": "School"
+  },
+  {
+    "id": 118,
+    "question": "பலகை",
+    "options": [
+      "Eraser",
+      "Board",
+      "Ruler",
+      "Apple"
+    ],
+    "correct_answer": "Board",
+    "category": "School"
+  },
+  {
+    "id": 119,
+    "question": "அழிப்பான்",
+    "options": [
+      "Ruler",
+      "Apple",
+      "Eraser",
+      "Banana"
+    ],
+    "correct_answer": "Eraser",
+    "category": "School"
+  },
+  {
+    "id": 120,
+    "question": "அளவுகோல்",
+    "options": [
+      "Apple",
+      "Banana",
+      "Mango",
+      "Ruler"
+    ],
+    "correct_answer": "Ruler",
+    "category": "School"
+  },
+  {
+    "id": 121,
+    "question": "ஆப்பிள்",
+    "options": [
+      "Apple",
+      "Banana",
+      "Mango",
+      "Orange"
+    ],
+    "correct_answer": "Apple",
+    "category": "Fruits"
+  },
+  {
+    "id": 122,
+    "question": "வாழைப்பழம்",
+    "options": [
+      "Mango",
+      "Banana",
+      "Orange",
+      "Grapes"
+    ],
+    "correct_answer": "Banana",
+    "category": "Fruits"
+  },
+  {
+    "id": 123,
+    "question": "மாம்பழம்",
+    "options": [
+      "Orange",
+      "Grapes",
+      "Mango",
+      "Guava"
+    ],
+    "correct_answer": "Mango",
+    "category": "Fruits"
+  },
+  {
+    "id": 124,
+    "question": "ஆரஞ்சு",
+    "options": [
+      "Grapes",
+      "Guava",
+      "Papaya",
+      "Orange"
+    ],
+    "correct_answer": "Orange",
+    "category": "Fruits"
+  },
+  {
+    "id": 125,
+    "question": "திராட்சை",
+    "options": [
+      "Grapes",
+      "Guava",
+      "Papaya",
+      "Lemon"
+    ],
+    "correct_answer": "Grapes",
+    "category": "Fruits"
+  },
+  {
+    "id": 126,
+    "question": "கொய்யாப்பழம்",
+    "options": [
+      "Papaya",
+      "Guava",
+      "Lemon",
+      "Pineapple"
+    ],
+    "correct_answer": "Guava",
+    "category": "Fruits"
+  },
+  {
+    "id": 127,
+    "question": "பப்பாளி",
+    "options": [
+      "Lemon",
+      "Pineapple",
+      "Papaya",
+      "Watermelon"
+    ],
+    "correct_answer": "Papaya",
+    "category": "Fruits"
+  },
+  {
+    "id": 128,
+    "question": "எலுமிச்சை",
+    "options": [
+      "Pineapple",
+      "Watermelon",
+      "Pear",
+      "Lemon"
+    ],
+    "correct_answer": "Lemon",
+    "category": "Fruits"
+  },
+  {
+    "id": 129,
+    "question": "அன்னாசி",
+    "options": [
+      "Pineapple",
+      "Watermelon",
+      "Pear",
+      "Sapota"
+    ],
+    "correct_answer": "Pineapple",
+    "category": "Fruits"
+  },
+  {
+    "id": 130,
+    "question": "தர்பூசணி",
+    "options": [
+      "Pear",
+      "Watermelon",
+      "Sapota",
+      "Dog"
+    ],
+    "correct_answer": "Watermelon",
+    "category": "Fruits"
+  },
+  {
+    "id": 131,
+    "question": "பேரிக்காய்",
+    "options": [
+      "Sapota",
+      "Dog",
+      "Pear",
+      "Cat"
+    ],
+    "correct_answer": "Pear",
+    "category": "Fruits"
+  },
+  {
+    "id": 132,
+    "question": "சப்போட்டா",
+    "options": [
+      "Dog",
+      "Cat",
+      "Cow",
+      "Sapota"
+    ],
+    "correct_answer": "Sapota",
+    "category": "Fruits"
+  },
+  {
+    "id": 133,
+    "question": "நாய்",
+    "options": [
+      "Dog",
+      "Cat",
+      "Cow",
+      "Horse"
+    ],
+    "correct_answer": "Dog",
+    "category": "Animals"
+  },
+  {
+    "id": 134,
+    "question": "பூனை",
+    "options": [
+      "Cow",
+      "Cat",
+      "Horse",
+      "Goat"
+    ],
+    "correct_answer": "Cat",
+    "category": "Animals"
+  },
+  {
+    "id": 135,
+    "question": "பசு",
+    "options": [
+      "Horse",
+      "Goat",
+      "Cow",
+      "Rabbit"
+    ],
+    "correct_answer": "Cow",
+    "category": "Animals"
+  },
+  {
+    "id": 136,
+    "question": "குதிரை",
+    "options": [
+      "Goat",
+      "Rabbit",
+      "Elephant",
+      "Horse"
+    ],
+    "correct_answer": "Horse",
+    "category": "Animals"
+  },
+  {
+    "id": 137,
+    "question": "ஆடு",
+    "options": [
+      "Goat",
+      "Rabbit",
+      "Elephant",
+      "Lion"
+    ],
+    "correct_answer": "Goat",
+    "category": "Animals"
+  },
+  {
+    "id": 138,
+    "question": "முயல்",
+    "options": [
+      "Elephant",
+      "Rabbit",
+      "Lion",
+      "Tiger"
+    ],
+    "correct_answer": "Rabbit",
+    "category": "Animals"
+  },
+  {
+    "id": 139,
+    "question": "யானை",
+    "options": [
+      "Lion",
+      "Tiger",
+      "Elephant",
+      "Bear"
+    ],
+    "correct_answer": "Elephant",
+    "category": "Animals"
+  },
+  {
+    "id": 140,
+    "question": "சிங்கம்",
+    "options": [
+      "Tiger",
+      "Bear",
+      "Fox",
+      "Lion"
+    ],
+    "correct_answer": "Lion",
+    "category": "Animals"
+  },
+  {
+    "id": 141,
+    "question": "புலி",
+    "options": [
+      "Tiger",
+      "Bear",
+      "Fox",
+      "Wolf"
+    ],
+    "correct_answer": "Tiger",
+    "category": "Animals"
+  },
+  {
+    "id": 142,
+    "question": "கரடி",
+    "options": [
+      "Fox",
+      "Bear",
+      "Wolf",
+      "Red"
+    ],
+    "correct_answer": "Bear",
+    "category": "Animals"
+  },
+  {
+    "id": 143,
+    "question": "நரி",
+    "options": [
+      "Wolf",
+      "Red",
+      "Fox",
+      "Blue"
+    ],
+    "correct_answer": "Fox",
+    "category": "Animals"
+  },
+  {
+    "id": 144,
+    "question": "ஓநாய்",
+    "options": [
+      "Red",
+      "Blue",
+      "Green",
+      "Wolf"
+    ],
+    "correct_answer": "Wolf",
+    "category": "Animals"
+  },
+  {
+    "id": 145,
+    "question": "சிவப்பு",
+    "options": [
+      "Red",
+      "Blue",
+      "Green",
+      "Yellow"
+    ],
+    "correct_answer": "Red",
+    "category": "Colors"
+  },
+  {
+    "id": 146,
+    "question": "நீலம்",
+    "options": [
+      "Green",
+      "Blue",
+      "Yellow",
+      "Black"
+    ],
+    "correct_answer": "Blue",
+    "category": "Colors"
+  },
+  {
+    "id": 147,
+    "question": "பச்சை",
+    "options": [
+      "Yellow",
+      "Black",
+      "Green",
+      "White"
+    ],
+    "correct_answer": "Green",
+    "category": "Colors"
+  },
+  {
+    "id": 148,
+    "question": "மஞ்சள்",
+    "options": [
+      "Black",
+      "White",
+      "Purple",
+      "Yellow"
+    ],
+    "correct_answer": "Yellow",
+    "category": "Colors"
+  },
+  {
+    "id": 149,
+    "question": "கருப்பு",
+    "options": [
+      "Black",
+      "White",
+      "Purple",
+      "Pink"
+    ],
+    "correct_answer": "Black",
+    "category": "Colors"
+  },
+  {
+    "id": 150,
+    "question": "வெள்ளை",
+    "options": [
+      "Purple",
+      "White",
+      "Pink",
+      "Brown"
+    ],
+    "correct_answer": "White",
+    "category": "Colors"
+  },
+  {
+    "id": 151,
+    "question": "ஊதா",
+    "options": [
+      "Pink",
+      "Brown",
+      "Purple",
+      "Gray"
+    ],
+    "correct_answer": "Purple",
+    "category": "Colors"
+  },
+  {
+    "id": 152,
+    "question": "இளஞ்சிவப்பு",
+    "options": [
+      "Brown",
+      "Gray",
+      "Gold",
+      "Pink"
+    ],
+    "correct_answer": "Pink",
+    "category": "Colors"
+  },
+  {
+    "id": 153,
+    "question": "பழுப்பு",
+    "options": [
+      "Brown",
+      "Gray",
+      "Gold",
+      "Silver"
+    ],
+    "correct_answer": "Brown",
+    "category": "Colors"
+  },
+  {
+    "id": 154,
+    "question": "சாம்பல்",
+    "options": [
+      "Gold",
+      "Gray",
+      "Silver",
+      "Father"
+    ],
+    "correct_answer": "Gray",
+    "category": "Colors"
+  },
+  {
+    "id": 155,
+    "question": "தங்கம்",
+    "options": [
+      "Silver",
+      "Father",
+      "Gold",
+      "Mother"
+    ],
+    "correct_answer": "Gold",
+    "category": "Colors"
+  },
+  {
+    "id": 156,
+    "question": "வெள்ளி",
+    "options": [
+      "Father",
+      "Mother",
+      "Brother",
+      "Silver"
+    ],
+    "correct_answer": "Silver",
+    "category": "Colors"
+  },
+  {
+    "id": 157,
+    "question": "தந்தை",
+    "options": [
+      "Father",
+      "Mother",
+      "Brother",
+      "Sister"
+    ],
+    "correct_answer": "Father",
+    "category": "Family"
+  },
+  {
+    "id": 158,
+    "question": "தாய்",
+    "options": [
+      "Brother",
+      "Mother",
+      "Sister",
+      "Grandfather"
+    ],
+    "correct_answer": "Mother",
+    "category": "Family"
+  },
+  {
+    "id": 159,
+    "question": "அண்ணன்",
+    "options": [
+      "Sister",
+      "Grandfather",
+      "Brother",
+      "Grandmother"
+    ],
+    "correct_answer": "Brother",
+    "category": "Family"
+  },
+  {
+    "id": 160,
+    "question": "அக்கா",
+    "options": [
+      "Grandfather",
+      "Grandmother",
+      "Uncle",
+      "Sister"
+    ],
+    "correct_answer": "Sister",
+    "category": "Family"
+  },
+  {
+    "id": 161,
+    "question": "தாத்தா",
+    "options": [
+      "Grandfather",
+      "Grandmother",
+      "Uncle",
+      "Aunt"
+    ],
+    "correct_answer": "Grandfather",
+    "category": "Family"
+  },
+  {
+    "id": 162,
+    "question": "பாட்டி",
+    "options": [
+      "Uncle",
+      "Grandmother",
+      "Aunt",
+      "Son"
+    ],
+    "correct_answer": "Grandmother",
+    "category": "Family"
+  },
+  {
+    "id": 163,
+    "question": "மாமா",
+    "options": [
+      "Aunt",
+      "Son",
+      "Uncle",
+      "Daughter"
+    ],
+    "correct_answer": "Uncle",
+    "category": "Family"
+  },
+  {
+    "id": 164,
+    "question": "அத்தை",
+    "options": [
+      "Son",
+      "Daughter",
+      "Husband",
+      "Aunt"
+    ],
+    "correct_answer": "Aunt",
+    "category": "Family"
+  },
+  {
+    "id": 165,
+    "question": "மகன்",
+    "options": [
+      "Son",
+      "Daughter",
+      "Husband",
+      "Wife"
+    ],
+    "correct_answer": "Son",
+    "category": "Family"
+  },
+  {
+    "id": 166,
+    "question": "மகள்",
+    "options": [
+      "Husband",
+      "Daughter",
+      "Wife",
+      "Book"
+    ],
+    "correct_answer": "Daughter",
+    "category": "Family"
+  },
+  {
+    "id": 167,
+    "question": "கணவர்",
+    "options": [
+      "Wife",
+      "Book",
+      "Husband",
+      "Pen"
+    ],
+    "correct_answer": "Husband",
+    "category": "Family"
+  },
+  {
+    "id": 168,
+    "question": "மனைவி",
+    "options": [
+      "Book",
+      "Pen",
+      "Pencil",
+      "Wife"
+    ],
+    "correct_answer": "Wife",
+    "category": "Family"
+  },
+  {
+    "id": 169,
+    "question": "புத்தகம்",
+    "options": [
+      "Book",
+      "Pen",
+      "Pencil",
+      "School"
+    ],
+    "correct_answer": "Book",
+    "category": "School"
+  },
+  {
+    "id": 170,
+    "question": "பேனா",
+    "options": [
+      "Pencil",
+      "Pen",
+      "School",
+      "Teacher"
+    ],
+    "correct_answer": "Pen",
+    "category": "School"
+  },
+  {
+    "id": 171,
+    "question": "பென்சில்",
+    "options": [
+      "School",
+      "Teacher",
+      "Pencil",
+      "Student"
+    ],
+    "correct_answer": "Pencil",
+    "category": "School"
+  },
+  {
+    "id": 172,
+    "question": "பள்ளி",
+    "options": [
+      "Teacher",
+      "Student",
+      "Table",
+      "School"
+    ],
+    "correct_answer": "School",
+    "category": "School"
+  },
+  {
+    "id": 173,
+    "question": "ஆசிரியர்",
+    "options": [
+      "Teacher",
+      "Student",
+      "Table",
+      "Chair"
+    ],
+    "correct_answer": "Teacher",
+    "category": "School"
+  },
+  {
+    "id": 174,
+    "question": "மாணவர்",
+    "options": [
+      "Table",
+      "Student",
+      "Chair",
+      "Bag"
+    ],
+    "correct_answer": "Student",
+    "category": "School"
+  },
+  {
+    "id": 175,
+    "question": "மேசை",
+    "options": [
+      "Chair",
+      "Bag",
+      "Table",
+      "Board"
+    ],
+    "correct_answer": "Table",
+    "category": "School"
+  },
+  {
+    "id": 176,
+    "question": "நாற்காலி",
+    "options": [
+      "Bag",
+      "Board",
+      "Eraser",
+      "Chair"
+    ],
+    "correct_answer": "Chair",
+    "category": "School"
+  },
+  {
+    "id": 177,
+    "question": "பை",
+    "options": [
+      "Bag",
+      "Board",
+      "Eraser",
+      "Ruler"
+    ],
+    "correct_answer": "Bag",
+    "category": "School"
+  },
+  {
+    "id": 178,
+    "question": "பலகை",
+    "options": [
+      "Eraser",
+      "Board",
+      "Ruler",
+      "Apple"
+    ],
+    "correct_answer": "Board",
+    "category": "School"
+  },
+  {
+    "id": 179,
+    "question": "அழிப்பான்",
+    "options": [
+      "Ruler",
+      "Apple",
+      "Eraser",
+      "Banana"
+    ],
+    "correct_answer": "Eraser",
+    "category": "School"
+  },
+  {
+    "id": 180,
+    "question": "அளவுகோல்",
+    "options": [
+      "Apple",
+      "Banana",
+      "Mango",
+      "Ruler"
+    ],
+    "correct_answer": "Ruler",
+    "category": "School"
+  },
+  {
+    "id": 181,
+    "question": "ஆப்பிள்",
+    "options": [
+      "Apple",
+      "Banana",
+      "Mango",
+      "Orange"
+    ],
+    "correct_answer": "Apple",
+    "category": "Fruits"
+  },
+  {
+    "id": 182,
+    "question": "வாழைப்பழம்",
+    "options": [
+      "Mango",
+      "Banana",
+      "Orange",
+      "Grapes"
+    ],
+    "correct_answer": "Banana",
+    "category": "Fruits"
+  },
+  {
+    "id": 183,
+    "question": "மாம்பழம்",
+    "options": [
+      "Orange",
+      "Grapes",
+      "Mango",
+      "Guava"
+    ],
+    "correct_answer": "Mango",
+    "category": "Fruits"
+  },
+  {
+    "id": 184,
+    "question": "ஆரஞ்சு",
+    "options": [
+      "Grapes",
+      "Guava",
+      "Papaya",
+      "Orange"
+    ],
+    "correct_answer": "Orange",
+    "category": "Fruits"
+  },
+  {
+    "id": 185,
+    "question": "திராட்சை",
+    "options": [
+      "Grapes",
+      "Guava",
+      "Papaya",
+      "Lemon"
+    ],
+    "correct_answer": "Grapes",
+    "category": "Fruits"
+  },
+  {
+    "id": 186,
+    "question": "கொய்யாப்பழம்",
+    "options": [
+      "Papaya",
+      "Guava",
+      "Lemon",
+      "Pineapple"
+    ],
+    "correct_answer": "Guava",
+    "category": "Fruits"
+  },
+  {
+    "id": 187,
+    "question": "பப்பாளி",
+    "options": [
+      "Lemon",
+      "Pineapple",
+      "Papaya",
+      "Watermelon"
+    ],
+    "correct_answer": "Papaya",
+    "category": "Fruits"
+  },
+  {
+    "id": 188,
+    "question": "எலுமிச்சை",
+    "options": [
+      "Pineapple",
+      "Watermelon",
+      "Pear",
+      "Lemon"
+    ],
+    "correct_answer": "Lemon",
+    "category": "Fruits"
+  },
+  {
+    "id": 189,
+    "question": "அன்னாசி",
+    "options": [
+      "Pineapple",
+      "Watermelon",
+      "Pear",
+      "Sapota"
+    ],
+    "correct_answer": "Pineapple",
+    "category": "Fruits"
+  },
+  {
+    "id": 190,
+    "question": "தர்பூசணி",
+    "options": [
+      "Pear",
+      "Watermelon",
+      "Sapota",
+      "Dog"
+    ],
+    "correct_answer": "Watermelon",
+    "category": "Fruits"
+  },
+  {
+    "id": 191,
+    "question": "பேரிக்காய்",
+    "options": [
+      "Sapota",
+      "Dog",
+      "Pear",
+      "Cat"
+    ],
+    "correct_answer": "Pear",
+    "category": "Fruits"
+  },
+  {
+    "id": 192,
+    "question": "சப்போட்டா",
+    "options": [
+      "Dog",
+      "Cat",
+      "Cow",
+      "Sapota"
+    ],
+    "correct_answer": "Sapota",
+    "category": "Fruits"
+  },
+  {
+    "id": 193,
+    "question": "நாய்",
+    "options": [
+      "Dog",
+      "Cat",
+      "Cow",
+      "Horse"
+    ],
+    "correct_answer": "Dog",
+    "category": "Animals"
+  },
+  {
+    "id": 194,
+    "question": "பூனை",
+    "options": [
+      "Cow",
+      "Cat",
+      "Horse",
+      "Goat"
+    ],
+    "correct_answer": "Cat",
+    "category": "Animals"
+  },
+  {
+    "id": 195,
+    "question": "பசு",
+    "options": [
+      "Horse",
+      "Goat",
+      "Cow",
+      "Rabbit"
+    ],
+    "correct_answer": "Cow",
+    "category": "Animals"
+  },
+  {
+    "id": 196,
+    "question": "குதிரை",
+    "options": [
+      "Goat",
+      "Rabbit",
+      "Elephant",
+      "Horse"
+    ],
+    "correct_answer": "Horse",
+    "category": "Animals"
+  },
+  {
+    "id": 197,
+    "question": "ஆடு",
+    "options": [
+      "Goat",
+      "Rabbit",
+      "Elephant",
+      "Lion"
+    ],
+    "correct_answer": "Goat",
+    "category": "Animals"
+  },
+  {
+    "id": 198,
+    "question": "முயல்",
+    "options": [
+      "Elephant",
+      "Rabbit",
+      "Lion",
+      "Tiger"
+    ],
+    "correct_answer": "Rabbit",
+    "category": "Animals"
+  },
+  {
+    "id": 199,
+    "question": "யானை",
+    "options": [
+      "Lion",
+      "Tiger",
+      "Elephant",
+      "Bear"
+    ],
+    "correct_answer": "Elephant",
+    "category": "Animals"
+  },
+  {
+    "id": 200,
+    "question": "சிங்கம்",
+    "options": [
+      "Tiger",
+      "Bear",
+      "Fox",
+      "Lion"
+    ],
+    "correct_answer": "Lion",
+    "category": "Animals"
+  },
+  {
+    "id": 201,
+    "question": "புலி",
+    "options": [
+      "Tiger",
+      "Bear",
+      "Fox",
+      "Wolf"
+    ],
+    "correct_answer": "Tiger",
+    "category": "Animals"
+  },
+  {
+    "id": 202,
+    "question": "கரடி",
+    "options": [
+      "Fox",
+      "Bear",
+      "Wolf",
+      "Red"
+    ],
+    "correct_answer": "Bear",
+    "category": "Animals"
+  },
+  {
+    "id": 203,
+    "question": "நரி",
+    "options": [
+      "Wolf",
+      "Red",
+      "Fox",
+      "Blue"
+    ],
+    "correct_answer": "Fox",
+    "category": "Animals"
+  },
+  {
+    "id": 204,
+    "question": "ஓநாய்",
+    "options": [
+      "Red",
+      "Blue",
+      "Green",
+      "Wolf"
+    ],
+    "correct_answer": "Wolf",
+    "category": "Animals"
+  },
+  {
+    "id": 205,
+    "question": "சிவப்பு",
+    "options": [
+      "Red",
+      "Blue",
+      "Green",
+      "Yellow"
+    ],
+    "correct_answer": "Red",
+    "category": "Colors"
+  },
+  {
+    "id": 206,
+    "question": "நீலம்",
+    "options": [
+      "Green",
+      "Blue",
+      "Yellow",
+      "Black"
+    ],
+    "correct_answer": "Blue",
+    "category": "Colors"
+  },
+  {
+    "id": 207,
+    "question": "பச்சை",
+    "options": [
+      "Yellow",
+      "Black",
+      "Green",
+      "White"
+    ],
+    "correct_answer": "Green",
+    "category": "Colors"
+  },
+  {
+    "id": 208,
+    "question": "மஞ்சள்",
+    "options": [
+      "Black",
+      "White",
+      "Purple",
+      "Yellow"
+    ],
+    "correct_answer": "Yellow",
+    "category": "Colors"
+  },
+  {
+    "id": 209,
+    "question": "கருப்பு",
+    "options": [
+      "Black",
+      "White",
+      "Purple",
+      "Pink"
+    ],
+    "correct_answer": "Black",
+    "category": "Colors"
+  },
+  {
+    "id": 210,
+    "question": "வெள்ளை",
+    "options": [
+      "Purple",
+      "White",
+      "Pink",
+      "Brown"
+    ],
+    "correct_answer": "White",
+    "category": "Colors"
+  },
+  {
+    "id": 211,
+    "question": "ஊதா",
+    "options": [
+      "Pink",
+      "Brown",
+      "Purple",
+      "Gray"
+    ],
+    "correct_answer": "Purple",
+    "category": "Colors"
+  },
+  {
+    "id": 212,
+    "question": "இளஞ்சிவப்பு",
+    "options": [
+      "Brown",
+      "Gray",
+      "Gold",
+      "Pink"
+    ],
+    "correct_answer": "Pink",
+    "category": "Colors"
+  },
+  {
+    "id": 213,
+    "question": "பழுப்பு",
+    "options": [
+      "Brown",
+      "Gray",
+      "Gold",
+      "Silver"
+    ],
+    "correct_answer": "Brown",
+    "category": "Colors"
+  },
+  {
+    "id": 214,
+    "question": "சாம்பல்",
+    "options": [
+      "Gold",
+      "Gray",
+      "Silver",
+      "Father"
+    ],
+    "correct_answer": "Gray",
+    "category": "Colors"
+  },
+  {
+    "id": 215,
+    "question": "தங்கம்",
+    "options": [
+      "Silver",
+      "Father",
+      "Gold",
+      "Mother"
+    ],
+    "correct_answer": "Gold",
+    "category": "Colors"
+  },
+  {
+    "id": 216,
+    "question": "வெள்ளி",
+    "options": [
+      "Father",
+      "Mother",
+      "Brother",
+      "Silver"
+    ],
+    "correct_answer": "Silver",
+    "category": "Colors"
+  },
+  {
+    "id": 217,
+    "question": "தந்தை",
+    "options": [
+      "Father",
+      "Mother",
+      "Brother",
+      "Sister"
+    ],
+    "correct_answer": "Father",
+    "category": "Family"
+  },
+  {
+    "id": 218,
+    "question": "தாய்",
+    "options": [
+      "Brother",
+      "Mother",
+      "Sister",
+      "Grandfather"
+    ],
+    "correct_answer": "Mother",
+    "category": "Family"
+  },
+  {
+    "id": 219,
+    "question": "அண்ணன்",
+    "options": [
+      "Sister",
+      "Grandfather",
+      "Brother",
+      "Grandmother"
+    ],
+    "correct_answer": "Brother",
+    "category": "Family"
+  },
+  {
+    "id": 220,
+    "question": "அக்கா",
+    "options": [
+      "Grandfather",
+      "Grandmother",
+      "Uncle",
+      "Sister"
+    ],
+    "correct_answer": "Sister",
+    "category": "Family"
+  },
+  {
+    "id": 221,
+    "question": "தாத்தா",
+    "options": [
+      "Grandfather",
+      "Grandmother",
+      "Uncle",
+      "Aunt"
+    ],
+    "correct_answer": "Grandfather",
+    "category": "Family"
+  },
+  {
+    "id": 222,
+    "question": "பாட்டி",
+    "options": [
+      "Uncle",
+      "Grandmother",
+      "Aunt",
+      "Son"
+    ],
+    "correct_answer": "Grandmother",
+    "category": "Family"
+  },
+  {
+    "id": 223,
+    "question": "மாமா",
+    "options": [
+      "Aunt",
+      "Son",
+      "Uncle",
+      "Daughter"
+    ],
+    "correct_answer": "Uncle",
+    "category": "Family"
+  },
+  {
+    "id": 224,
+    "question": "அத்தை",
+    "options": [
+      "Son",
+      "Daughter",
+      "Husband",
+      "Aunt"
+    ],
+    "correct_answer": "Aunt",
+    "category": "Family"
+  },
+  {
+    "id": 225,
+    "question": "மகன்",
+    "options": [
+      "Son",
+      "Daughter",
+      "Husband",
+      "Wife"
+    ],
+    "correct_answer": "Son",
+    "category": "Family"
+  },
+  {
+    "id": 226,
+    "question": "மகள்",
+    "options": [
+      "Husband",
+      "Daughter",
+      "Wife",
+      "Book"
+    ],
+    "correct_answer": "Daughter",
+    "category": "Family"
+  },
+  {
+    "id": 227,
+    "question": "கணவர்",
+    "options": [
+      "Wife",
+      "Book",
+      "Husband",
+      "Pen"
+    ],
+    "correct_answer": "Husband",
+    "category": "Family"
+  },
+  {
+    "id": 228,
+    "question": "மனைவி",
+    "options": [
+      "Book",
+      "Pen",
+      "Pencil",
+      "Wife"
+    ],
+    "correct_answer": "Wife",
+    "category": "Family"
+  },
+  {
+    "id": 229,
+    "question": "புத்தகம்",
+    "options": [
+      "Book",
+      "Pen",
+      "Pencil",
+      "School"
+    ],
+    "correct_answer": "Book",
+    "category": "School"
+  },
+  {
+    "id": 230,
+    "question": "பேனா",
+    "options": [
+      "Pencil",
+      "Pen",
+      "School",
+      "Teacher"
+    ],
+    "correct_answer": "Pen",
+    "category": "School"
+  },
+  {
+    "id": 231,
+    "question": "பென்சில்",
+    "options": [
+      "School",
+      "Teacher",
+      "Pencil",
+      "Student"
+    ],
+    "correct_answer": "Pencil",
+    "category": "School"
+  },
+  {
+    "id": 232,
+    "question": "பள்ளி",
+    "options": [
+      "Teacher",
+      "Student",
+      "Table",
+      "School"
+    ],
+    "correct_answer": "School",
+    "category": "School"
+  },
+  {
+    "id": 233,
+    "question": "ஆசிரியர்",
+    "options": [
+      "Teacher",
+      "Student",
+      "Table",
+      "Chair"
+    ],
+    "correct_answer": "Teacher",
+    "category": "School"
+  },
+  {
+    "id": 234,
+    "question": "மாணவர்",
+    "options": [
+      "Table",
+      "Student",
+      "Chair",
+      "Bag"
+    ],
+    "correct_answer": "Student",
+    "category": "School"
+  },
+  {
+    "id": 235,
+    "question": "மேசை",
+    "options": [
+      "Chair",
+      "Bag",
+      "Table",
+      "Board"
+    ],
+    "correct_answer": "Table",
+    "category": "School"
+  },
+  {
+    "id": 236,
+    "question": "நாற்காலி",
+    "options": [
+      "Bag",
+      "Board",
+      "Eraser",
+      "Chair"
+    ],
+    "correct_answer": "Chair",
+    "category": "School"
+  },
+  {
+    "id": 237,
+    "question": "பை",
+    "options": [
+      "Bag",
+      "Board",
+      "Eraser",
+      "Ruler"
+    ],
+    "correct_answer": "Bag",
+    "category": "School"
+  },
+  {
+    "id": 238,
+    "question": "பலகை",
+    "options": [
+      "Eraser",
+      "Board",
+      "Ruler",
+      "Apple"
+    ],
+    "correct_answer": "Board",
+    "category": "School"
+  },
+  {
+    "id": 239,
+    "question": "அழிப்பான்",
+    "options": [
+      "Ruler",
+      "Apple",
+      "Eraser",
+      "Banana"
+    ],
+    "correct_answer": "Eraser",
+    "category": "School"
+  },
+  {
+    "id": 240,
+    "question": "அளவுகோல்",
+    "options": [
+      "Apple",
+      "Banana",
+      "Mango",
+      "Ruler"
+    ],
+    "correct_answer": "Ruler",
+    "category": "School"
+  },
+  {
+    "id": 241,
+    "question": "ஆப்பிள்",
+    "options": [
+      "Apple",
+      "Banana",
+      "Mango",
+      "Orange"
+    ],
+    "correct_answer": "Apple",
+    "category": "Fruits"
+  },
+  {
+    "id": 242,
+    "question": "வாழைப்பழம்",
+    "options": [
+      "Mango",
+      "Banana",
+      "Orange",
+      "Grapes"
+    ],
+    "correct_answer": "Banana",
+    "category": "Fruits"
+  },
+  {
+    "id": 243,
+    "question": "மாம்பழம்",
+    "options": [
+      "Orange",
+      "Grapes",
+      "Mango",
+      "Guava"
+    ],
+    "correct_answer": "Mango",
+    "category": "Fruits"
+  },
+  {
+    "id": 244,
+    "question": "ஆரஞ்சு",
+    "options": [
+      "Grapes",
+      "Guava",
+      "Papaya",
+      "Orange"
+    ],
+    "correct_answer": "Orange",
+    "category": "Fruits"
+  },
+  {
+    "id": 245,
+    "question": "திராட்சை",
+    "options": [
+      "Grapes",
+      "Guava",
+      "Papaya",
+      "Lemon"
+    ],
+    "correct_answer": "Grapes",
+    "category": "Fruits"
+  },
+  {
+    "id": 246,
+    "question": "கொய்யாப்பழம்",
+    "options": [
+      "Papaya",
+      "Guava",
+      "Lemon",
+      "Pineapple"
+    ],
+    "correct_answer": "Guava",
+    "category": "Fruits"
+  },
+  {
+    "id": 247,
+    "question": "பப்பாளி",
+    "options": [
+      "Lemon",
+      "Pineapple",
+      "Papaya",
+      "Watermelon"
+    ],
+    "correct_answer": "Papaya",
+    "category": "Fruits"
+  },
+  {
+    "id": 248,
+    "question": "எலுமிச்சை",
+    "options": [
+      "Pineapple",
+      "Watermelon",
+      "Pear",
+      "Lemon"
+    ],
+    "correct_answer": "Lemon",
+    "category": "Fruits"
+  },
+  {
+    "id": 249,
+    "question": "அன்னாசி",
+    "options": [
+      "Pineapple",
+      "Watermelon",
+      "Pear",
+      "Sapota"
+    ],
+    "correct_answer": "Pineapple",
+    "category": "Fruits"
+  },
+  {
+    "id": 250,
+    "question": "தர்பூசணி",
+    "options": [
+      "Pear",
+      "Watermelon",
+      "Sapota",
+      "Dog"
+    ],
+    "correct_answer": "Watermelon",
+    "category": "Fruits"
+  },
+  {
+    "id": 251,
+    "question": "பேரிக்காய்",
+    "options": [
+      "Sapota",
+      "Dog",
+      "Pear",
+      "Cat"
+    ],
+    "correct_answer": "Pear",
+    "category": "Fruits"
+  },
+  {
+    "id": 252,
+    "question": "சப்போட்டா",
+    "options": [
+      "Dog",
+      "Cat",
+      "Cow",
+      "Sapota"
+    ],
+    "correct_answer": "Sapota",
+    "category": "Fruits"
+  },
+  {
+    "id": 253,
+    "question": "நாய்",
+    "options": [
+      "Dog",
+      "Cat",
+      "Cow",
+      "Horse"
+    ],
+    "correct_answer": "Dog",
+    "category": "Animals"
+  },
+  {
+    "id": 254,
+    "question": "பூனை",
+    "options": [
+      "Cow",
+      "Cat",
+      "Horse",
+      "Goat"
+    ],
+    "correct_answer": "Cat",
+    "category": "Animals"
+  },
+  {
+    "id": 255,
+    "question": "பசு",
+    "options": [
+      "Horse",
+      "Goat",
+      "Cow",
+      "Rabbit"
+    ],
+    "correct_answer": "Cow",
+    "category": "Animals"
+  },
+  {
+    "id": 256,
+    "question": "குதிரை",
+    "options": [
+      "Goat",
+      "Rabbit",
+      "Elephant",
+      "Horse"
+    ],
+    "correct_answer": "Horse",
+    "category": "Animals"
+  },
+  {
+    "id": 257,
+    "question": "ஆடு",
+    "options": [
+      "Goat",
+      "Rabbit",
+      "Elephant",
+      "Lion"
+    ],
+    "correct_answer": "Goat",
+    "category": "Animals"
+  },
+  {
+    "id": 258,
+    "question": "முயல்",
+    "options": [
+      "Elephant",
+      "Rabbit",
+      "Lion",
+      "Tiger"
+    ],
+    "correct_answer": "Rabbit",
+    "category": "Animals"
+  },
+  {
+    "id": 259,
+    "question": "யானை",
+    "options": [
+      "Lion",
+      "Tiger",
+      "Elephant",
+      "Bear"
+    ],
+    "correct_answer": "Elephant",
+    "category": "Animals"
+  },
+  {
+    "id": 260,
+    "question": "சிங்கம்",
+    "options": [
+      "Tiger",
+      "Bear",
+      "Fox",
+      "Lion"
+    ],
+    "correct_answer": "Lion",
+    "category": "Animals"
+  },
+  {
+    "id": 261,
+    "question": "புலி",
+    "options": [
+      "Tiger",
+      "Bear",
+      "Fox",
+      "Wolf"
+    ],
+    "correct_answer": "Tiger",
+    "category": "Animals"
+  },
+  {
+    "id": 262,
+    "question": "கரடி",
+    "options": [
+      "Fox",
+      "Bear",
+      "Wolf",
+      "Red"
+    ],
+    "correct_answer": "Bear",
+    "category": "Animals"
+  },
+  {
+    "id": 263,
+    "question": "நரி",
+    "options": [
+      "Wolf",
+      "Red",
+      "Fox",
+      "Blue"
+    ],
+    "correct_answer": "Fox",
+    "category": "Animals"
+  },
+  {
+    "id": 264,
+    "question": "ஓநாய்",
+    "options": [
+      "Red",
+      "Blue",
+      "Green",
+      "Wolf"
+    ],
+    "correct_answer": "Wolf",
+    "category": "Animals"
+  },
+  {
+    "id": 265,
+    "question": "சிவப்பு",
+    "options": [
+      "Red",
+      "Blue",
+      "Green",
+      "Yellow"
+    ],
+    "correct_answer": "Red",
+    "category": "Colors"
+  },
+  {
+    "id": 266,
+    "question": "நீலம்",
+    "options": [
+      "Green",
+      "Blue",
+      "Yellow",
+      "Black"
+    ],
+    "correct_answer": "Blue",
+    "category": "Colors"
+  },
+  {
+    "id": 267,
+    "question": "பச்சை",
+    "options": [
+      "Yellow",
+      "Black",
+      "Green",
+      "White"
+    ],
+    "correct_answer": "Green",
+    "category": "Colors"
+  },
+  {
+    "id": 268,
+    "question": "மஞ்சள்",
+    "options": [
+      "Black",
+      "White",
+      "Purple",
+      "Yellow"
+    ],
+    "correct_answer": "Yellow",
+    "category": "Colors"
+  },
+  {
+    "id": 269,
+    "question": "கருப்பு",
+    "options": [
+      "Black",
+      "White",
+      "Purple",
+      "Pink"
+    ],
+    "correct_answer": "Black",
+    "category": "Colors"
+  },
+  {
+    "id": 270,
+    "question": "வெள்ளை",
+    "options": [
+      "Purple",
+      "White",
+      "Pink",
+      "Brown"
+    ],
+    "correct_answer": "White",
+    "category": "Colors"
+  },
+  {
+    "id": 271,
+    "question": "ஊதா",
+    "options": [
+      "Pink",
+      "Brown",
+      "Purple",
+      "Gray"
+    ],
+    "correct_answer": "Purple",
+    "category": "Colors"
+  },
+  {
+    "id": 272,
+    "question": "இளஞ்சிவப்பு",
+    "options": [
+      "Brown",
+      "Gray",
+      "Gold",
+      "Pink"
+    ],
+    "correct_answer": "Pink",
+    "category": "Colors"
+  },
+  {
+    "id": 273,
+    "question": "பழுப்பு",
+    "options": [
+      "Brown",
+      "Gray",
+      "Gold",
+      "Silver"
+    ],
+    "correct_answer": "Brown",
+    "category": "Colors"
+  },
+  {
+    "id": 274,
+    "question": "சாம்பல்",
+    "options": [
+      "Gold",
+      "Gray",
+      "Silver",
+      "Father"
+    ],
+    "correct_answer": "Gray",
+    "category": "Colors"
+  },
+  {
+    "id": 275,
+    "question": "தங்கம்",
+    "options": [
+      "Silver",
+      "Father",
+      "Gold",
+      "Mother"
+    ],
+    "correct_answer": "Gold",
+    "category": "Colors"
+  },
+  {
+    "id": 276,
+    "question": "வெள்ளி",
+    "options": [
+      "Father",
+      "Mother",
+      "Brother",
+      "Silver"
+    ],
+    "correct_answer": "Silver",
+    "category": "Colors"
+  },
+  {
+    "id": 277,
+    "question": "தந்தை",
+    "options": [
+      "Father",
+      "Mother",
+      "Brother",
+      "Sister"
+    ],
+    "correct_answer": "Father",
+    "category": "Family"
+  },
+  {
+    "id": 278,
+    "question": "தாய்",
+    "options": [
+      "Brother",
+      "Mother",
+      "Sister",
+      "Grandfather"
+    ],
+    "correct_answer": "Mother",
+    "category": "Family"
+  },
+  {
+    "id": 279,
+    "question": "அண்ணன்",
+    "options": [
+      "Sister",
+      "Grandfather",
+      "Brother",
+      "Grandmother"
+    ],
+    "correct_answer": "Brother",
+    "category": "Family"
+  },
+  {
+    "id": 280,
+    "question": "அக்கா",
+    "options": [
+      "Grandfather",
+      "Grandmother",
+      "Uncle",
+      "Sister"
+    ],
+    "correct_answer": "Sister",
+    "category": "Family"
+  },
+  {
+    "id": 281,
+    "question": "தாத்தா",
+    "options": [
+      "Grandfather",
+      "Grandmother",
+      "Uncle",
+      "Aunt"
+    ],
+    "correct_answer": "Grandfather",
+    "category": "Family"
+  },
+  {
+    "id": 282,
+    "question": "பாட்டி",
+    "options": [
+      "Uncle",
+      "Grandmother",
+      "Aunt",
+      "Son"
+    ],
+    "correct_answer": "Grandmother",
+    "category": "Family"
+  },
+  {
+    "id": 283,
+    "question": "மாமா",
+    "options": [
+      "Aunt",
+      "Son",
+      "Uncle",
+      "Daughter"
+    ],
+    "correct_answer": "Uncle",
+    "category": "Family"
+  },
+  {
+    "id": 284,
+    "question": "அத்தை",
+    "options": [
+      "Son",
+      "Daughter",
+      "Husband",
+      "Aunt"
+    ],
+    "correct_answer": "Aunt",
+    "category": "Family"
+  },
+  {
+    "id": 285,
+    "question": "மகன்",
+    "options": [
+      "Son",
+      "Daughter",
+      "Husband",
+      "Wife"
+    ],
+    "correct_answer": "Son",
+    "category": "Family"
+  },
+  {
+    "id": 286,
+    "question": "மகள்",
+    "options": [
+      "Husband",
+      "Daughter",
+      "Wife",
+      "Book"
+    ],
+    "correct_answer": "Daughter",
+    "category": "Family"
+  },
+  {
+    "id": 287,
+    "question": "கணவர்",
+    "options": [
+      "Wife",
+      "Book",
+      "Husband",
+      "Pen"
+    ],
+    "correct_answer": "Husband",
+    "category": "Family"
+  },
+  {
+    "id": 288,
+    "question": "மனைவி",
+    "options": [
+      "Book",
+      "Pen",
+      "Pencil",
+      "Wife"
+    ],
+    "correct_answer": "Wife",
+    "category": "Family"
+  },
+  {
+    "id": 289,
+    "question": "புத்தகம்",
+    "options": [
+      "Book",
+      "Pen",
+      "Pencil",
+      "School"
+    ],
+    "correct_answer": "Book",
+    "category": "School"
+  },
+  {
+    "id": 290,
+    "question": "பேனா",
+    "options": [
+      "Pencil",
+      "Pen",
+      "School",
+      "Teacher"
+    ],
+    "correct_answer": "Pen",
+    "category": "School"
+  },
+  {
+    "id": 291,
+    "question": "பென்சில்",
+    "options": [
+      "School",
+      "Teacher",
+      "Pencil",
+      "Student"
+    ],
+    "correct_answer": "Pencil",
+    "category": "School"
+  },
+  {
+    "id": 292,
+    "question": "பள்ளி",
+    "options": [
+      "Teacher",
+      "Student",
+      "Table",
+      "School"
+    ],
+    "correct_answer": "School",
+    "category": "School"
+  },
+  {
+    "id": 293,
+    "question": "ஆசிரியர்",
+    "options": [
+      "Teacher",
+      "Student",
+      "Table",
+      "Chair"
+    ],
+    "correct_answer": "Teacher",
+    "category": "School"
+  },
+  {
+    "id": 294,
+    "question": "மாணவர்",
+    "options": [
+      "Table",
+      "Student",
+      "Chair",
+      "Bag"
+    ],
+    "correct_answer": "Student",
+    "category": "School"
+  },
+  {
+    "id": 295,
+    "question": "மேசை",
+    "options": [
+      "Chair",
+      "Bag",
+      "Table",
+      "Board"
+    ],
+    "correct_answer": "Table",
+    "category": "School"
+  },
+  {
+    "id": 296,
+    "question": "நாற்காலி",
+    "options": [
+      "Bag",
+      "Board",
+      "Eraser",
+      "Chair"
+    ],
+    "correct_answer": "Chair",
+    "category": "School"
+  },
+  {
+    "id": 297,
+    "question": "பை",
+    "options": [
+      "Bag",
+      "Board",
+      "Eraser",
+      "Ruler"
+    ],
+    "correct_answer": "Bag",
+    "category": "School"
+  },
+  {
+    "id": 298,
+    "question": "பலகை",
+    "options": [
+      "Eraser",
+      "Board",
+      "Ruler",
+      "Apple"
+    ],
+    "correct_answer": "Board",
+    "category": "School"
+  },
+  {
+    "id": 299,
+    "question": "அழிப்பான்",
+    "options": [
+      "Ruler",
+      "Apple",
+      "Eraser",
+      "Banana"
+    ],
+    "correct_answer": "Eraser",
+    "category": "School"
+  },
+  {
+    "id": 300,
+    "question": "அளவுகோல்",
+    "options": [
+      "Apple",
+      "Banana",
+      "Mango",
+      "Ruler"
+    ],
+    "correct_answer": "Ruler",
+    "category": "School"
+  },
+  {
+    "id": 301,
+    "question": "ஆப்பிள்",
+    "options": [
+      "Apple",
+      "Banana",
+      "Mango",
+      "Orange"
+    ],
+    "correct_answer": "Apple",
+    "category": "Fruits"
+  },
+  {
+    "id": 302,
+    "question": "வாழைப்பழம்",
+    "options": [
+      "Mango",
+      "Banana",
+      "Orange",
+      "Grapes"
+    ],
+    "correct_answer": "Banana",
+    "category": "Fruits"
+  },
+  {
+    "id": 303,
+    "question": "மாம்பழம்",
+    "options": [
+      "Orange",
+      "Grapes",
+      "Mango",
+      "Guava"
+    ],
+    "correct_answer": "Mango",
+    "category": "Fruits"
+  },
+  {
+    "id": 304,
+    "question": "ஆரஞ்சு",
+    "options": [
+      "Grapes",
+      "Guava",
+      "Papaya",
+      "Orange"
+    ],
+    "correct_answer": "Orange",
+    "category": "Fruits"
+  },
+  {
+    "id": 305,
+    "question": "திராட்சை",
+    "options": [
+      "Grapes",
+      "Guava",
+      "Papaya",
+      "Lemon"
+    ],
+    "correct_answer": "Grapes",
+    "category": "Fruits"
+  },
+  {
+    "id": 306,
+    "question": "கொய்யாப்பழம்",
+    "options": [
+      "Papaya",
+      "Guava",
+      "Lemon",
+      "Pineapple"
+    ],
+    "correct_answer": "Guava",
+    "category": "Fruits"
+  },
+  {
+    "id": 307,
+    "question": "பப்பாளி",
+    "options": [
+      "Lemon",
+      "Pineapple",
+      "Papaya",
+      "Watermelon"
+    ],
+    "correct_answer": "Papaya",
+    "category": "Fruits"
+  },
+  {
+    "id": 308,
+    "question": "எலுமிச்சை",
+    "options": [
+      "Pineapple",
+      "Watermelon",
+      "Pear",
+      "Lemon"
+    ],
+    "correct_answer": "Lemon",
+    "category": "Fruits"
+  },
+  {
+    "id": 309,
+    "question": "அன்னாசி",
+    "options": [
+      "Pineapple",
+      "Watermelon",
+      "Pear",
+      "Sapota"
+    ],
+    "correct_answer": "Pineapple",
+    "category": "Fruits"
+  },
+  {
+    "id": 310,
+    "question": "தர்பூசணி",
+    "options": [
+      "Pear",
+      "Watermelon",
+      "Sapota",
+      "Dog"
+    ],
+    "correct_answer": "Watermelon",
+    "category": "Fruits"
+  },
+  {
+    "id": 311,
+    "question": "பேரிக்காய்",
+    "options": [
+      "Sapota",
+      "Dog",
+      "Pear",
+      "Cat"
+    ],
+    "correct_answer": "Pear",
+    "category": "Fruits"
+  },
+  {
+    "id": 312,
+    "question": "சப்போட்டா",
+    "options": [
+      "Dog",
+      "Cat",
+      "Cow",
+      "Sapota"
+    ],
+    "correct_answer": "Sapota",
+    "category": "Fruits"
+  },
+  {
+    "id": 313,
+    "question": "நாய்",
+    "options": [
+      "Dog",
+      "Cat",
+      "Cow",
+      "Horse"
+    ],
+    "correct_answer": "Dog",
+    "category": "Animals"
+  },
+  {
+    "id": 314,
+    "question": "பூனை",
+    "options": [
+      "Cow",
+      "Cat",
+      "Horse",
+      "Goat"
+    ],
+    "correct_answer": "Cat",
+    "category": "Animals"
+  },
+  {
+    "id": 315,
+    "question": "பசு",
+    "options": [
+      "Horse",
+      "Goat",
+      "Cow",
+      "Rabbit"
+    ],
+    "correct_answer": "Cow",
+    "category": "Animals"
+  },
+  {
+    "id": 316,
+    "question": "குதிரை",
+    "options": [
+      "Goat",
+      "Rabbit",
+      "Elephant",
+      "Horse"
+    ],
+    "correct_answer": "Horse",
+    "category": "Animals"
+  },
+  {
+    "id": 317,
+    "question": "ஆடு",
+    "options": [
+      "Goat",
+      "Rabbit",
+      "Elephant",
+      "Lion"
+    ],
+    "correct_answer": "Goat",
+    "category": "Animals"
+  },
+  {
+    "id": 318,
+    "question": "முயல்",
+    "options": [
+      "Elephant",
+      "Rabbit",
+      "Lion",
+      "Tiger"
+    ],
+    "correct_answer": "Rabbit",
+    "category": "Animals"
+  },
+  {
+    "id": 319,
+    "question": "யானை",
+    "options": [
+      "Lion",
+      "Tiger",
+      "Elephant",
+      "Bear"
+    ],
+    "correct_answer": "Elephant",
+    "category": "Animals"
+  },
+  {
+    "id": 320,
+    "question": "சிங்கம்",
+    "options": [
+      "Tiger",
+      "Bear",
+      "Fox",
+      "Lion"
+    ],
+    "correct_answer": "Lion",
+    "category": "Animals"
+  },
+  {
+    "id": 321,
+    "question": "புலி",
+    "options": [
+      "Tiger",
+      "Bear",
+      "Fox",
+      "Wolf"
+    ],
+    "correct_answer": "Tiger",
+    "category": "Animals"
+  },
+  {
+    "id": 322,
+    "question": "கரடி",
+    "options": [
+      "Fox",
+      "Bear",
+      "Wolf",
+      "Red"
+    ],
+    "correct_answer": "Bear",
+    "category": "Animals"
+  },
+  {
+    "id": 323,
+    "question": "நரி",
+    "options": [
+      "Wolf",
+      "Red",
+      "Fox",
+      "Blue"
+    ],
+    "correct_answer": "Fox",
+    "category": "Animals"
+  },
+  {
+    "id": 324,
+    "question": "ஓநாய்",
+    "options": [
+      "Red",
+      "Blue",
+      "Green",
+      "Wolf"
+    ],
+    "correct_answer": "Wolf",
+    "category": "Animals"
+  },
+  {
+    "id": 325,
+    "question": "சிவப்பு",
+    "options": [
+      "Red",
+      "Blue",
+      "Green",
+      "Yellow"
+    ],
+    "correct_answer": "Red",
+    "category": "Colors"
+  },
+  {
+    "id": 326,
+    "question": "நீலம்",
+    "options": [
+      "Green",
+      "Blue",
+      "Yellow",
+      "Black"
+    ],
+    "correct_answer": "Blue",
+    "category": "Colors"
+  },
+  {
+    "id": 327,
+    "question": "பச்சை",
+    "options": [
+      "Yellow",
+      "Black",
+      "Green",
+      "White"
+    ],
+    "correct_answer": "Green",
+    "category": "Colors"
+  },
+  {
+    "id": 328,
+    "question": "மஞ்சள்",
+    "options": [
+      "Black",
+      "White",
+      "Purple",
+      "Yellow"
+    ],
+    "correct_answer": "Yellow",
+    "category": "Colors"
+  },
+  {
+    "id": 329,
+    "question": "கருப்பு",
+    "options": [
+      "Black",
+      "White",
+      "Purple",
+      "Pink"
+    ],
+    "correct_answer": "Black",
+    "category": "Colors"
+  },
+  {
+    "id": 330,
+    "question": "வெள்ளை",
+    "options": [
+      "Purple",
+      "White",
+      "Pink",
+      "Brown"
+    ],
+    "correct_answer": "White",
+    "category": "Colors"
+  },
+  {
+    "id": 331,
+    "question": "ஊதா",
+    "options": [
+      "Pink",
+      "Brown",
+      "Purple",
+      "Gray"
+    ],
+    "correct_answer": "Purple",
+    "category": "Colors"
+  },
+  {
+    "id": 332,
+    "question": "இளஞ்சிவப்பு",
+    "options": [
+      "Brown",
+      "Gray",
+      "Gold",
+      "Pink"
+    ],
+    "correct_answer": "Pink",
+    "category": "Colors"
+  },
+  {
+    "id": 333,
+    "question": "பழுப்பு",
+    "options": [
+      "Brown",
+      "Gray",
+      "Gold",
+      "Silver"
+    ],
+    "correct_answer": "Brown",
+    "category": "Colors"
+  },
+  {
+    "id": 334,
+    "question": "சாம்பல்",
+    "options": [
+      "Gold",
+      "Gray",
+      "Silver",
+      "Father"
+    ],
+    "correct_answer": "Gray",
+    "category": "Colors"
+  },
+  {
+    "id": 335,
+    "question": "தங்கம்",
+    "options": [
+      "Silver",
+      "Father",
+      "Gold",
+      "Mother"
+    ],
+    "correct_answer": "Gold",
+    "category": "Colors"
+  },
+  {
+    "id": 336,
+    "question": "வெள்ளி",
+    "options": [
+      "Father",
+      "Mother",
+      "Brother",
+      "Silver"
+    ],
+    "correct_answer": "Silver",
+    "category": "Colors"
+  },
+  {
+    "id": 337,
+    "question": "தந்தை",
+    "options": [
+      "Father",
+      "Mother",
+      "Brother",
+      "Sister"
+    ],
+    "correct_answer": "Father",
+    "category": "Family"
+  },
+  {
+    "id": 338,
+    "question": "தாய்",
+    "options": [
+      "Brother",
+      "Mother",
+      "Sister",
+      "Grandfather"
+    ],
+    "correct_answer": "Mother",
+    "category": "Family"
+  },
+  {
+    "id": 339,
+    "question": "அண்ணன்",
+    "options": [
+      "Sister",
+      "Grandfather",
+      "Brother",
+      "Grandmother"
+    ],
+    "correct_answer": "Brother",
+    "category": "Family"
+  },
+  {
+    "id": 340,
+    "question": "அக்கா",
+    "options": [
+      "Grandfather",
+      "Grandmother",
+      "Uncle",
+      "Sister"
+    ],
+    "correct_answer": "Sister",
+    "category": "Family"
+  },
+  {
+    "id": 341,
+    "question": "தாத்தா",
+    "options": [
+      "Grandfather",
+      "Grandmother",
+      "Uncle",
+      "Aunt"
+    ],
+    "correct_answer": "Grandfather",
+    "category": "Family"
+  },
+  {
+    "id": 342,
+    "question": "பாட்டி",
+    "options": [
+      "Uncle",
+      "Grandmother",
+      "Aunt",
+      "Son"
+    ],
+    "correct_answer": "Grandmother",
+    "category": "Family"
+  },
+  {
+    "id": 343,
+    "question": "மாமா",
+    "options": [
+      "Aunt",
+      "Son",
+      "Uncle",
+      "Daughter"
+    ],
+    "correct_answer": "Uncle",
+    "category": "Family"
+  },
+  {
+    "id": 344,
+    "question": "அத்தை",
+    "options": [
+      "Son",
+      "Daughter",
+      "Husband",
+      "Aunt"
+    ],
+    "correct_answer": "Aunt",
+    "category": "Family"
+  },
+  {
+    "id": 345,
+    "question": "மகன்",
+    "options": [
+      "Son",
+      "Daughter",
+      "Husband",
+      "Wife"
+    ],
+    "correct_answer": "Son",
+    "category": "Family"
+  },
+  {
+    "id": 346,
+    "question": "மகள்",
+    "options": [
+      "Husband",
+      "Daughter",
+      "Wife",
+      "Book"
+    ],
+    "correct_answer": "Daughter",
+    "category": "Family"
+  },
+  {
+    "id": 347,
+    "question": "கணவர்",
+    "options": [
+      "Wife",
+      "Book",
+      "Husband",
+      "Pen"
+    ],
+    "correct_answer": "Husband",
+    "category": "Family"
+  },
+  {
+    "id": 348,
+    "question": "மனைவி",
+    "options": [
+      "Book",
+      "Pen",
+      "Pencil",
+      "Wife"
+    ],
+    "correct_answer": "Wife",
+    "category": "Family"
+  },
+  {
+    "id": 349,
+    "question": "புத்தகம்",
+    "options": [
+      "Book",
+      "Pen",
+      "Pencil",
+      "School"
+    ],
+    "correct_answer": "Book",
+    "category": "School"
+  },
+  {
+    "id": 350,
+    "question": "பேனா",
+    "options": [
+      "Pencil",
+      "Pen",
+      "School",
+      "Teacher"
+    ],
+    "correct_answer": "Pen",
+    "category": "School"
+  },
+  {
+    "id": 351,
+    "question": "பென்சில்",
+    "options": [
+      "School",
+      "Teacher",
+      "Pencil",
+      "Student"
+    ],
+    "correct_answer": "Pencil",
+    "category": "School"
+  },
+  {
+    "id": 352,
+    "question": "பள்ளி",
+    "options": [
+      "Teacher",
+      "Student",
+      "Table",
+      "School"
+    ],
+    "correct_answer": "School",
+    "category": "School"
+  },
+  {
+    "id": 353,
+    "question": "ஆசிரியர்",
+    "options": [
+      "Teacher",
+      "Student",
+      "Table",
+      "Chair"
+    ],
+    "correct_answer": "Teacher",
+    "category": "School"
+  },
+  {
+    "id": 354,
+    "question": "மாணவர்",
+    "options": [
+      "Table",
+      "Student",
+      "Chair",
+      "Bag"
+    ],
+    "correct_answer": "Student",
+    "category": "School"
+  },
+  {
+    "id": 355,
+    "question": "மேசை",
+    "options": [
+      "Chair",
+      "Bag",
+      "Table",
+      "Board"
+    ],
+    "correct_answer": "Table",
+    "category": "School"
+  },
+  {
+    "id": 356,
+    "question": "நாற்காலி",
+    "options": [
+      "Bag",
+      "Board",
+      "Eraser",
+      "Chair"
+    ],
+    "correct_answer": "Chair",
+    "category": "School"
+  },
+  {
+    "id": 357,
+    "question": "பை",
+    "options": [
+      "Bag",
+      "Board",
+      "Eraser",
+      "Ruler"
+    ],
+    "correct_answer": "Bag",
+    "category": "School"
+  },
+  {
+    "id": 358,
+    "question": "பலகை",
+    "options": [
+      "Eraser",
+      "Board",
+      "Ruler",
+      "Apple"
+    ],
+    "correct_answer": "Board",
+    "category": "School"
+  },
+  {
+    "id": 359,
+    "question": "அழிப்பான்",
+    "options": [
+      "Ruler",
+      "Apple",
+      "Eraser",
+      "Banana"
+    ],
+    "correct_answer": "Eraser",
+    "category": "School"
+  },
+  {
+    "id": 360,
+    "question": "அளவுகோல்",
+    "options": [
+      "Apple",
+      "Banana",
+      "Mango",
+      "Ruler"
+    ],
+    "correct_answer": "Ruler",
+    "category": "School"
+  },
+  {
+    "id": 361,
+    "question": "ஆப்பிள்",
+    "options": [
+      "Apple",
+      "Banana",
+      "Mango",
+      "Orange"
+    ],
+    "correct_answer": "Apple",
+    "category": "Fruits"
+  },
+  {
+    "id": 362,
+    "question": "வாழைப்பழம்",
+    "options": [
+      "Mango",
+      "Banana",
+      "Orange",
+      "Grapes"
+    ],
+    "correct_answer": "Banana",
+    "category": "Fruits"
+  },
+  {
+    "id": 363,
+    "question": "மாம்பழம்",
+    "options": [
+      "Orange",
+      "Grapes",
+      "Mango",
+      "Guava"
+    ],
+    "correct_answer": "Mango",
+    "category": "Fruits"
+  },
+  {
+    "id": 364,
+    "question": "ஆரஞ்சு",
+    "options": [
+      "Grapes",
+      "Guava",
+      "Papaya",
+      "Orange"
+    ],
+    "correct_answer": "Orange",
+    "category": "Fruits"
+  },
+  {
+    "id": 365,
+    "question": "திராட்சை",
+    "options": [
+      "Grapes",
+      "Guava",
+      "Papaya",
+      "Lemon"
+    ],
+    "correct_answer": "Grapes",
+    "category": "Fruits"
+  },
+  {
+    "id": 366,
+    "question": "கொய்யாப்பழம்",
+    "options": [
+      "Papaya",
+      "Guava",
+      "Lemon",
+      "Pineapple"
+    ],
+    "correct_answer": "Guava",
+    "category": "Fruits"
+  },
+  {
+    "id": 367,
+    "question": "பப்பாளி",
+    "options": [
+      "Lemon",
+      "Pineapple",
+      "Papaya",
+      "Watermelon"
+    ],
+    "correct_answer": "Papaya",
+    "category": "Fruits"
+  },
+  {
+    "id": 368,
+    "question": "எலுமிச்சை",
+    "options": [
+      "Pineapple",
+      "Watermelon",
+      "Pear",
+      "Lemon"
+    ],
+    "correct_answer": "Lemon",
+    "category": "Fruits"
+  },
+  {
+    "id": 369,
+    "question": "அன்னாசி",
+    "options": [
+      "Pineapple",
+      "Watermelon",
+      "Pear",
+      "Sapota"
+    ],
+    "correct_answer": "Pineapple",
+    "category": "Fruits"
+  },
+  {
+    "id": 370,
+    "question": "தர்பூசணி",
+    "options": [
+      "Pear",
+      "Watermelon",
+      "Sapota",
+      "Dog"
+    ],
+    "correct_answer": "Watermelon",
+    "category": "Fruits"
+  },
+  {
+    "id": 371,
+    "question": "பேரிக்காய்",
+    "options": [
+      "Sapota",
+      "Dog",
+      "Pear",
+      "Cat"
+    ],
+    "correct_answer": "Pear",
+    "category": "Fruits"
+  },
+  {
+    "id": 372,
+    "question": "சப்போட்டா",
+    "options": [
+      "Dog",
+      "Cat",
+      "Cow",
+      "Sapota"
+    ],
+    "correct_answer": "Sapota",
+    "category": "Fruits"
+  },
+  {
+    "id": 373,
+    "question": "நாய்",
+    "options": [
+      "Dog",
+      "Cat",
+      "Cow",
+      "Horse"
+    ],
+    "correct_answer": "Dog",
+    "category": "Animals"
+  },
+  {
+    "id": 374,
+    "question": "பூனை",
+    "options": [
+      "Cow",
+      "Cat",
+      "Horse",
+      "Goat"
+    ],
+    "correct_answer": "Cat",
+    "category": "Animals"
+  },
+  {
+    "id": 375,
+    "question": "பசு",
+    "options": [
+      "Horse",
+      "Goat",
+      "Cow",
+      "Rabbit"
+    ],
+    "correct_answer": "Cow",
+    "category": "Animals"
+  },
+  {
+    "id": 376,
+    "question": "குதிரை",
+    "options": [
+      "Goat",
+      "Rabbit",
+      "Elephant",
+      "Horse"
+    ],
+    "correct_answer": "Horse",
+    "category": "Animals"
+  },
+  {
+    "id": 377,
+    "question": "ஆடு",
+    "options": [
+      "Goat",
+      "Rabbit",
+      "Elephant",
+      "Lion"
+    ],
+    "correct_answer": "Goat",
+    "category": "Animals"
+  },
+  {
+    "id": 378,
+    "question": "முயல்",
+    "options": [
+      "Elephant",
+      "Rabbit",
+      "Lion",
+      "Tiger"
+    ],
+    "correct_answer": "Rabbit",
+    "category": "Animals"
+  },
+  {
+    "id": 379,
+    "question": "யானை",
+    "options": [
+      "Lion",
+      "Tiger",
+      "Elephant",
+      "Bear"
+    ],
+    "correct_answer": "Elephant",
+    "category": "Animals"
+  },
+  {
+    "id": 380,
+    "question": "சிங்கம்",
+    "options": [
+      "Tiger",
+      "Bear",
+      "Fox",
+      "Lion"
+    ],
+    "correct_answer": "Lion",
+    "category": "Animals"
+  },
+  {
+    "id": 381,
+    "question": "புலி",
+    "options": [
+      "Tiger",
+      "Bear",
+      "Fox",
+      "Wolf"
+    ],
+    "correct_answer": "Tiger",
+    "category": "Animals"
+  },
+  {
+    "id": 382,
+    "question": "கரடி",
+    "options": [
+      "Fox",
+      "Bear",
+      "Wolf",
+      "Red"
+    ],
+    "correct_answer": "Bear",
+    "category": "Animals"
+  },
+  {
+    "id": 383,
+    "question": "நரி",
+    "options": [
+      "Wolf",
+      "Red",
+      "Fox",
+      "Blue"
+    ],
+    "correct_answer": "Fox",
+    "category": "Animals"
+  },
+  {
+    "id": 384,
+    "question": "ஓநாய்",
+    "options": [
+      "Red",
+      "Blue",
+      "Green",
+      "Wolf"
+    ],
+    "correct_answer": "Wolf",
+    "category": "Animals"
+  },
+  {
+    "id": 385,
+    "question": "சிவப்பு",
+    "options": [
+      "Red",
+      "Blue",
+      "Green",
+      "Yellow"
+    ],
+    "correct_answer": "Red",
+    "category": "Colors"
+  },
+  {
+    "id": 386,
+    "question": "நீலம்",
+    "options": [
+      "Green",
+      "Blue",
+      "Yellow",
+      "Black"
+    ],
+    "correct_answer": "Blue",
+    "category": "Colors"
+  },
+  {
+    "id": 387,
+    "question": "பச்சை",
+    "options": [
+      "Yellow",
+      "Black",
+      "Green",
+      "White"
+    ],
+    "correct_answer": "Green",
+    "category": "Colors"
+  },
+  {
+    "id": 388,
+    "question": "மஞ்சள்",
+    "options": [
+      "Black",
+      "White",
+      "Purple",
+      "Yellow"
+    ],
+    "correct_answer": "Yellow",
+    "category": "Colors"
+  },
+  {
+    "id": 389,
+    "question": "கருப்பு",
+    "options": [
+      "Black",
+      "White",
+      "Purple",
+      "Pink"
+    ],
+    "correct_answer": "Black",
+    "category": "Colors"
+  },
+  {
+    "id": 390,
+    "question": "வெள்ளை",
+    "options": [
+      "Purple",
+      "White",
+      "Pink",
+      "Brown"
+    ],
+    "correct_answer": "White",
+    "category": "Colors"
+  },
+  {
+    "id": 391,
+    "question": "ஊதா",
+    "options": [
+      "Pink",
+      "Brown",
+      "Purple",
+      "Gray"
+    ],
+    "correct_answer": "Purple",
+    "category": "Colors"
+  },
+  {
+    "id": 392,
+    "question": "இளஞ்சிவப்பு",
+    "options": [
+      "Brown",
+      "Gray",
+      "Gold",
+      "Pink"
+    ],
+    "correct_answer": "Pink",
+    "category": "Colors"
+  },
+  {
+    "id": 393,
+    "question": "பழுப்பு",
+    "options": [
+      "Brown",
+      "Gray",
+      "Gold",
+      "Silver"
+    ],
+    "correct_answer": "Brown",
+    "category": "Colors"
+  },
+  {
+    "id": 394,
+    "question": "சாம்பல்",
+    "options": [
+      "Gold",
+      "Gray",
+      "Silver",
+      "Father"
+    ],
+    "correct_answer": "Gray",
+    "category": "Colors"
+  },
+  {
+    "id": 395,
+    "question": "தங்கம்",
+    "options": [
+      "Silver",
+      "Father",
+      "Gold",
+      "Mother"
+    ],
+    "correct_answer": "Gold",
+    "category": "Colors"
+  },
+  {
+    "id": 396,
+    "question": "வெள்ளி",
+    "options": [
+      "Father",
+      "Mother",
+      "Brother",
+      "Silver"
+    ],
+    "correct_answer": "Silver",
+    "category": "Colors"
+  },
+  {
+    "id": 397,
+    "question": "தந்தை",
+    "options": [
+      "Father",
+      "Mother",
+      "Brother",
+      "Sister"
+    ],
+    "correct_answer": "Father",
+    "category": "Family"
+  },
+  {
+    "id": 398,
+    "question": "தாய்",
+    "options": [
+      "Brother",
+      "Mother",
+      "Sister",
+      "Grandfather"
+    ],
+    "correct_answer": "Mother",
+    "category": "Family"
+  },
+  {
+    "id": 399,
+    "question": "அண்ணன்",
+    "options": [
+      "Sister",
+      "Grandfather",
+      "Brother",
+      "Grandmother"
+    ],
+    "correct_answer": "Brother",
+    "category": "Family"
+  },
+  {
+    "id": 400,
+    "question": "அக்கா",
+    "options": [
+      "Grandfather",
+      "Grandmother",
+      "Uncle",
+      "Sister"
+    ],
+    "correct_answer": "Sister",
+    "category": "Family"
+  },
+  {
+    "id": 401,
+    "question": "தாத்தா",
+    "options": [
+      "Grandfather",
+      "Grandmother",
+      "Uncle",
+      "Aunt"
+    ],
+    "correct_answer": "Grandfather",
+    "category": "Family"
+  },
+  {
+    "id": 402,
+    "question": "பாட்டி",
+    "options": [
+      "Uncle",
+      "Grandmother",
+      "Aunt",
+      "Son"
+    ],
+    "correct_answer": "Grandmother",
+    "category": "Family"
+  },
+  {
+    "id": 403,
+    "question": "மாமா",
+    "options": [
+      "Aunt",
+      "Son",
+      "Uncle",
+      "Daughter"
+    ],
+    "correct_answer": "Uncle",
+    "category": "Family"
+  },
+  {
+    "id": 404,
+    "question": "அத்தை",
+    "options": [
+      "Son",
+      "Daughter",
+      "Husband",
+      "Aunt"
+    ],
+    "correct_answer": "Aunt",
+    "category": "Family"
+  },
+  {
+    "id": 405,
+    "question": "மகன்",
+    "options": [
+      "Son",
+      "Daughter",
+      "Husband",
+      "Wife"
+    ],
+    "correct_answer": "Son",
+    "category": "Family"
+  },
+  {
+    "id": 406,
+    "question": "மகள்",
+    "options": [
+      "Husband",
+      "Daughter",
+      "Wife",
+      "Book"
+    ],
+    "correct_answer": "Daughter",
+    "category": "Family"
+  },
+  {
+    "id": 407,
+    "question": "கணவர்",
+    "options": [
+      "Wife",
+      "Book",
+      "Husband",
+      "Pen"
+    ],
+    "correct_answer": "Husband",
+    "category": "Family"
+  },
+  {
+    "id": 408,
+    "question": "மனைவி",
+    "options": [
+      "Book",
+      "Pen",
+      "Pencil",
+      "Wife"
+    ],
+    "correct_answer": "Wife",
+    "category": "Family"
+  },
+  {
+    "id": 409,
+    "question": "புத்தகம்",
+    "options": [
+      "Book",
+      "Pen",
+      "Pencil",
+      "School"
+    ],
+    "correct_answer": "Book",
+    "category": "School"
+  },
+  {
+    "id": 410,
+    "question": "பேனா",
+    "options": [
+      "Pencil",
+      "Pen",
+      "School",
+      "Teacher"
+    ],
+    "correct_answer": "Pen",
+    "category": "School"
+  },
+  {
+    "id": 411,
+    "question": "பென்சில்",
+    "options": [
+      "School",
+      "Teacher",
+      "Pencil",
+      "Student"
+    ],
+    "correct_answer": "Pencil",
+    "category": "School"
+  },
+  {
+    "id": 412,
+    "question": "பள்ளி",
+    "options": [
+      "Teacher",
+      "Student",
+      "Table",
+      "School"
+    ],
+    "correct_answer": "School",
+    "category": "School"
+  },
+  {
+    "id": 413,
+    "question": "ஆசிரியர்",
+    "options": [
+      "Teacher",
+      "Student",
+      "Table",
+      "Chair"
+    ],
+    "correct_answer": "Teacher",
+    "category": "School"
+  },
+  {
+    "id": 414,
+    "question": "மாணவர்",
+    "options": [
+      "Table",
+      "Student",
+      "Chair",
+      "Bag"
+    ],
+    "correct_answer": "Student",
+    "category": "School"
+  },
+  {
+    "id": 415,
+    "question": "மேசை",
+    "options": [
+      "Chair",
+      "Bag",
+      "Table",
+      "Board"
+    ],
+    "correct_answer": "Table",
+    "category": "School"
+  },
+  {
+    "id": 416,
+    "question": "நாற்காலி",
+    "options": [
+      "Bag",
+      "Board",
+      "Eraser",
+      "Chair"
+    ],
+    "correct_answer": "Chair",
+    "category": "School"
+  },
+  {
+    "id": 417,
+    "question": "பை",
+    "options": [
+      "Bag",
+      "Board",
+      "Eraser",
+      "Ruler"
+    ],
+    "correct_answer": "Bag",
+    "category": "School"
+  },
+  {
+    "id": 418,
+    "question": "பலகை",
+    "options": [
+      "Eraser",
+      "Board",
+      "Ruler",
+      "Apple"
+    ],
+    "correct_answer": "Board",
+    "category": "School"
+  },
+  {
+    "id": 419,
+    "question": "அழிப்பான்",
+    "options": [
+      "Ruler",
+      "Apple",
+      "Eraser",
+      "Banana"
+    ],
+    "correct_answer": "Eraser",
+    "category": "School"
+  },
+  {
+    "id": 420,
+    "question": "அளவுகோல்",
+    "options": [
+      "Apple",
+      "Banana",
+      "Mango",
+      "Ruler"
+    ],
+    "correct_answer": "Ruler",
+    "category": "School"
+  },
+  {
+    "id": 421,
+    "question": "ஆப்பிள்",
+    "options": [
+      "Apple",
+      "Banana",
+      "Mango",
+      "Orange"
+    ],
+    "correct_answer": "Apple",
+    "category": "Fruits"
+  },
+  {
+    "id": 422,
+    "question": "வாழைப்பழம்",
+    "options": [
+      "Mango",
+      "Banana",
+      "Orange",
+      "Grapes"
+    ],
+    "correct_answer": "Banana",
+    "category": "Fruits"
+  },
+  {
+    "id": 423,
+    "question": "மாம்பழம்",
+    "options": [
+      "Orange",
+      "Grapes",
+      "Mango",
+      "Guava"
+    ],
+    "correct_answer": "Mango",
+    "category": "Fruits"
+  },
+  {
+    "id": 424,
+    "question": "ஆரஞ்சு",
+    "options": [
+      "Grapes",
+      "Guava",
+      "Papaya",
+      "Orange"
+    ],
+    "correct_answer": "Orange",
+    "category": "Fruits"
+  },
+  {
+    "id": 425,
+    "question": "திராட்சை",
+    "options": [
+      "Grapes",
+      "Guava",
+      "Papaya",
+      "Lemon"
+    ],
+    "correct_answer": "Grapes",
+    "category": "Fruits"
+  },
+  {
+    "id": 426,
+    "question": "கொய்யாப்பழம்",
+    "options": [
+      "Papaya",
+      "Guava",
+      "Lemon",
+      "Pineapple"
+    ],
+    "correct_answer": "Guava",
+    "category": "Fruits"
+  },
+  {
+    "id": 427,
+    "question": "பப்பாளி",
+    "options": [
+      "Lemon",
+      "Pineapple",
+      "Papaya",
+      "Watermelon"
+    ],
+    "correct_answer": "Papaya",
+    "category": "Fruits"
+  },
+  {
+    "id": 428,
+    "question": "எலுமிச்சை",
+    "options": [
+      "Pineapple",
+      "Watermelon",
+      "Pear",
+      "Lemon"
+    ],
+    "correct_answer": "Lemon",
+    "category": "Fruits"
+  },
+  {
+    "id": 429,
+    "question": "அன்னாசி",
+    "options": [
+      "Pineapple",
+      "Watermelon",
+      "Pear",
+      "Sapota"
+    ],
+    "correct_answer": "Pineapple",
+    "category": "Fruits"
+  },
+  {
+    "id": 430,
+    "question": "தர்பூசணி",
+    "options": [
+      "Pear",
+      "Watermelon",
+      "Sapota",
+      "Dog"
+    ],
+    "correct_answer": "Watermelon",
+    "category": "Fruits"
+  },
+  {
+    "id": 431,
+    "question": "பேரிக்காய்",
+    "options": [
+      "Sapota",
+      "Dog",
+      "Pear",
+      "Cat"
+    ],
+    "correct_answer": "Pear",
+    "category": "Fruits"
+  },
+  {
+    "id": 432,
+    "question": "சப்போட்டா",
+    "options": [
+      "Dog",
+      "Cat",
+      "Cow",
+      "Sapota"
+    ],
+    "correct_answer": "Sapota",
+    "category": "Fruits"
+  },
+  {
+    "id": 433,
+    "question": "நாய்",
+    "options": [
+      "Dog",
+      "Cat",
+      "Cow",
+      "Horse"
+    ],
+    "correct_answer": "Dog",
+    "category": "Animals"
+  },
+  {
+    "id": 434,
+    "question": "பூனை",
+    "options": [
+      "Cow",
+      "Cat",
+      "Horse",
+      "Goat"
+    ],
+    "correct_answer": "Cat",
+    "category": "Animals"
+  },
+  {
+    "id": 435,
+    "question": "பசு",
+    "options": [
+      "Horse",
+      "Goat",
+      "Cow",
+      "Rabbit"
+    ],
+    "correct_answer": "Cow",
+    "category": "Animals"
+  },
+  {
+    "id": 436,
+    "question": "குதிரை",
+    "options": [
+      "Goat",
+      "Rabbit",
+      "Elephant",
+      "Horse"
+    ],
+    "correct_answer": "Horse",
+    "category": "Animals"
+  },
+  {
+    "id": 437,
+    "question": "ஆடு",
+    "options": [
+      "Goat",
+      "Rabbit",
+      "Elephant",
+      "Lion"
+    ],
+    "correct_answer": "Goat",
+    "category": "Animals"
+  },
+  {
+    "id": 438,
+    "question": "முயல்",
+    "options": [
+      "Elephant",
+      "Rabbit",
+      "Lion",
+      "Tiger"
+    ],
+    "correct_answer": "Rabbit",
+    "category": "Animals"
+  },
+  {
+    "id": 439,
+    "question": "யானை",
+    "options": [
+      "Lion",
+      "Tiger",
+      "Elephant",
+      "Bear"
+    ],
+    "correct_answer": "Elephant",
+    "category": "Animals"
+  },
+  {
+    "id": 440,
+    "question": "சிங்கம்",
+    "options": [
+      "Tiger",
+      "Bear",
+      "Fox",
+      "Lion"
+    ],
+    "correct_answer": "Lion",
+    "category": "Animals"
+  },
+  {
+    "id": 441,
+    "question": "புலி",
+    "options": [
+      "Tiger",
+      "Bear",
+      "Fox",
+      "Wolf"
+    ],
+    "correct_answer": "Tiger",
+    "category": "Animals"
+  },
+  {
+    "id": 442,
+    "question": "கரடி",
+    "options": [
+      "Fox",
+      "Bear",
+      "Wolf",
+      "Red"
+    ],
+    "correct_answer": "Bear",
+    "category": "Animals"
+  },
+  {
+    "id": 443,
+    "question": "நரி",
+    "options": [
+      "Wolf",
+      "Red",
+      "Fox",
+      "Blue"
+    ],
+    "correct_answer": "Fox",
+    "category": "Animals"
+  },
+  {
+    "id": 444,
+    "question": "ஓநாய்",
+    "options": [
+      "Red",
+      "Blue",
+      "Green",
+      "Wolf"
+    ],
+    "correct_answer": "Wolf",
+    "category": "Animals"
+  },
+  {
+    "id": 445,
+    "question": "சிவப்பு",
+    "options": [
+      "Red",
+      "Blue",
+      "Green",
+      "Yellow"
+    ],
+    "correct_answer": "Red",
+    "category": "Colors"
+  },
+  {
+    "id": 446,
+    "question": "நீலம்",
+    "options": [
+      "Green",
+      "Blue",
+      "Yellow",
+      "Black"
+    ],
+    "correct_answer": "Blue",
+    "category": "Colors"
+  },
+  {
+    "id": 447,
+    "question": "பச்சை",
+    "options": [
+      "Yellow",
+      "Black",
+      "Green",
+      "White"
+    ],
+    "correct_answer": "Green",
+    "category": "Colors"
+  },
+  {
+    "id": 448,
+    "question": "மஞ்சள்",
+    "options": [
+      "Black",
+      "White",
+      "Purple",
+      "Yellow"
+    ],
+    "correct_answer": "Yellow",
+    "category": "Colors"
+  },
+  {
+    "id": 449,
+    "question": "கருப்பு",
+    "options": [
+      "Black",
+      "White",
+      "Purple",
+      "Pink"
+    ],
+    "correct_answer": "Black",
+    "category": "Colors"
+  },
+  {
+    "id": 450,
+    "question": "வெள்ளை",
+    "options": [
+      "Purple",
+      "White",
+      "Pink",
+      "Brown"
+    ],
+    "correct_answer": "White",
+    "category": "Colors"
+  },
+  {
+    "id": 451,
+    "question": "ஊதா",
+    "options": [
+      "Pink",
+      "Brown",
+      "Purple",
+      "Gray"
+    ],
+    "correct_answer": "Purple",
+    "category": "Colors"
+  },
+  {
+    "id": 452,
+    "question": "இளஞ்சிவப்பு",
+    "options": [
+      "Brown",
+      "Gray",
+      "Gold",
+      "Pink"
+    ],
+    "correct_answer": "Pink",
+    "category": "Colors"
+  },
+  {
+    "id": 453,
+    "question": "பழுப்பு",
+    "options": [
+      "Brown",
+      "Gray",
+      "Gold",
+      "Silver"
+    ],
+    "correct_answer": "Brown",
+    "category": "Colors"
+  },
+  {
+    "id": 454,
+    "question": "சாம்பல்",
+    "options": [
+      "Gold",
+      "Gray",
+      "Silver",
+      "Father"
+    ],
+    "correct_answer": "Gray",
+    "category": "Colors"
+  },
+  {
+    "id": 455,
+    "question": "தங்கம்",
+    "options": [
+      "Silver",
+      "Father",
+      "Gold",
+      "Mother"
+    ],
+    "correct_answer": "Gold",
+    "category": "Colors"
+  },
+  {
+    "id": 456,
+    "question": "வெள்ளி",
+    "options": [
+      "Father",
+      "Mother",
+      "Brother",
+      "Silver"
+    ],
+    "correct_answer": "Silver",
+    "category": "Colors"
+  },
+  {
+    "id": 457,
+    "question": "தந்தை",
+    "options": [
+      "Father",
+      "Mother",
+      "Brother",
+      "Sister"
+    ],
+    "correct_answer": "Father",
+    "category": "Family"
+  },
+  {
+    "id": 458,
+    "question": "தாய்",
+    "options": [
+      "Brother",
+      "Mother",
+      "Sister",
+      "Grandfather"
+    ],
+    "correct_answer": "Mother",
+    "category": "Family"
+  },
+  {
+    "id": 459,
+    "question": "அண்ணன்",
+    "options": [
+      "Sister",
+      "Grandfather",
+      "Brother",
+      "Grandmother"
+    ],
+    "correct_answer": "Brother",
+    "category": "Family"
+  },
+  {
+    "id": 460,
+    "question": "அக்கா",
+    "options": [
+      "Grandfather",
+      "Grandmother",
+      "Uncle",
+      "Sister"
+    ],
+    "correct_answer": "Sister",
+    "category": "Family"
+  },
+  {
+    "id": 461,
+    "question": "தாத்தா",
+    "options": [
+      "Grandfather",
+      "Grandmother",
+      "Uncle",
+      "Aunt"
+    ],
+    "correct_answer": "Grandfather",
+    "category": "Family"
+  },
+  {
+    "id": 462,
+    "question": "பாட்டி",
+    "options": [
+      "Uncle",
+      "Grandmother",
+      "Aunt",
+      "Son"
+    ],
+    "correct_answer": "Grandmother",
+    "category": "Family"
+  },
+  {
+    "id": 463,
+    "question": "மாமா",
+    "options": [
+      "Aunt",
+      "Son",
+      "Uncle",
+      "Daughter"
+    ],
+    "correct_answer": "Uncle",
+    "category": "Family"
+  },
+  {
+    "id": 464,
+    "question": "அத்தை",
+    "options": [
+      "Son",
+      "Daughter",
+      "Husband",
+      "Aunt"
+    ],
+    "correct_answer": "Aunt",
+    "category": "Family"
+  },
+  {
+    "id": 465,
+    "question": "மகன்",
+    "options": [
+      "Son",
+      "Daughter",
+      "Husband",
+      "Wife"
+    ],
+    "correct_answer": "Son",
+    "category": "Family"
+  },
+  {
+    "id": 466,
+    "question": "மகள்",
+    "options": [
+      "Husband",
+      "Daughter",
+      "Wife",
+      "Book"
+    ],
+    "correct_answer": "Daughter",
+    "category": "Family"
+  },
+  {
+    "id": 467,
+    "question": "கணவர்",
+    "options": [
+      "Wife",
+      "Book",
+      "Husband",
+      "Pen"
+    ],
+    "correct_answer": "Husband",
+    "category": "Family"
+  },
+  {
+    "id": 468,
+    "question": "மனைவி",
+    "options": [
+      "Book",
+      "Pen",
+      "Pencil",
+      "Wife"
+    ],
+    "correct_answer": "Wife",
+    "category": "Family"
+  },
+  {
+    "id": 469,
+    "question": "புத்தகம்",
+    "options": [
+      "Book",
+      "Pen",
+      "Pencil",
+      "School"
+    ],
+    "correct_answer": "Book",
+    "category": "School"
+  },
+  {
+    "id": 470,
+    "question": "பேனா",
+    "options": [
+      "Pencil",
+      "Pen",
+      "School",
+      "Teacher"
+    ],
+    "correct_answer": "Pen",
+    "category": "School"
+  },
+  {
+    "id": 471,
+    "question": "பென்சில்",
+    "options": [
+      "School",
+      "Teacher",
+      "Pencil",
+      "Student"
+    ],
+    "correct_answer": "Pencil",
+    "category": "School"
+  },
+  {
+    "id": 472,
+    "question": "பள்ளி",
+    "options": [
+      "Teacher",
+      "Student",
+      "Table",
+      "School"
+    ],
+    "correct_answer": "School",
+    "category": "School"
+  },
+  {
+    "id": 473,
+    "question": "ஆசிரியர்",
+    "options": [
+      "Teacher",
+      "Student",
+      "Table",
+      "Chair"
+    ],
+    "correct_answer": "Teacher",
+    "category": "School"
+  },
+  {
+    "id": 474,
+    "question": "மாணவர்",
+    "options": [
+      "Table",
+      "Student",
+      "Chair",
+      "Bag"
+    ],
+    "correct_answer": "Student",
+    "category": "School"
+  },
+  {
+    "id": 475,
+    "question": "மேசை",
+    "options": [
+      "Chair",
+      "Bag",
+      "Table",
+      "Board"
+    ],
+    "correct_answer": "Table",
+    "category": "School"
+  },
+  {
+    "id": 476,
+    "question": "நாற்காலி",
+    "options": [
+      "Bag",
+      "Board",
+      "Eraser",
+      "Chair"
+    ],
+    "correct_answer": "Chair",
+    "category": "School"
+  },
+  {
+    "id": 477,
+    "question": "பை",
+    "options": [
+      "Bag",
+      "Board",
+      "Eraser",
+      "Ruler"
+    ],
+    "correct_answer": "Bag",
+    "category": "School"
+  },
+  {
+    "id": 478,
+    "question": "பலகை",
+    "options": [
+      "Eraser",
+      "Board",
+      "Ruler",
+      "Apple"
+    ],
+    "correct_answer": "Board",
+    "category": "School"
+  },
+  {
+    "id": 479,
+    "question": "அழிப்பான்",
+    "options": [
+      "Ruler",
+      "Apple",
+      "Eraser",
+      "Banana"
+    ],
+    "correct_answer": "Eraser",
+    "category": "School"
+  },
+  {
+    "id": 480,
+    "question": "அளவுகோல்",
+    "options": [
+      "Apple",
+      "Banana",
+      "Mango",
+      "Ruler"
+    ],
+    "correct_answer": "Ruler",
+    "category": "School"
+  },
+  {
+    "id": 481,
+    "question": "ஆப்பிள்",
+    "options": [
+      "Apple",
+      "Banana",
+      "Mango",
+      "Orange"
+    ],
+    "correct_answer": "Apple",
+    "category": "Fruits"
+  },
+  {
+    "id": 482,
+    "question": "வாழைப்பழம்",
+    "options": [
+      "Mango",
+      "Banana",
+      "Orange",
+      "Grapes"
+    ],
+    "correct_answer": "Banana",
+    "category": "Fruits"
+  },
+  {
+    "id": 483,
+    "question": "மாம்பழம்",
+    "options": [
+      "Orange",
+      "Grapes",
+      "Mango",
+      "Guava"
+    ],
+    "correct_answer": "Mango",
+    "category": "Fruits"
+  },
+  {
+    "id": 484,
+    "question": "ஆரஞ்சு",
+    "options": [
+      "Grapes",
+      "Guava",
+      "Papaya",
+      "Orange"
+    ],
+    "correct_answer": "Orange",
+    "category": "Fruits"
+  },
+  {
+    "id": 485,
+    "question": "திராட்சை",
+    "options": [
+      "Grapes",
+      "Guava",
+      "Papaya",
+      "Lemon"
+    ],
+    "correct_answer": "Grapes",
+    "category": "Fruits"
+  },
+  {
+    "id": 486,
+    "question": "கொய்யாப்பழம்",
+    "options": [
+      "Papaya",
+      "Guava",
+      "Lemon",
+      "Pineapple"
+    ],
+    "correct_answer": "Guava",
+    "category": "Fruits"
+  },
+  {
+    "id": 487,
+    "question": "பப்பாளி",
+    "options": [
+      "Lemon",
+      "Pineapple",
+      "Papaya",
+      "Watermelon"
+    ],
+    "correct_answer": "Papaya",
+    "category": "Fruits"
+  },
+  {
+    "id": 488,
+    "question": "எலுமிச்சை",
+    "options": [
+      "Pineapple",
+      "Watermelon",
+      "Pear",
+      "Lemon"
+    ],
+    "correct_answer": "Lemon",
+    "category": "Fruits"
+  },
+  {
+    "id": 489,
+    "question": "அன்னாசி",
+    "options": [
+      "Pineapple",
+      "Watermelon",
+      "Pear",
+      "Sapota"
+    ],
+    "correct_answer": "Pineapple",
+    "category": "Fruits"
+  },
+  {
+    "id": 490,
+    "question": "தர்பூசணி",
+    "options": [
+      "Pear",
+      "Watermelon",
+      "Sapota",
+      "Dog"
+    ],
+    "correct_answer": "Watermelon",
+    "category": "Fruits"
+  },
+  {
+    "id": 491,
+    "question": "பேரிக்காய்",
+    "options": [
+      "Sapota",
+      "Dog",
+      "Pear",
+      "Cat"
+    ],
+    "correct_answer": "Pear",
+    "category": "Fruits"
+  },
+  {
+    "id": 492,
+    "question": "சப்போட்டா",
+    "options": [
+      "Dog",
+      "Cat",
+      "Cow",
+      "Sapota"
+    ],
+    "correct_answer": "Sapota",
+    "category": "Fruits"
+  },
+  {
+    "id": 493,
+    "question": "நாய்",
+    "options": [
+      "Dog",
+      "Cat",
+      "Cow",
+      "Horse"
+    ],
+    "correct_answer": "Dog",
+    "category": "Animals"
+  },
+  {
+    "id": 494,
+    "question": "பூனை",
+    "options": [
+      "Cow",
+      "Cat",
+      "Horse",
+      "Goat"
+    ],
+    "correct_answer": "Cat",
+    "category": "Animals"
+  },
+  {
+    "id": 495,
+    "question": "பசு",
+    "options": [
+      "Horse",
+      "Goat",
+      "Cow",
+      "Rabbit"
+    ],
+    "correct_answer": "Cow",
+    "category": "Animals"
+  },
+  {
+    "id": 496,
+    "question": "குதிரை",
+    "options": [
+      "Goat",
+      "Rabbit",
+      "Elephant",
+      "Horse"
+    ],
+    "correct_answer": "Horse",
+    "category": "Animals"
+  },
+  {
+    "id": 497,
+    "question": "ஆடு",
+    "options": [
+      "Goat",
+      "Rabbit",
+      "Elephant",
+      "Lion"
+    ],
+    "correct_answer": "Goat",
+    "category": "Animals"
+  },
+  {
+    "id": 498,
+    "question": "முயல்",
+    "options": [
+      "Elephant",
+      "Rabbit",
+      "Lion",
+      "Tiger"
+    ],
+    "correct_answer": "Rabbit",
+    "category": "Animals"
+  },
+  {
+    "id": 499,
+    "question": "யானை",
+    "options": [
+      "Lion",
+      "Tiger",
+      "Elephant",
+      "Bear"
+    ],
+    "correct_answer": "Elephant",
+    "category": "Animals"
+  },
+  {
+    "id": 500,
+    "question": "சிங்கம்",
+    "options": [
+      "Tiger",
+      "Bear",
+      "Fox",
+      "Lion"
+    ],
+    "correct_answer": "Lion",
+    "category": "Animals"
+  },
+  {
+    "id": 501,
+    "question": "புலி",
+    "options": [
+      "Tiger",
+      "Bear",
+      "Fox",
+      "Wolf"
+    ],
+    "correct_answer": "Tiger",
+    "category": "Animals"
+  },
+  {
+    "id": 502,
+    "question": "கரடி",
+    "options": [
+      "Fox",
+      "Bear",
+      "Wolf",
+      "Red"
+    ],
+    "correct_answer": "Bear",
+    "category": "Animals"
+  },
+  {
+    "id": 503,
+    "question": "நரி",
+    "options": [
+      "Wolf",
+      "Red",
+      "Fox",
+      "Blue"
+    ],
+    "correct_answer": "Fox",
+    "category": "Animals"
+  },
+  {
+    "id": 504,
+    "question": "ஓநாய்",
+    "options": [
+      "Red",
+      "Blue",
+      "Green",
+      "Wolf"
+    ],
+    "correct_answer": "Wolf",
+    "category": "Animals"
+  },
+  {
+    "id": 505,
+    "question": "சிவப்பு",
+    "options": [
+      "Red",
+      "Blue",
+      "Green",
+      "Yellow"
+    ],
+    "correct_answer": "Red",
+    "category": "Colors"
+  },
+  {
+    "id": 506,
+    "question": "நீலம்",
+    "options": [
+      "Green",
+      "Blue",
+      "Yellow",
+      "Black"
+    ],
+    "correct_answer": "Blue",
+    "category": "Colors"
+  },
+  {
+    "id": 507,
+    "question": "பச்சை",
+    "options": [
+      "Yellow",
+      "Black",
+      "Green",
+      "White"
+    ],
+    "correct_answer": "Green",
+    "category": "Colors"
+  },
+  {
+    "id": 508,
+    "question": "மஞ்சள்",
+    "options": [
+      "Black",
+      "White",
+      "Purple",
+      "Yellow"
+    ],
+    "correct_answer": "Yellow",
+    "category": "Colors"
+  },
+  {
+    "id": 509,
+    "question": "கருப்பு",
+    "options": [
+      "Black",
+      "White",
+      "Purple",
+      "Pink"
+    ],
+    "correct_answer": "Black",
+    "category": "Colors"
+  },
+  {
+    "id": 510,
+    "question": "வெள்ளை",
+    "options": [
+      "Purple",
+      "White",
+      "Pink",
+      "Brown"
+    ],
+    "correct_answer": "White",
+    "category": "Colors"
+  },
+  {
+    "id": 511,
+    "question": "ஊதா",
+    "options": [
+      "Pink",
+      "Brown",
+      "Purple",
+      "Gray"
+    ],
+    "correct_answer": "Purple",
+    "category": "Colors"
+  },
+  {
+    "id": 512,
+    "question": "இளஞ்சிவப்பு",
+    "options": [
+      "Brown",
+      "Gray",
+      "Gold",
+      "Pink"
+    ],
+    "correct_answer": "Pink",
+    "category": "Colors"
+  },
+  {
+    "id": 513,
+    "question": "பழுப்பு",
+    "options": [
+      "Brown",
+      "Gray",
+      "Gold",
+      "Silver"
+    ],
+    "correct_answer": "Brown",
+    "category": "Colors"
+  },
+  {
+    "id": 514,
+    "question": "சாம்பல்",
+    "options": [
+      "Gold",
+      "Gray",
+      "Silver",
+      "Father"
+    ],
+    "correct_answer": "Gray",
+    "category": "Colors"
+  },
+  {
+    "id": 515,
+    "question": "தங்கம்",
+    "options": [
+      "Silver",
+      "Father",
+      "Gold",
+      "Mother"
+    ],
+    "correct_answer": "Gold",
+    "category": "Colors"
+  },
+  {
+    "id": 516,
+    "question": "வெள்ளி",
+    "options": [
+      "Father",
+      "Mother",
+      "Brother",
+      "Silver"
+    ],
+    "correct_answer": "Silver",
+    "category": "Colors"
+  },
+  {
+    "id": 517,
+    "question": "தந்தை",
+    "options": [
+      "Father",
+      "Mother",
+      "Brother",
+      "Sister"
+    ],
+    "correct_answer": "Father",
+    "category": "Family"
+  },
+  {
+    "id": 518,
+    "question": "தாய்",
+    "options": [
+      "Brother",
+      "Mother",
+      "Sister",
+      "Grandfather"
+    ],
+    "correct_answer": "Mother",
+    "category": "Family"
+  },
+  {
+    "id": 519,
+    "question": "அண்ணன்",
+    "options": [
+      "Sister",
+      "Grandfather",
+      "Brother",
+      "Grandmother"
+    ],
+    "correct_answer": "Brother",
+    "category": "Family"
+  },
+  {
+    "id": 520,
+    "question": "அக்கா",
+    "options": [
+      "Grandfather",
+      "Grandmother",
+      "Uncle",
+      "Sister"
+    ],
+    "correct_answer": "Sister",
+    "category": "Family"
+  },
+  {
+    "id": 521,
+    "question": "தாத்தா",
+    "options": [
+      "Grandfather",
+      "Grandmother",
+      "Uncle",
+      "Aunt"
+    ],
+    "correct_answer": "Grandfather",
+    "category": "Family"
+  },
+  {
+    "id": 522,
+    "question": "பாட்டி",
+    "options": [
+      "Uncle",
+      "Grandmother",
+      "Aunt",
+      "Son"
+    ],
+    "correct_answer": "Grandmother",
+    "category": "Family"
+  },
+  {
+    "id": 523,
+    "question": "மாமா",
+    "options": [
+      "Aunt",
+      "Son",
+      "Uncle",
+      "Daughter"
+    ],
+    "correct_answer": "Uncle",
+    "category": "Family"
+  },
+  {
+    "id": 524,
+    "question": "அத்தை",
+    "options": [
+      "Son",
+      "Daughter",
+      "Husband",
+      "Aunt"
+    ],
+    "correct_answer": "Aunt",
+    "category": "Family"
+  },
+  {
+    "id": 525,
+    "question": "மகன்",
+    "options": [
+      "Son",
+      "Daughter",
+      "Husband",
+      "Wife"
+    ],
+    "correct_answer": "Son",
+    "category": "Family"
+  },
+  {
+    "id": 526,
+    "question": "மகள்",
+    "options": [
+      "Husband",
+      "Daughter",
+      "Wife",
+      "Book"
+    ],
+    "correct_answer": "Daughter",
+    "category": "Family"
+  },
+  {
+    "id": 527,
+    "question": "கணவர்",
+    "options": [
+      "Wife",
+      "Book",
+      "Husband",
+      "Pen"
+    ],
+    "correct_answer": "Husband",
+    "category": "Family"
+  },
+  {
+    "id": 528,
+    "question": "மனைவி",
+    "options": [
+      "Book",
+      "Pen",
+      "Pencil",
+      "Wife"
+    ],
+    "correct_answer": "Wife",
+    "category": "Family"
+  },
+  {
+    "id": 529,
+    "question": "புத்தகம்",
+    "options": [
+      "Book",
+      "Pen",
+      "Pencil",
+      "School"
+    ],
+    "correct_answer": "Book",
+    "category": "School"
+  },
+  {
+    "id": 530,
+    "question": "பேனா",
+    "options": [
+      "Pencil",
+      "Pen",
+      "School",
+      "Teacher"
+    ],
+    "correct_answer": "Pen",
+    "category": "School"
+  },
+  {
+    "id": 531,
+    "question": "பென்சில்",
+    "options": [
+      "School",
+      "Teacher",
+      "Pencil",
+      "Student"
+    ],
+    "correct_answer": "Pencil",
+    "category": "School"
+  },
+  {
+    "id": 532,
+    "question": "பள்ளி",
+    "options": [
+      "Teacher",
+      "Student",
+      "Table",
+      "School"
+    ],
+    "correct_answer": "School",
+    "category": "School"
+  },
+  {
+    "id": 533,
+    "question": "ஆசிரியர்",
+    "options": [
+      "Teacher",
+      "Student",
+      "Table",
+      "Chair"
+    ],
+    "correct_answer": "Teacher",
+    "category": "School"
+  },
+  {
+    "id": 534,
+    "question": "மாணவர்",
+    "options": [
+      "Table",
+      "Student",
+      "Chair",
+      "Bag"
+    ],
+    "correct_answer": "Student",
+    "category": "School"
+  },
+  {
+    "id": 535,
+    "question": "மேசை",
+    "options": [
+      "Chair",
+      "Bag",
+      "Table",
+      "Board"
+    ],
+    "correct_answer": "Table",
+    "category": "School"
+  },
+  {
+    "id": 536,
+    "question": "நாற்காலி",
+    "options": [
+      "Bag",
+      "Board",
+      "Eraser",
+      "Chair"
+    ],
+    "correct_answer": "Chair",
+    "category": "School"
+  },
+  {
+    "id": 537,
+    "question": "பை",
+    "options": [
+      "Bag",
+      "Board",
+      "Eraser",
+      "Ruler"
+    ],
+    "correct_answer": "Bag",
+    "category": "School"
+  },
+  {
+    "id": 538,
+    "question": "பலகை",
+    "options": [
+      "Eraser",
+      "Board",
+      "Ruler",
+      "Apple"
+    ],
+    "correct_answer": "Board",
+    "category": "School"
+  },
+  {
+    "id": 539,
+    "question": "அழிப்பான்",
+    "options": [
+      "Ruler",
+      "Apple",
+      "Eraser",
+      "Banana"
+    ],
+    "correct_answer": "Eraser",
+    "category": "School"
+  },
+  {
+    "id": 540,
+    "question": "அளவுகோல்",
+    "options": [
+      "Apple",
+      "Banana",
+      "Mango",
+      "Ruler"
+    ],
+    "correct_answer": "Ruler",
+    "category": "School"
+  },
+  {
+    "id": 541,
+    "question": "ஆப்பிள்",
+    "options": [
+      "Apple",
+      "Banana",
+      "Mango",
+      "Orange"
+    ],
+    "correct_answer": "Apple",
+    "category": "Fruits"
+  },
+  {
+    "id": 542,
+    "question": "வாழைப்பழம்",
+    "options": [
+      "Mango",
+      "Banana",
+      "Orange",
+      "Grapes"
+    ],
+    "correct_answer": "Banana",
+    "category": "Fruits"
+  },
+  {
+    "id": 543,
+    "question": "மாம்பழம்",
+    "options": [
+      "Orange",
+      "Grapes",
+      "Mango",
+      "Guava"
+    ],
+    "correct_answer": "Mango",
+    "category": "Fruits"
+  },
+  {
+    "id": 544,
+    "question": "ஆரஞ்சு",
+    "options": [
+      "Grapes",
+      "Guava",
+      "Papaya",
+      "Orange"
+    ],
+    "correct_answer": "Orange",
+    "category": "Fruits"
+  },
+  {
+    "id": 545,
+    "question": "திராட்சை",
+    "options": [
+      "Grapes",
+      "Guava",
+      "Papaya",
+      "Lemon"
+    ],
+    "correct_answer": "Grapes",
+    "category": "Fruits"
+  },
+  {
+    "id": 546,
+    "question": "கொய்யாப்பழம்",
+    "options": [
+      "Papaya",
+      "Guava",
+      "Lemon",
+      "Pineapple"
+    ],
+    "correct_answer": "Guava",
+    "category": "Fruits"
+  },
+  {
+    "id": 547,
+    "question": "பப்பாளி",
+    "options": [
+      "Lemon",
+      "Pineapple",
+      "Papaya",
+      "Watermelon"
+    ],
+    "correct_answer": "Papaya",
+    "category": "Fruits"
+  },
+  {
+    "id": 548,
+    "question": "எலுமிச்சை",
+    "options": [
+      "Pineapple",
+      "Watermelon",
+      "Pear",
+      "Lemon"
+    ],
+    "correct_answer": "Lemon",
+    "category": "Fruits"
+  },
+  {
+    "id": 549,
+    "question": "அன்னாசி",
+    "options": [
+      "Pineapple",
+      "Watermelon",
+      "Pear",
+      "Sapota"
+    ],
+    "correct_answer": "Pineapple",
+    "category": "Fruits"
+  },
+  {
+    "id": 550,
+    "question": "தர்பூசணி",
+    "options": [
+      "Pear",
+      "Watermelon",
+      "Sapota",
+      "Dog"
+    ],
+    "correct_answer": "Watermelon",
+    "category": "Fruits"
+  },
+  {
+    "id": 551,
+    "question": "பேரிக்காய்",
+    "options": [
+      "Sapota",
+      "Dog",
+      "Pear",
+      "Cat"
+    ],
+    "correct_answer": "Pear",
+    "category": "Fruits"
+  },
+  {
+    "id": 552,
+    "question": "சப்போட்டா",
+    "options": [
+      "Dog",
+      "Cat",
+      "Cow",
+      "Sapota"
+    ],
+    "correct_answer": "Sapota",
+    "category": "Fruits"
+  },
+  {
+    "id": 553,
+    "question": "நாய்",
+    "options": [
+      "Dog",
+      "Cat",
+      "Cow",
+      "Horse"
+    ],
+    "correct_answer": "Dog",
+    "category": "Animals"
+  },
+  {
+    "id": 554,
+    "question": "பூனை",
+    "options": [
+      "Cow",
+      "Cat",
+      "Horse",
+      "Goat"
+    ],
+    "correct_answer": "Cat",
+    "category": "Animals"
+  },
+  {
+    "id": 555,
+    "question": "பசு",
+    "options": [
+      "Horse",
+      "Goat",
+      "Cow",
+      "Rabbit"
+    ],
+    "correct_answer": "Cow",
+    "category": "Animals"
+  },
+  {
+    "id": 556,
+    "question": "குதிரை",
+    "options": [
+      "Goat",
+      "Rabbit",
+      "Elephant",
+      "Horse"
+    ],
+    "correct_answer": "Horse",
+    "category": "Animals"
+  },
+  {
+    "id": 557,
+    "question": "ஆடு",
+    "options": [
+      "Goat",
+      "Rabbit",
+      "Elephant",
+      "Lion"
+    ],
+    "correct_answer": "Goat",
+    "category": "Animals"
+  },
+  {
+    "id": 558,
+    "question": "முயல்",
+    "options": [
+      "Elephant",
+      "Rabbit",
+      "Lion",
+      "Tiger"
+    ],
+    "correct_answer": "Rabbit",
+    "category": "Animals"
+  },
+  {
+    "id": 559,
+    "question": "யானை",
+    "options": [
+      "Lion",
+      "Tiger",
+      "Elephant",
+      "Bear"
+    ],
+    "correct_answer": "Elephant",
+    "category": "Animals"
+  },
+  {
+    "id": 560,
+    "question": "சிங்கம்",
+    "options": [
+      "Tiger",
+      "Bear",
+      "Fox",
+      "Lion"
+    ],
+    "correct_answer": "Lion",
+    "category": "Animals"
+  },
+  {
+    "id": 561,
+    "question": "புலி",
+    "options": [
+      "Tiger",
+      "Bear",
+      "Fox",
+      "Wolf"
+    ],
+    "correct_answer": "Tiger",
+    "category": "Animals"
+  },
+  {
+    "id": 562,
+    "question": "கரடி",
+    "options": [
+      "Fox",
+      "Bear",
+      "Wolf",
+      "Red"
+    ],
+    "correct_answer": "Bear",
+    "category": "Animals"
+  },
+  {
+    "id": 563,
+    "question": "நரி",
+    "options": [
+      "Wolf",
+      "Red",
+      "Fox",
+      "Blue"
+    ],
+    "correct_answer": "Fox",
+    "category": "Animals"
+  },
+  {
+    "id": 564,
+    "question": "ஓநாய்",
+    "options": [
+      "Red",
+      "Blue",
+      "Green",
+      "Wolf"
+    ],
+    "correct_answer": "Wolf",
+    "category": "Animals"
+  },
+  {
+    "id": 565,
+    "question": "சிவப்பு",
+    "options": [
+      "Red",
+      "Blue",
+      "Green",
+      "Yellow"
+    ],
+    "correct_answer": "Red",
+    "category": "Colors"
+  },
+  {
+    "id": 566,
+    "question": "நீலம்",
+    "options": [
+      "Green",
+      "Blue",
+      "Yellow",
+      "Black"
+    ],
+    "correct_answer": "Blue",
+    "category": "Colors"
+  },
+  {
+    "id": 567,
+    "question": "பச்சை",
+    "options": [
+      "Yellow",
+      "Black",
+      "Green",
+      "White"
+    ],
+    "correct_answer": "Green",
+    "category": "Colors"
+  },
+  {
+    "id": 568,
+    "question": "மஞ்சள்",
+    "options": [
+      "Black",
+      "White",
+      "Purple",
+      "Yellow"
+    ],
+    "correct_answer": "Yellow",
+    "category": "Colors"
+  },
+  {
+    "id": 569,
+    "question": "கருப்பு",
+    "options": [
+      "Black",
+      "White",
+      "Purple",
+      "Pink"
+    ],
+    "correct_answer": "Black",
+    "category": "Colors"
+  },
+  {
+    "id": 570,
+    "question": "வெள்ளை",
+    "options": [
+      "Purple",
+      "White",
+      "Pink",
+      "Brown"
+    ],
+    "correct_answer": "White",
+    "category": "Colors"
+  },
+  {
+    "id": 571,
+    "question": "ஊதா",
+    "options": [
+      "Pink",
+      "Brown",
+      "Purple",
+      "Gray"
+    ],
+    "correct_answer": "Purple",
+    "category": "Colors"
+  },
+  {
+    "id": 572,
+    "question": "இளஞ்சிவப்பு",
+    "options": [
+      "Brown",
+      "Gray",
+      "Gold",
+      "Pink"
+    ],
+    "correct_answer": "Pink",
+    "category": "Colors"
+  },
+  {
+    "id": 573,
+    "question": "பழுப்பு",
+    "options": [
+      "Brown",
+      "Gray",
+      "Gold",
+      "Silver"
+    ],
+    "correct_answer": "Brown",
+    "category": "Colors"
+  },
+  {
+    "id": 574,
+    "question": "சாம்பல்",
+    "options": [
+      "Gold",
+      "Gray",
+      "Silver",
+      "Father"
+    ],
+    "correct_answer": "Gray",
+    "category": "Colors"
+  },
+  {
+    "id": 575,
+    "question": "தங்கம்",
+    "options": [
+      "Silver",
+      "Father",
+      "Gold",
+      "Mother"
+    ],
+    "correct_answer": "Gold",
+    "category": "Colors"
+  },
+  {
+    "id": 576,
+    "question": "வெள்ளி",
+    "options": [
+      "Father",
+      "Mother",
+      "Brother",
+      "Silver"
+    ],
+    "correct_answer": "Silver",
+    "category": "Colors"
+  },
+  {
+    "id": 577,
+    "question": "தந்தை",
+    "options": [
+      "Father",
+      "Mother",
+      "Brother",
+      "Sister"
+    ],
+    "correct_answer": "Father",
+    "category": "Family"
+  },
+  {
+    "id": 578,
+    "question": "தாய்",
+    "options": [
+      "Brother",
+      "Mother",
+      "Sister",
+      "Grandfather"
+    ],
+    "correct_answer": "Mother",
+    "category": "Family"
+  },
+  {
+    "id": 579,
+    "question": "அண்ணன்",
+    "options": [
+      "Sister",
+      "Grandfather",
+      "Brother",
+      "Grandmother"
+    ],
+    "correct_answer": "Brother",
+    "category": "Family"
+  },
+  {
+    "id": 580,
+    "question": "அக்கா",
+    "options": [
+      "Grandfather",
+      "Grandmother",
+      "Uncle",
+      "Sister"
+    ],
+    "correct_answer": "Sister",
+    "category": "Family"
+  },
+  {
+    "id": 581,
+    "question": "தாத்தா",
+    "options": [
+      "Grandfather",
+      "Grandmother",
+      "Uncle",
+      "Aunt"
+    ],
+    "correct_answer": "Grandfather",
+    "category": "Family"
+  },
+  {
+    "id": 582,
+    "question": "பாட்டி",
+    "options": [
+      "Uncle",
+      "Grandmother",
+      "Aunt",
+      "Son"
+    ],
+    "correct_answer": "Grandmother",
+    "category": "Family"
+  },
+  {
+    "id": 583,
+    "question": "மாமா",
+    "options": [
+      "Aunt",
+      "Son",
+      "Uncle",
+      "Daughter"
+    ],
+    "correct_answer": "Uncle",
+    "category": "Family"
+  },
+  {
+    "id": 584,
+    "question": "அத்தை",
+    "options": [
+      "Son",
+      "Daughter",
+      "Husband",
+      "Aunt"
+    ],
+    "correct_answer": "Aunt",
+    "category": "Family"
+  },
+  {
+    "id": 585,
+    "question": "மகன்",
+    "options": [
+      "Son",
+      "Daughter",
+      "Husband",
+      "Wife"
+    ],
+    "correct_answer": "Son",
+    "category": "Family"
+  },
+  {
+    "id": 586,
+    "question": "மகள்",
+    "options": [
+      "Husband",
+      "Daughter",
+      "Wife",
+      "Book"
+    ],
+    "correct_answer": "Daughter",
+    "category": "Family"
+  },
+  {
+    "id": 587,
+    "question": "கணவர்",
+    "options": [
+      "Wife",
+      "Book",
+      "Husband",
+      "Pen"
+    ],
+    "correct_answer": "Husband",
+    "category": "Family"
+  },
+  {
+    "id": 588,
+    "question": "மனைவி",
+    "options": [
+      "Book",
+      "Pen",
+      "Pencil",
+      "Wife"
+    ],
+    "correct_answer": "Wife",
+    "category": "Family"
+  },
+  {
+    "id": 589,
+    "question": "புத்தகம்",
+    "options": [
+      "Book",
+      "Pen",
+      "Pencil",
+      "School"
+    ],
+    "correct_answer": "Book",
+    "category": "School"
+  },
+  {
+    "id": 590,
+    "question": "பேனா",
+    "options": [
+      "Pencil",
+      "Pen",
+      "School",
+      "Teacher"
+    ],
+    "correct_answer": "Pen",
+    "category": "School"
+  },
+  {
+    "id": 591,
+    "question": "பென்சில்",
+    "options": [
+      "School",
+      "Teacher",
+      "Pencil",
+      "Student"
+    ],
+    "correct_answer": "Pencil",
+    "category": "School"
+  },
+  {
+    "id": 592,
+    "question": "பள்ளி",
+    "options": [
+      "Teacher",
+      "Student",
+      "Table",
+      "School"
+    ],
+    "correct_answer": "School",
+    "category": "School"
+  },
+  {
+    "id": 593,
+    "question": "ஆசிரியர்",
+    "options": [
+      "Teacher",
+      "Student",
+      "Table",
+      "Chair"
+    ],
+    "correct_answer": "Teacher",
+    "category": "School"
+  },
+  {
+    "id": 594,
+    "question": "மாணவர்",
+    "options": [
+      "Table",
+      "Student",
+      "Chair",
+      "Bag"
+    ],
+    "correct_answer": "Student",
+    "category": "School"
+  },
+  {
+    "id": 595,
+    "question": "மேசை",
+    "options": [
+      "Chair",
+      "Bag",
+      "Table",
+      "Board"
+    ],
+    "correct_answer": "Table",
+    "category": "School"
+  },
+  {
+    "id": 596,
+    "question": "நாற்காலி",
+    "options": [
+      "Bag",
+      "Board",
+      "Eraser",
+      "Chair"
+    ],
+    "correct_answer": "Chair",
+    "category": "School"
+  },
+  {
+    "id": 597,
+    "question": "பை",
+    "options": [
+      "Bag",
+      "Board",
+      "Eraser",
+      "Ruler"
+    ],
+    "correct_answer": "Bag",
+    "category": "School"
+  },
+  {
+    "id": 598,
+    "question": "பலகை",
+    "options": [
+      "Eraser",
+      "Board",
+      "Ruler",
+      "Apple"
+    ],
+    "correct_answer": "Board",
+    "category": "School"
+  },
+  {
+    "id": 599,
+    "question": "அழிப்பான்",
+    "options": [
+      "Ruler",
+      "Apple",
+      "Eraser",
+      "Banana"
+    ],
+    "correct_answer": "Eraser",
+    "category": "School"
+  },
+  {
+    "id": 600,
+    "question": "அளவுகோல்",
+    "options": [
+      "Apple",
+      "Banana",
+      "Mango",
+      "Ruler"
+    ],
+    "correct_answer": "Ruler",
+    "category": "School"
+  }
+]

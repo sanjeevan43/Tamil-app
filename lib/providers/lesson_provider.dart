@@ -30,37 +30,55 @@ class LessonProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final allWords = TamilData.masterWords;
-      if (allWords.isEmpty) {
+      if (TamilData.lessonQuestions.isEmpty) {
         await TamilData.loadDatabase();
       }
 
       final List<LessonQuestion> generated = [];
-
-      final pool = TamilData.masterWords;
+      final pool = TamilData.lessonQuestions;
+      
       if (pool.isNotEmpty) {
-        final shuffledPool = List<Map<String, dynamic>>.from(pool)..shuffle();
+        // Filter pool by category name if lessonId is a specific category (not 'all')
+        final filteredPool = pool.where((item) {
+          if (lessonId == 'all' || lessonId.isEmpty) return true;
+          final cat = item['category']?.toString().toLowerCase();
+          return cat == lessonId.toLowerCase();
+        }).toList();
+
+        final activePool = filteredPool.isNotEmpty ? filteredPool : pool;
+        final shuffledPool = List<Map<String, dynamic>>.from(activePool)..shuffle();
         
         for (int i = 0; i < shuffledPool.length; i++) {
-          final wordData = shuffledPool[i];
-          final String englishWord = wordData['english'] as String;
-          final String correctTamil = wordData['tamil'] as String;
+          final item = shuffledPool[i];
+          final String englishWord = item['correct_answer'] as String; // e.g. "Apple"
+          final String correctTamil = item['question'] as String; // e.g. "ஆப்பிள்"
+          final String category = item['category'] ?? 'General';
 
-          final wrongOptions = pool
-              .where((w) => w['tamil'] != correctTamil)
-              .map((w) => w['tamil'] as String)
-              .toList()
-            ..shuffle();
+          // Select wrong Tamil options from other items in the same category
+          final wrongTamilOptions = pool
+              .where((q) => q['category'] == category && q['question'] != correctTamil)
+              .map((q) => q['question'] as String)
+              .toList();
+
+          if (wrongTamilOptions.length < 3) {
+            wrongTamilOptions.addAll(
+              pool
+                  .where((q) => q['question'] != correctTamil)
+                  .map((q) => q['question'] as String)
+            );
+          }
+          
+          wrongTamilOptions.shuffle();
 
           final options = [correctTamil];
-          for (int k = 0; k < 3 && k < wrongOptions.length; k++) {
-            options.add(wrongOptions[k]);
+          for (int k = 0; k < 3 && k < wrongTamilOptions.length; k++) {
+            options.add(wrongTamilOptions[k]);
           }
           options.shuffle();
 
           generated.add(
             LessonQuestion(
-              id: wordData['id'] ?? 'lesson_q_$i',
+              id: item['id']?.toString() ?? 'lesson_q_$i',
               lessonId: lessonId,
               type: QuestionType.mcq,
               englishText: englishWord,
@@ -77,36 +95,28 @@ class LessonProvider with ChangeNotifier {
             id: 'q1',
             lessonId: lessonId,
             type: QuestionType.mcq,
-            englishText: 'Dog',
-            options: ['நாய்', 'பூனை', 'ஆடு'],
-            correctAnswer: 'நாய்',
-          ),
-          LessonQuestion(
-            id: 'q2',
-            lessonId: lessonId,
-            type: QuestionType.mcq,
-            englishText: 'Cat',
-            options: ['பூனை', 'நாய்', 'மாடு'],
-            correctAnswer: 'பூனை',
+            englishText: 'Apple',
+            options: ['ஆப்பிள்', 'வாழைப்பழம்', 'மாம்பழம்', 'ஆரஞ்சு'],
+            correctAnswer: 'ஆப்பிள்',
           ),
         ]);
       } else {
         generated.shuffle();
       }
 
-      // Limit to 15 questions per lesson run, drawing from the 1000+ unique questions
+      // Limit to 15 questions per lesson run, drawing from the 600+ questions
       _questions = generated.take(15).toList();
 
     } catch (e) {
-      debugPrint('Error generating dynamic questions: $e');
+      debugPrint('Error generating lessons: $e');
       _questions = [
         LessonQuestion(
           id: 'q1',
           lessonId: lessonId,
           type: QuestionType.mcq,
-          englishText: 'Dog',
-          options: ['நாய்', 'பூனை', 'ஆடு'],
-          correctAnswer: 'நாய்',
+          englishText: 'Apple',
+          options: ['ஆப்பிள்', 'வாழைப்பழம்', 'மாம்பழம்', 'ஆரஞ்சு'],
+          correctAnswer: 'ஆப்பிள்',
         ),
       ];
     }
