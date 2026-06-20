@@ -1,5 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 
 class TamilProverb {
   final int id;
@@ -22,25 +23,29 @@ class TamilProverb {
 }
 
 class ProverbService {
-  static final FirebaseFirestore _db = FirebaseFirestore.instance;
+  static List<TamilProverb>? _cachedProverbs;
 
   static Future<TamilProverb?> getDailyProverb() async {
     try {
-      final now = DateTime.now();
-      final startOfYear = DateTime(now.year, 1, 1);
-      final dayOfYear = now.difference(startOfYear).inDays;
-
-      // Pseudo-random index from 1 to 30 based on day of the year
-      final int index = (dayOfYear % 30) + 1;
-
-      // Fetch specific proverb document directly by ID
-      final doc = await _db.collection('proverbs').doc(index.toString()).get();
-      if (doc.exists && doc.data() != null) {
-        return TamilProverb.fromJson(doc.data()!);
+      if (_cachedProverbs == null) {
+        final String jsonString = await rootBundle.loadString('assets/data/tamil_proverbs.json');
+        final List<dynamic> data = json.decode(jsonString);
+        _cachedProverbs = data.map((item) => TamilProverb.fromJson(item)).toList();
       }
+
+      if (_cachedProverbs != null && _cachedProverbs!.isNotEmpty) {
+        final now = DateTime.now();
+        final startOfYear = DateTime(now.year, 1, 1);
+        final dayOfYear = now.difference(startOfYear).inDays;
+
+        // Index from 0 to list length - 1
+        final int index = dayOfYear % _cachedProverbs!.length;
+        return _cachedProverbs![index];
+      }
+
       return _getFallbackProverb();
     } catch (e) {
-      debugPrint('ProverbService: Error fetching proverb from Firestore: $e');
+      debugPrint('ProverbService: Error loading proverb from assets: $e');
       return _getFallbackProverb();
     }
   }

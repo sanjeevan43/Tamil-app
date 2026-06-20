@@ -1,5 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 
 class Thirukkural {
   final int number;
@@ -22,31 +23,38 @@ class Thirukkural {
       line1: json['Line1'] ?? json['line1'] ?? '',
       line2: json['Line2'] ?? json['line2'] ?? '',
       explanation: json['mv'] ?? json['explanation_tamil'] ?? json['explanation'] ?? '',
-      englishMeaning: json['explanation_english'] ?? json['explanation'] ?? '',
+      englishMeaning: json['explanation'] ?? json['explanation_english'] ?? '',
     );
   }
 }
 
 class ThirukkuralService {
-  static final FirebaseFirestore _db = FirebaseFirestore.instance;
+  static List<Thirukkural>? _cachedKurals;
 
   static Future<Thirukkural?> fetchDailyKural() async {
     try {
-      final now = DateTime.now();
-      final startOfYear = DateTime(now.year, 1, 1);
-      final dayOfYear = now.difference(startOfYear).inDays;
-
-      // Pseudo-random index from 1 to 1330 based on day of the year
-      final int index = (dayOfYear % 1330) + 1;
-
-      // Fetch the specific thirukkural document directly by ID (fast & offline cached)
-      final doc = await _db.collection('kurals').doc(index.toString()).get();
-      if (doc.exists && doc.data() != null) {
-        return Thirukkural.fromJson(doc.data()!);
+      if (_cachedKurals == null) {
+        final String jsonString = await rootBundle.loadString('assets/data/v_thirukkural_list.json');
+        final Map<String, dynamic> data = json.decode(jsonString);
+        if (data.containsKey('kural')) {
+          final List<dynamic> kuralList = data['kural'];
+          _cachedKurals = kuralList.map((item) => Thirukkural.fromJson(item)).toList();
+        }
       }
+
+      if (_cachedKurals != null && _cachedKurals!.isNotEmpty) {
+        final now = DateTime.now();
+        final startOfYear = DateTime(now.year, 1, 1);
+        final dayOfYear = now.difference(startOfYear).inDays;
+
+        // Index from 0 to list length - 1
+        final int index = dayOfYear % _cachedKurals!.length;
+        return _cachedKurals![index];
+      }
+
       return _getFallbackKural();
     } catch (e) {
-      debugPrint('ThirukkuralService: Error fetching Kural from Firestore: $e');
+      debugPrint('ThirukkuralService: Error loading Kural from assets: $e');
       return _getFallbackKural();
     }
   }
