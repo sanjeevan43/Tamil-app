@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/app_theme.dart';
 import '../services/auth_service.dart';
 import '../providers/enhanced_progress_provider.dart';
-import 'admin_control_screen.dart';
 import 'teacher_dashboard_screen.dart';
 import 'parent_dashboard_screen.dart';
 import 'main_navigation_container.dart';
@@ -71,9 +70,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     if (authService.isAuthenticated) {
       final role = authService.userRole;
       switch (role) {
-        case 'admin':
-          nextScreen = const AdminControlScreen();
-          break;
         case 'teacher':
           nextScreen = TeacherDashboardScreen();
           break;

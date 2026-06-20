@@ -321,24 +321,42 @@ class GameLogic {
   // Letter Hunt Game with difficulty
   static Map<String, dynamic> generateLetterHuntRoundWithDifficulty(String difficulty) {
     List<String> letterPool;
-    
+
     if (difficulty == 'Easy') {
-      letterPool = TamilData.uyirEzhuthukkal;
+      letterPool = List<String>.from(TamilData.uyirEzhuthukkal);
     } else if (difficulty == 'Medium') {
-      letterPool = [...TamilData.uyirEzhuthukkal, ...TamilData.meiEzhuthukkal];
+      letterPool = [
+        ...TamilData.uyirEzhuthukkal,
+        ...TamilData.meiEzhuthukkal,
+      ];
     } else {
-      letterPool = [...TamilData.uyirEzhuthukkal, ...TamilData.meiEzhuthukkal, ...TamilData.aayudhaEzhuthu];
+      // Hard / Expert: include aayudhaEzhuthu if non-empty
+      letterPool = [
+        ...TamilData.uyirEzhuthukkal,
+        ...TamilData.meiEzhuthukkal,
+        if (TamilData.aayudhaEzhuthu.isNotEmpty) ...TamilData.aayudhaEzhuthu,
+      ];
     }
-    
+
+    // Guard: need at least 6 unique letters for 6 options
+    if (letterPool.length < 6) {
+      letterPool = [
+        ...TamilData.uyirEzhuthukkal,
+        ...TamilData.meiEzhuthukkal,
+      ];
+    }
+
     final targetLetter = letterPool[_random.nextInt(letterPool.length)];
     final options = [targetLetter];
-    
-    while (options.length < 6) {
+
+    int safetyCounter = 0;
+    while (options.length < 6 && safetyCounter < 200) {
       final letter = letterPool[_random.nextInt(letterPool.length)];
       if (!options.contains(letter)) options.add(letter);
+      safetyCounter++;
     }
     options.shuffle();
-    
+
     return {
       'targetLetter': targetLetter,
       'options': options,

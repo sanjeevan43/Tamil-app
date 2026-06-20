@@ -14,7 +14,6 @@ import '../widgets/premium_animations.dart';
 import 'stories_screen.dart';
 import 'profile_screen.dart';
 import 'pronunciation_practice_game.dart';
-import 'admin_control_screen.dart';
 import 'riddle_academy_screen.dart';
 import 'linguistic_scanner_screen.dart';
 import 'word_quest_hub_screen.dart';
@@ -545,9 +544,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
   Widget _buildQuickLearningTools(BuildContext context, int adaptiveAge) {
-    final authService = Provider.of<AuthService>(context, listen: false);
-    final isAdmin = authService.userRole == 'admin';
-
     final items = [
       _quickActionItem('Dictionary', 'Explore words', Icons.menu_book_rounded, Colors.green,
           () => Navigator.push(context, FadeInSlidePageRoute(page: LinguisticScannerScreen(childAge: adaptiveAge)))),
@@ -559,9 +555,6 @@ class _HomeScreenState extends State<HomeScreen> {
           () => Navigator.push(context, FadeInSlidePageRoute(page: const PronunciationPracticeGame()))),
       _quickActionItem('Riddle Hub', 'Solve puzzles', Icons.wb_sunny_rounded, Colors.indigo,
           () => Navigator.push(context, FadeInSlidePageRoute(page: RiddleAcademyScreen(childAge: adaptiveAge)))),
-      if (isAdmin)
-        _quickActionItem('Admin Panel', 'Manage app', Icons.admin_panel_settings_rounded, Colors.red,
-            () => Navigator.push(context, FadeInSlidePageRoute(page: const AdminControlScreen()))),
     ];
 
     return Column(
