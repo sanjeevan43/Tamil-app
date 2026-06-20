@@ -32,7 +32,7 @@ class LessonProvider with ChangeNotifier {
     try {
       final allWords = TamilData.masterWords;
       if (allWords.isEmpty) {
-        await TamilData.loadData();
+        await TamilData.loadDatabase();
       }
 
       final List<LessonQuestion> generated = [];
