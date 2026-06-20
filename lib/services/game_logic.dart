@@ -161,19 +161,18 @@ class GameLogic {
   }
 
   // Pronunciation Practice
-  static Map<String, dynamic> generatePronunciationRound({String? difficulty}) {
-    final pool = _filterContent(TamilData.masterWords.isEmpty ? [
-      {'tamil': 'நாய்', 'english': 'Dog', 'emoji': '🐕', 'id': 'fallback_1', 'difficulty': 'Easy'}
-    ] : TamilData.masterWords, difficulty);
+  static Map<String, dynamic> generatePronunciationRound() {
+    final allWords = <Map<String, String>>[];
+    for (var cat in TamilData.wordCategories.values) {
+      allWords.addAll(cat);
+    }
     
-    final wordData = pool[_random.nextInt(pool.length)];
-    final id = wordData['id'] as String?;
-    if (id != null) trackShown(id);
+    final word = allWords[_random.nextInt(allWords.length)];
     
     return {
-      'word': wordData['tamil'],
-      'english': wordData['english'],
-      'emoji': wordData['emoji'],
+      'word': word['tamil'],
+      'english': word['english'],
+      'emoji': word['emoji'],
     };
   }
 

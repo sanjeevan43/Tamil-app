@@ -308,7 +308,7 @@ class GamesHubScreen extends StatelessWidget {
         'icon': '🎤',
         'description': 'Practice speaking',
         'color': const Color(0xFFFF8A65),
-        'screenBuilder': (String diff) => PronunciationPracticeGame(difficulty: diff),
+        'screenBuilder': (String diff) => const PronunciationPracticeGame(),
         'xp': '+40 XP',
         'difficulty': 2
       },
