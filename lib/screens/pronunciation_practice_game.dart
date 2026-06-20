@@ -56,8 +56,23 @@ class _PronunciationPracticeGameState extends State<PronunciationPracticeGame> {
 
   void _startListening() async {
     if (!_speechEnabled) {
+      try {
+        _speechEnabled = await _speechToText.initialize(
+          onError: (val) => debugPrint('STT Error: $val'),
+          onStatus: (val) => debugPrint('STT Status: $val'),
+        );
+      } catch (e) {
+        debugPrint('On-demand STT init failed: $e');
+        _speechEnabled = false;
+      }
+    }
+    
+    if (!_speechEnabled) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Speech recognition is not enabled on this device.')),
+        const SnackBar(
+          content: Text('Speech recognition is not enabled or mic permission denied.'),
+          backgroundColor: AppTheme.error,
+        ),
       );
       return;
     }
