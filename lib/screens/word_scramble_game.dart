@@ -3,33 +3,26 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../providers/enhanced_progress_provider.dart';
+import '../services/game_logic.dart';
 
 class WordScrambleGame extends StatefulWidget {
-  const WordScrambleGame({super.key});
+  final String difficulty;
+  const WordScrambleGame({super.key, this.difficulty = 'Easy'});
 
   @override
   State<WordScrambleGame> createState() => _WordScrambleGameState();
 }
 
 class _WordScrambleGameState extends State<WordScrambleGame> {
-  final List<Map<String, String>> _words = [
-    {'word': 'அம்மா', 'hint': 'Mother'},
-    {'word': 'அப்பா', 'hint': 'Father'},
-    {'word': 'ஆப்பிள்', 'hint': 'Apple'},
-    {'word': 'பந்து', 'hint': 'Ball'},
-    {'word': 'மலர்', 'hint': 'Flower'},
-    {'word': 'தமி்ழ்', 'hint': 'Tamil'},
-    {'word': 'பள்ளி', 'hint': 'School'},
-    {'word': 'புத்தகம்', 'hint': 'Book'},
-    {'word': 'யானை', 'hint': 'Elephant'},
-    {'word': 'மயில்', 'hint': 'Peacock'},
-  ];
-
-  int _currentIndex = 0;
+  String _targetWord = '';
+  String _hint = '';
+  String _emoji = '';
   List<String> _scrambledLetters = [];
   List<String> _selectedLetters = [];
   bool _isCorrect = false;
   int _score = 0;
+  int _round = 1;
+  final int _maxRounds = 8;
 
   @override
   void initState() {
@@ -38,18 +31,15 @@ class _WordScrambleGameState extends State<WordScrambleGame> {
   }
 
   void _loadLevel() {
+    final wordData = GameLogic.generateWordScrambleRound(difficulty: widget.difficulty);
     setState(() {
-      String word = _words[_currentIndex]['word']!;
-      // Simple splitting for Tamil letters (considering combinations)
-      _scrambledLetters = _splitTamilWord(word);
-      _scrambledLetters.shuffle();
+      _targetWord = wordData['word']!;
+      _hint = wordData['english']!;
+      _emoji = wordData['emoji'] ?? '🧩';
+      _scrambledLetters = List<String>.from(wordData['scrambled'] as List);
       _selectedLetters = [];
       _isCorrect = false;
     });
-  }
-
-  List<String> _splitTamilWord(String word) {
-    return word.characters.toList();
   }
 
   void _onLetterTap(int index) {
@@ -60,26 +50,39 @@ class _WordScrambleGameState extends State<WordScrambleGame> {
       _scrambledLetters.removeAt(index);
 
       String currentWord = _selectedLetters.join('');
-      if (currentWord == _words[_currentIndex]['word']) {
+      if (currentWord == _targetWord) {
         _isCorrect = true;
-        _score += 10;
+        _score += 15;
         _showSuccessDialog();
       } else if (_scrambledLetters.isEmpty) {
         // Wrong answer
-        Future.delayed(const Duration(milliseconds: 500), () {
-          _loadLevel();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Try again! Spelling not correct.'),
+            backgroundColor: AppTheme.error,
+            duration: const Duration(milliseconds: 800),
+          ),
+        );
+        Future.delayed(const Duration(milliseconds: 800), () {
+          if (mounted) {
+            _resetLevel();
+          }
         });
       }
     });
   }
 
   void _resetLevel() {
-    _loadLevel();
+    setState(() {
+      _scrambledLetters = _targetWord.characters.toList()..shuffle();
+      _selectedLetters = [];
+      _isCorrect = false;
+    });
   }
 
   void _showSuccessDialog() {
     final progress = Provider.of<EnhancedProgressProvider>(context, listen: false);
-    progress.addRewards(coins: 10, stars: 2, missionId: 'game_hero');
+    progress.addRewards(coins: 15, stars: 2, missionId: 'game_hero');
 
     showDialog(
       context: context,
@@ -93,12 +96,14 @@ class _WordScrambleGameState extends State<WordScrambleGame> {
           children: [
             Text('You spelled it correctly!', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
             const SizedBox(height: 12),
-            Text(_words[_currentIndex]['word']!, style: GoogleFonts.notoSansTamil(fontSize: 32, fontWeight: FontWeight.bold, color: AppTheme.primary)),
+            Text(_emoji, style: const TextStyle(fontSize: 48)),
+            const SizedBox(height: 8),
+            Text(_targetWord, style: GoogleFonts.notoSansTamil(fontSize: 32, fontWeight: FontWeight.bold, color: AppTheme.primary)),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _rewardIcon('💰', '+10'),
+                _rewardIcon('💰', '+15'),
                 const SizedBox(width: 20),
                 _rewardIcon('⭐', '+2'),
               ],
@@ -106,17 +111,80 @@ class _WordScrambleGameState extends State<WordScrambleGame> {
           ],
         ),
         actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() {
-                _currentIndex = (_currentIndex + 1) % _words.length;
-                _loadLevel();
-              });
-            },
-            child: Text('NEXT WORD', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.primary)),
+          Center(
+            child: TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                if (_round < _maxRounds) {
+                  setState(() {
+                    _round++;
+                  });
+                  _loadLevel();
+                } else {
+                  _showFinalResults();
+                }
+              },
+              child: Text(_round < _maxRounds ? 'NEXT WORD' : 'SEE RESULTS', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: AppTheme.primary)),
+            ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showFinalResults() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.emoji_events, color: AppTheme.warning, size: 80),
+            const SizedBox(height: 16),
+            const Text(
+              'Game Complete!',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.primaryRed,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Score: $_score/${_maxRounds * 15}',
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    setState(() {
+                      _score = 0;
+                      _round = 1;
+                      _loadLevel();
+                    });
+                  },
+                  child: const Text('Play Again'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.darkRed,
+                  ),
+                  child: const Text('Exit'),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -155,6 +223,21 @@ class _WordScrambleGameState extends State<WordScrambleGame> {
           padding: const EdgeInsets.all(24.0),
           child: Column(
             children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: LinearProgressIndicator(
+                  value: _round / _maxRounds,
+                  backgroundColor: AppTheme.textGray.withOpacity(0.3),
+                  color: AppTheme.primaryRed,
+                  minHeight: 8,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Word $_round/$_maxRounds',
+                style: const TextStyle(fontSize: 14, color: AppTheme.textGray),
+              ),
+              const SizedBox(height: 20),
               // Hint Card
               Container(
                 width: double.infinity,
@@ -164,7 +247,7 @@ class _WordScrambleGameState extends State<WordScrambleGame> {
                   children: [
                     Text('HINT', style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.textSlate.withOpacity(0.4), letterSpacing: 2)),
                     const SizedBox(height: 8),
-                    Text(_words[_currentIndex]['hint']!, style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
+                    Text(_hint, style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.textDark)),
                   ],
                 ),
               ),

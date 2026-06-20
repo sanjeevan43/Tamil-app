@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'dart:math';
 import '../constants/app_theme.dart';
-import '../data/tamil_data.dart';
 import '../services/audio_service.dart';
+import '../services/game_logic.dart';
 import '../providers/enhanced_progress_provider.dart';
 
 class WordBuilderGame extends StatefulWidget {
-  const WordBuilderGame({super.key});
+  final String difficulty;
+  const WordBuilderGame({super.key, this.difficulty = 'Easy'});
 
   @override
   State<WordBuilderGame> createState() => _WordBuilderGameState();
@@ -24,30 +26,20 @@ class _WordBuilderGameState extends State<WordBuilderGame> {
   final int _maxRounds = 8;
   bool _showingResult = false;
 
-  // Aggregate all words from all categories
-  late List<Map<String, String>> _allWords;
-
   @override
   void initState() {
     super.initState();
-    _allWords = [];
-    for (final category in TamilData.wordCategories.entries) {
-      for (final word in category.value) {
-        _allWords.add(word);
-      }
-    }
     _generateWord();
   }
 
   void _generateWord() {
-    final random = Random();
-    final wordData = _allWords[random.nextInt(_allWords.length)];
-    _targetWord = wordData['tamil']!;
+    final wordData = GameLogic.generateWordBuilderRound(difficulty: widget.difficulty);
+    _targetWord = wordData['word']!;
     _english = wordData['english']!;
-    _emoji = wordData['emoji']!;
+    _emoji = wordData['emoji'] ?? '📝';
 
     // Use characters package for proper Tamil character handling
-    _scrambledLetters = _targetWord.characters.toList()..shuffle(random);
+    _scrambledLetters = List<String>.from(wordData['scrambled'] as List);
     _userAnswer = [];
     _showingResult = false;
     setState(() {});

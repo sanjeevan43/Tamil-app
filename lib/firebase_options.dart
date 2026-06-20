@@ -45,13 +45,13 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: String.fromEnvironment('VITE_FIREBASE_API_KEY', defaultValue: ''),
-    appId: String.fromEnvironment('VITE_FIREBASE_APP_ID', defaultValue: ''),
-    messagingSenderId: String.fromEnvironment('VITE_FIREBASE_MESSAGING_SENDER_ID', defaultValue: ''),
-    projectId: String.fromEnvironment('VITE_FIREBASE_PROJECT_ID', defaultValue: ''),
-    authDomain: String.fromEnvironment('VITE_FIREBASE_AUTH_DOMAIN', defaultValue: ''),
-    storageBucket: String.fromEnvironment('VITE_FIREBASE_STORAGE_BUCKET', defaultValue: ''),
-    measurementId: String.fromEnvironment('VITE_FIREBASE_MEASUREMENT_ID', defaultValue: ''),
+    apiKey: 'AIzaSyDw-pCDEHyBs2lPnpVsLZXD1i6hh65L95k',
+    appId: '1:356453132420:web:256c9c8127289bcc96bad1',
+    messagingSenderId: '356453132420',
+    projectId: 'h3-tamil-app',
+    authDomain: 'h3-tamil-app.firebaseapp.com',
+    storageBucket: 'h3-tamil-app.firebasestorage.app',
+    measurementId: 'G-XFC0SQ0ZTJ',
   );
 
   static const FirebaseOptions android = FirebaseOptions(

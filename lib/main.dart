@@ -10,6 +10,7 @@ import 'services/audio_service.dart';
 import 'services/auth_service.dart';
 import 'providers/lesson_provider.dart';
 import 'screens/splash_screen.dart';
+import 'data/tamil_data.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -24,6 +25,7 @@ void main() async {
   ));
   
   await dotenv.load(fileName: '.env');
+  await TamilData.loadDatabase();
   
   try {
     debugPrint('Initializing Firebase...');

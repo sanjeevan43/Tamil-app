@@ -3,9 +3,11 @@ import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../data/tamil_data.dart';
 import '../providers/enhanced_progress_provider.dart';
+import '../services/game_logic.dart';
 
 class QuizScreen extends StatefulWidget {
-  const QuizScreen({super.key});
+  final String difficulty;
+  const QuizScreen({super.key, this.difficulty = 'Easy'});
 
   @override
   State<QuizScreen> createState() => _QuizScreenState();
@@ -21,7 +23,7 @@ class _QuizScreenState extends State<QuizScreen> {
   @override
   void initState() {
     super.initState();
-    _questions = TamilData.getQuizQuestions()..shuffle();
+    _questions = GameLogic.getQuizQuestions(difficulty: widget.difficulty).take(10).toList()..shuffle();
   }
 
   void _checkAnswer(int selected) {
@@ -107,7 +109,7 @@ class _QuizScreenState extends State<QuizScreen> {
                       _score = 0;
                       _selectedAnswer = null;
                       _answered = false;
-                      _questions = TamilData.getQuizQuestions()..shuffle();
+                      _questions = GameLogic.getQuizQuestions(difficulty: widget.difficulty).take(10).toList()..shuffle();
                     });
                   },
                   child: const Text('Retry'),

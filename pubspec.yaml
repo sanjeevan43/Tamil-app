@@ -46,8 +46,7 @@ flutter:
   assets:
     - assets/images/
     - assets/audio/
-    - assets/data/tamil_proverbs.json
-    - assets/data/v_thirukkural_list.json
+    - assets/data/
     - .env
 
 flutter_launcher_icons:

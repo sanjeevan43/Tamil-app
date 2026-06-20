@@ -5,6 +5,52 @@ import '../data/tamil_data.dart';
 class GameLogic {
   static final Random _random = Random();
 
+  static final List<String> _recentlyShownQuestions = [];
+  static const int _maxRepetitionHistory = 50;
+
+  static void trackShown(String id) {
+    _recentlyShownQuestions.add(id);
+    if (_recentlyShownQuestions.length > _maxRepetitionHistory) {
+      _recentlyShownQuestions.removeAt(0);
+    }
+  }
+
+  static bool isRecentlyShown(String id) {
+    return _recentlyShownQuestions.contains(id);
+  }
+
+  // Filter list by difficulty and anti-repetition
+  static List<T> _filterContent<T extends Map<String, dynamic>>(
+    List<T> source,
+    String? difficulty,
+  ) {
+    var filtered = source.where((item) {
+      final id = item['id'] as String?;
+      if (id != null && isRecentlyShown(id)) return false;
+      if (difficulty != null && difficulty != 'Any' && difficulty.isNotEmpty) {
+        final diff = item['difficulty'] as String?;
+        if (diff != difficulty) return false;
+      }
+      return true;
+    }).toList();
+
+    // Fallback if everything is filtered out
+    if (filtered.isEmpty) {
+      filtered = source.where((item) {
+        if (difficulty != null && difficulty != 'Any' && difficulty.isNotEmpty) {
+          final diff = item['difficulty'] as String?;
+          if (diff != difficulty) return false;
+        }
+        return true;
+      }).toList();
+    }
+
+    if (filtered.isEmpty) {
+      filtered = List<T>.from(source);
+    }
+    return filtered;
+  }
+
   // Letter Hunt Game
   static Map<String, dynamic> generateLetterHuntRound() {
     final targetLetter = TamilData.uyirEzhuthukkal[_random.nextInt(TamilData.uyirEzhuthukkal.length)];
@@ -24,10 +70,15 @@ class GameLogic {
   }
 
   // Word Builder Game
-  static Map<String, dynamic> generateWordBuilderRound() {
-    final categories = TamilData.wordCategories.values.toList();
-    final words = categories[_random.nextInt(categories.length)];
-    final wordData = words[_random.nextInt(words.length)];
+  static Map<String, dynamic> generateWordBuilderRound({String? difficulty}) {
+    final pool = _filterContent(TamilData.masterWords.isEmpty ? [
+      {'tamil': 'நாய்', 'english': 'Dog', 'emoji': '🐕', 'id': 'fallback_1', 'difficulty': 'Easy'}
+    ] : TamilData.masterWords, difficulty);
+    
+    final wordData = pool[_random.nextInt(pool.length)];
+    final id = wordData['id'] as String?;
+    if (id != null) trackShown(id);
+    
     final word = wordData['tamil']!;
     final scrambled = word.characters.toList()..shuffle();
     
@@ -40,13 +91,21 @@ class GameLogic {
   }
 
   // Fill Blanks Game
-  static Map<String, dynamic> generateFillBlanksRound() {
-    final categories = TamilData.wordCategories.values.toList();
-    final words = categories[_random.nextInt(categories.length)];
-    final wordData = words[_random.nextInt(words.length)];
+  static Map<String, dynamic> generateFillBlanksRound({String? difficulty}) {
+    final pool = _filterContent(TamilData.masterWords.isEmpty ? [
+      {'tamil': 'நாய்', 'english': 'Dog', 'emoji': '🐕', 'id': 'fallback_1', 'difficulty': 'Easy'}
+    ] : TamilData.masterWords, difficulty);
+    
+    final wordData = pool[_random.nextInt(pool.length)];
+    final id = wordData['id'] as String?;
+    if (id != null) trackShown(id);
+    
     final word = wordData['tamil']!;
     final wordChars = word.characters.toList();
-    final blankIndex = _random.nextInt(wordChars.length);
+    int blankIndex = _random.nextInt(wordChars.length);
+    if (wordChars[blankIndex] == ' ') {
+      blankIndex = ((blankIndex + 1) % wordChars.length).toInt();
+    }
     final correctLetter = wordChars[blankIndex];
     
     final options = [correctLetter];
@@ -78,14 +137,16 @@ class GameLogic {
   }
 
   // Quiz Game
-  static List<Map<String, dynamic>> getQuizQuestions() {
-    return TamilData.quizQuestions;
+  static List<Map<String, dynamic>> getQuizQuestions({String? difficulty}) {
+    return _filterContent(TamilData.quizQuestions, difficulty);
   }
 
   // Sentence Builder Game
-  static Map<String, dynamic> generateSentenceBuilderRound() {
-    const sentences = TamilData.sentences;
-    final sentenceData = sentences[_random.nextInt(sentences.length)];
+  static Map<String, dynamic> generateSentenceBuilderRound({String? difficulty}) {
+    final pool = _filterContent(TamilData.sentences, difficulty);
+    final sentenceData = pool[_random.nextInt(pool.length)];
+    final id = sentenceData['id'] as String?;
+    if (id != null) trackShown(id);
     
     final words = List<String>.from(sentenceData['tamil'] as List);
     final correctSentence = words.join(' ');
@@ -193,31 +254,60 @@ class GameLogic {
   }
 
   // Word Search Game
-  static Map<String, dynamic> generateWordSearchRound() {
-    final categories = TamilData.wordCategories.values.toList();
-    final words = categories[_random.nextInt(categories.length)];
-    final selectedWords = <Map<String, String>>[];
-    
-    while (selectedWords.length < 5) {
-      final word = words[_random.nextInt(words.length)];
+  static Map<String, dynamic> generateWordSearchRound({String? difficulty}) {
+    final pool = _filterContent(TamilData.masterWords.isEmpty ? [
+      {'tamil': 'நாய்', 'english': 'Dog', 'emoji': '🐕', 'id': 'fallback_1', 'difficulty': 'Easy'}
+    ] : TamilData.masterWords, difficulty);
+
+    int count = 5;
+    int size = 8;
+    if (difficulty == 'Easy') {
+      count = 3;
+      size = 6;
+    } else if (difficulty == 'Medium') {
+      count = 4;
+      size = 8;
+    } else if (difficulty == 'Hard') {
+      count = 5;
+      size = 9;
+    } else if (difficulty == 'Expert') {
+      count = 6;
+      size = 10;
+    }
+
+    final selectedWords = <Map<String, dynamic>>[];
+    final maxAttempts = 100;
+    int attempts = 0;
+    while (selectedWords.length < count && attempts < maxAttempts) {
+      final word = pool[_random.nextInt(pool.length)];
       if (!selectedWords.any((w) => w['tamil'] == word['tamil'])) {
         selectedWords.add(word);
       }
+      attempts++;
     }
-    
+
+    if (selectedWords.isEmpty) {
+      selectedWords.add({'tamil': 'நாய்', 'english': 'Dog'});
+    }
+
     return {
       'words': selectedWords,
-      'gridSize': 8,
+      'gridSize': size,
     };
   }
 
   // Word Scramble Game
-  static Map<String, dynamic> generateWordScrambleRound() {
-    final categories = TamilData.wordCategories.values.toList();
-    final words = categories[_random.nextInt(categories.length)];
-    final wordData = words[_random.nextInt(words.length)];
+  static Map<String, dynamic> generateWordScrambleRound({String? difficulty}) {
+    final pool = _filterContent(TamilData.masterWords.isEmpty ? [
+      {'tamil': 'நாய்', 'english': 'Dog', 'emoji': '🐕', 'id': 'fallback_1', 'difficulty': 'Easy'}
+    ] : TamilData.masterWords, difficulty);
+    
+    final wordData = pool[_random.nextInt(pool.length)];
+    final id = wordData['id'] as String?;
+    if (id != null) trackShown(id);
+    
     final word = wordData['tamil']!;
-    final scrambled = (word.characters.toList()..shuffle()).join('');
+    final scrambled = word.characters.toList()..shuffle();
     
     return {
       'word': word,

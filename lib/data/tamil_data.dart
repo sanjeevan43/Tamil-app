@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
+
 class TamilData {
   static const List<String> uyirEzhuthukkal = [
     'அ', 'ஆ', 'இ', 'ஈ', 'உ', 'ஊ', 'எ', 'ஏ', 'ஐ', 'ஒ', 'ஓ', 'ஔ'
@@ -38,7 +41,7 @@ class TamilData {
     ['ன', 'னா', 'னி', 'னீ', 'னு', 'னூ', 'னெ', 'னே', 'னை', 'னொ', 'னோ', 'னௌ'],
   ];
 
-  static const Map<String, List<Map<String, String>>> wordCategories = {
+  static Map<String, List<Map<String, String>>> wordCategories = {
     'Animals': [
       {'tamil': 'நாய்', 'english': 'Dog', 'emoji': '🐕'},
       {'tamil': 'பூனை', 'english': 'Cat', 'emoji': '🐈'},
@@ -289,10 +292,10 @@ class TamilData {
     return questions;
   }
 
-  static final List<Map<String, dynamic>> quizQuestions = getQuizQuestions();
+  static List<Map<String, dynamic>> quizQuestions = getQuizQuestions();
 
   // Sentence data for Sentence Builder game
-  static const List<Map<String, dynamic>> sentences = [
+  static List<Map<String, dynamic>> sentences = [
     {
       'tamil': ['நான்', 'பள்ளி', 'செல்கிறேன்'],
       'english': 'I go to school',
@@ -341,7 +344,7 @@ class TamilData {
   ];
 
   // Fill Blanks Game specific data
-  static const List<Map<String, String>> fillBlanksWords = [
+  static List<Map<String, String>> fillBlanksWords = [
     {'word': 'நாய்', 'english': 'Dog', 'emoji': '🐕'},
     {'word': 'பூனை', 'english': 'Cat', 'emoji': '🐈'},
     {'word': 'மீன்', 'english': 'Fish', 'emoji': '🐟'},
@@ -353,6 +356,47 @@ class TamilData {
     {'word': 'கண்', 'english': 'Eye', 'emoji': '👁️'},
     {'word': 'காது', 'english': 'Ear', 'emoji': '👂'},
   ];
+
+  static List<Map<String, dynamic>> masterWords = [];
+
+  static Future<void> loadDatabase() async {
+    try {
+      final String wordsString = await rootBundle.loadString('assets/data/words.json');
+      final List<dynamic> wordsList = jsonDecode(wordsString);
+      masterWords = List<Map<String, dynamic>>.from(wordsList);
+      wordCategories.clear();
+      for (var item in wordsList) {
+        final String cat = item['category'] ?? 'General';
+        if (!wordCategories.containsKey(cat)) {
+          wordCategories[cat] = [];
+        }
+        wordCategories[cat]!.add({
+          'tamil': item['tamil'] as String,
+          'english': item['english'] as String,
+          'emoji': item['emoji'] as String,
+        });
+      }
+
+      final String sentencesString = await rootBundle.loadString('assets/data/sentences.json');
+      sentences = List<Map<String, dynamic>>.from(jsonDecode(sentencesString));
+
+      final String quizString = await rootBundle.loadString('assets/data/quiz_questions.json');
+      quizQuestions = List<Map<String, dynamic>>.from(jsonDecode(quizString));
+      quizQuestions.addAll(getQuizQuestions());
+
+      final String fillString = await rootBundle.loadString('assets/data/fill_blanks.json');
+      final List<dynamic> fillList = jsonDecode(fillString);
+      fillBlanksWords = fillList.map((item) => {
+        'word': item['word'] as String,
+        'english': item['prompt'] as String,
+        'emoji': '📝'
+      }).toList();
+      
+      print('Database loaded successfully from JSON files!');
+    } catch (e) {
+      print('Error loading JSON databases: $e');
+    }
+  }
 
   static const List<Map<String, String>> globalFacts = [
     {

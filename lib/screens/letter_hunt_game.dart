@@ -7,7 +7,8 @@ import '../services/game_logic.dart';
 import '../providers/enhanced_progress_provider.dart';
 
 class LetterHuntGame extends StatefulWidget {
-  const LetterHuntGame({super.key});
+  final String difficulty;
+  const LetterHuntGame({super.key, this.difficulty = 'Easy'});
 
   @override
   State<LetterHuntGame> createState() => _LetterHuntGameState();
@@ -27,7 +28,7 @@ class _LetterHuntGameState extends State<LetterHuntGame> {
   }
 
   void _generateRound() {
-    _currentRound = GameLogic.generateLetterHuntRound();
+    _currentRound = GameLogic.generateLetterHuntRoundWithDifficulty(widget.difficulty);
     AudioService.playLetter(_currentRound['targetLetter']);
     _isAnswered = false;
   }

@@ -5,7 +5,8 @@ import '../services/game_logic.dart';
 import '../providers/enhanced_progress_provider.dart';
 
 class SentenceBuilderGame extends StatefulWidget {
-  const SentenceBuilderGame({super.key});
+  final String difficulty;
+  const SentenceBuilderGame({super.key, this.difficulty = 'Easy'});
 
   @override
   State<SentenceBuilderGame> createState() => _SentenceBuilderGameState();
@@ -25,7 +26,7 @@ class _SentenceBuilderGameState extends State<SentenceBuilderGame> {
   }
 
   void _generateSentence() {
-    _currentRound = GameLogic.generateSentenceBuilderRound();
+    _currentRound = GameLogic.generateSentenceBuilderRound(difficulty: widget.difficulty);
     _userSentence = [];
     setState(() {});
   }

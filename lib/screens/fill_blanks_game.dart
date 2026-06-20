@@ -6,7 +6,8 @@ import '../services/game_logic.dart';
 import '../providers/enhanced_progress_provider.dart';
 
 class FillBlanksGame extends StatefulWidget {
-  const FillBlanksGame({super.key});
+  final String difficulty;
+  const FillBlanksGame({super.key, this.difficulty = 'Easy'});
 
   @override
   State<FillBlanksGame> createState() => _FillBlanksGameState();
@@ -26,7 +27,7 @@ class _FillBlanksGameState extends State<FillBlanksGame> {
   }
 
   void _generateQuestion() {
-    _currentRound = GameLogic.generateFillBlanksRound();
+    _currentRound = GameLogic.generateFillBlanksRound(difficulty: widget.difficulty);
     _answered = false;
   }
 

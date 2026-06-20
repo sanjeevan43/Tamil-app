@@ -23,24 +23,325 @@ import 'odd_one_out_game.dart';
 class GamesHubScreen extends StatelessWidget {
   const GamesHubScreen({super.key});
 
+  void _showDifficultySelection(BuildContext context, Map<String, dynamic> game) {
+    final color = game['color'] as Color;
+    
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return Container(
+          decoration: BoxDecoration(
+            color: AppTheme.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 20,
+                offset: const Offset(0, -5),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Pull Handle
+              Container(
+                width: 48,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: AppTheme.topoSilver,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              const SizedBox(height: 24),
+              
+              // Icon & Game Name
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(game['icon'] as String, style: const TextStyle(fontSize: 32)),
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        game['name'] as String,
+                        style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w900, color: AppTheme.textDark),
+                      ),
+                      Text(
+                        game['tamil'] as String,
+                        style: GoogleFonts.notoSansTamil(fontSize: 12, color: color, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              
+              Text(
+                'Choose Difficulty Level / நிலையைத் தேர்ந்தெடுக்கவும்',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: AppTheme.textSlate),
+              ),
+              const SizedBox(height: 24),
+              
+              // Difficulty Options
+              _buildDifficultyOption(
+                context,
+                title: 'Easy',
+                tamil: 'எளிய நிலை',
+                desc: 'Simple letters & short 2-3 letter words. Ideal for beginners.',
+                color: Colors.green,
+                onTap: () {
+                  Navigator.pop(context);
+                  final builder = game['screenBuilder'] as Widget Function(String);
+                  Navigator.push(context, FadeInSlidePageRoute(page: builder('Easy')));
+                },
+              ),
+              const SizedBox(height: 12),
+              _buildDifficultyOption(
+                context,
+                title: 'Medium',
+                tamil: 'நடுத்தர நிலை',
+                desc: 'Common vocabulary & daily expressions.',
+                color: Colors.orange,
+                onTap: () {
+                  Navigator.pop(context);
+                  final builder = game['screenBuilder'] as Widget Function(String);
+                  Navigator.push(context, FadeInSlidePageRoute(page: builder('Medium')));
+                },
+              ),
+              const SizedBox(height: 12),
+              _buildDifficultyOption(
+                context,
+                title: 'Hard',
+                tamil: 'கடின நிலை',
+                desc: 'Complex words, spelling challenges, and full sentences.',
+                color: Colors.red,
+                onTap: () {
+                  Navigator.pop(context);
+                  final builder = game['screenBuilder'] as Widget Function(String);
+                  Navigator.push(context, FadeInSlidePageRoute(page: builder('Hard')));
+                },
+              ),
+              const SizedBox(height: 12),
+              _buildDifficultyOption(
+                context,
+                title: 'Expert',
+                tamil: 'நிபுணர் நிலை',
+                desc: 'Advanced level quizzes, complex sentences & speed trials.',
+                color: Colors.purple,
+                onTap: () {
+                  Navigator.pop(context);
+                  final builder = game['screenBuilder'] as Widget Function(String);
+                  Navigator.push(context, FadeInSlidePageRoute(page: builder('Expert')));
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDifficultyOption(
+    BuildContext context, {
+    required String title,
+    required String tamil,
+    required String desc,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.topoLight,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppTheme.topoSilver),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: () {
+            AudioFeedbackService.playTap();
+            onTap();
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            child: Row(
+              children: [
+                Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: color,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            title,
+                            style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 16, color: AppTheme.textDark),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '• $tamil',
+                            style: GoogleFonts.notoSansTamil(fontWeight: FontWeight.w700, fontSize: 12, color: color),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        desc,
+                        style: GoogleFonts.outfit(fontSize: 11, color: AppTheme.textGray),
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: AppTheme.textGray),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final progress = Provider.of<EnhancedProgressProvider>(context, listen: false);
     final childAge = progress.level + 5;
 
     final games = [
-      {'name': 'Letter Hunt', 'tamil': 'எழுத்து வேட்டை', 'icon': '🎯', 'description': 'Find the correct letter', 'color': const Color(0xFFFF7043), 'screen': const LetterHuntGame(), 'xp': '+30 XP', 'difficulty': 1},
-      {'name': 'Writing Practice', 'tamil': 'எழுத்துப் பயிற்சி', 'icon': '✏️', 'description': 'Trace letters', 'color': const Color(0xFF5C6BC0), 'screen': const WritingPracticeGame(), 'xp': '+40 XP', 'difficulty': 2},
-      {'name': 'Word Search', 'tamil': 'சொல் தேடல்', 'icon': '🔍', 'description': 'Find hidden words', 'color': const Color(0xFF9CCC65), 'screen': const WordSearchGame(), 'xp': '+50 XP', 'difficulty': 3},
-      {'name': 'Word Scramble', 'tamil': 'சொல் கலைத்தல்', 'icon': '🧩', 'description': 'Unscramble words', 'color': const Color(0xFF7E57C2), 'screen': const WordScrambleGame(), 'xp': '+45 XP', 'difficulty': 2},
-      {'name': 'Sentence Builder', 'tamil': 'வாக்கிய அமைப்பு', 'icon': '📚', 'description': 'Form sentences', 'color': const Color(0xFF26A69A), 'screen': const SentenceBuilderGame(), 'xp': '+50 XP', 'difficulty': 3},
-      {'name': 'Memory Match', 'tamil': 'நினைவக போட்டி', 'icon': '🧠', 'description': 'Match Tamil letters', 'color': AppTheme.success, 'screen': const MemoryGameScreen(), 'xp': '+35 XP', 'difficulty': 1},
-      {'name': 'Riddle Academy', 'tamil': 'புதிர் அரங்கம்', 'icon': '💡', 'description': 'Solve Tamil riddles', 'color': const Color(0xFFAB47BC), 'screen': RiddleAcademyScreen(childAge: childAge), 'xp': '+50 XP', 'difficulty': 3},
-      {'name': 'Fill Blanks', 'tamil': 'இடம் நிரப்பு', 'icon': '📝', 'description': 'Complete the word', 'color': const Color(0xFFEF5350), 'screen': const FillBlanksGame(), 'xp': '+35 XP', 'difficulty': 2},
-      {'name': 'Pronunciation', 'tamil': 'உச்சரிப்பு பயிற்சி', 'icon': '🎤', 'description': 'Practice speaking', 'color': const Color(0xFFFF8A65), 'screen': const PronunciationPracticeGame(), 'xp': '+40 XP', 'difficulty': 2},
-      {'name': 'Sound Match', 'tamil': 'ஒலி பொருத்தம்', 'icon': '🔊', 'description': 'Listen and match', 'color': const Color(0xFF29B6F6), 'screen': const SoundMatchGame(), 'xp': '+30 XP', 'difficulty': 1},
-      {'name': 'Odd One Out', 'tamil': 'வேறுபட்டதைத் தேடு', 'icon': '🦄', 'description': 'Find the odd word', 'color': const Color(0xFFEC407A), 'screen': const OddOneOutGame(), 'xp': '+40 XP', 'difficulty': 2},
-      {'name': 'Word Builder', 'tamil': 'சொல் கட்டுதல்', 'icon': '🔨', 'description': 'Build Tamil words', 'color': const Color(0xFF42A5F5), 'screen': const WordBuilderGame(), 'xp': '+45 XP', 'difficulty': 2},
+      {
+        'name': 'Letter Hunt',
+        'tamil': 'எழுத்து வேட்டை',
+        'icon': '🎯',
+        'description': 'Find the correct letter',
+        'color': const Color(0xFFFF7043),
+        'screenBuilder': (String diff) => LetterHuntGame(difficulty: diff),
+        'xp': '+30 XP',
+        'difficulty': 1
+      },
+      {
+        'name': 'Writing Practice',
+        'tamil': 'எழுத்துப் பயிற்சி',
+        'icon': '✏️',
+        'description': 'Trace letters',
+        'color': const Color(0xFF5C6BC0),
+        'screenBuilder': (String diff) => const WritingPracticeGame(),
+        'xp': '+40 XP',
+        'difficulty': 2
+      },
+      {
+        'name': 'Word Search',
+        'tamil': 'சொல் தேடல்',
+        'icon': '🔍',
+        'description': 'Find hidden words',
+        'color': const Color(0xFF9CCC65),
+        'screenBuilder': (String diff) => WordSearchGame(difficulty: diff),
+        'xp': '+50 XP',
+        'difficulty': 3
+      },
+      {
+        'name': 'Word Scramble',
+        'tamil': 'சொல் கலைத்தல்',
+        'icon': '🧩',
+        'description': 'Unscramble words',
+        'color': const Color(0xFF7E57C2),
+        'screenBuilder': (String diff) => WordScrambleGame(difficulty: diff),
+        'xp': '+45 XP',
+        'difficulty': 2
+      },
+      {
+        'name': 'Sentence Builder',
+        'tamil': 'வாக்கிய அமைப்பு',
+        'icon': '📚',
+        'description': 'Form sentences',
+        'color': const Color(0xFF26A69A),
+        'screenBuilder': (String diff) => SentenceBuilderGame(difficulty: diff),
+        'xp': '+50 XP',
+        'difficulty': 3
+      },
+      {
+        'name': 'Memory Match',
+        'tamil': 'நினைவக போட்டி',
+        'icon': '🧠',
+        'description': 'Match Tamil letters',
+        'color': AppTheme.success,
+        'screenBuilder': (String diff) => const MemoryGameScreen(),
+        'xp': '+35 XP',
+        'difficulty': 1
+      },
+      {
+        'name': 'Riddle Academy',
+        'tamil': 'புதிர் அரங்கம்',
+        'icon': '💡',
+        'description': 'Solve Tamil riddles',
+        'color': const Color(0xFFAB47BC),
+        'screenBuilder': (String diff) => RiddleAcademyScreen(childAge: childAge),
+        'xp': '+50 XP',
+        'difficulty': 3
+      },
+      {
+        'name': 'Fill Blanks',
+        'tamil': 'இடம் நிரப்பு',
+        'icon': '📝',
+        'description': 'Complete the word',
+        'color': const Color(0xFFEF5350),
+        'screenBuilder': (String diff) => FillBlanksGame(difficulty: diff),
+        'xp': '+35 XP',
+        'difficulty': 2
+      },
+      {
+        'name': 'Pronunciation',
+        'tamil': 'உச்சரிப்பு பயிற்சி',
+        'icon': '🎤',
+        'description': 'Practice speaking',
+        'color': const Color(0xFFFF8A65),
+        'screenBuilder': (String diff) => const PronunciationPracticeGame(),
+        'xp': '+40 XP',
+        'difficulty': 2
+      },
+      {
+        'name': 'Sound Match',
+        'tamil': 'ஒலி பொருத்தம்',
+        'icon': '🔊',
+        'description': 'Listen and match',
+        'color': const Color(0xFF29B6F6),
+        'screenBuilder': (String diff) => const SoundMatchGame(),
+        'xp': '+30 XP',
+        'difficulty': 1
+      },
+      {
+        'name': 'Odd One Out',
+        'tamil': 'வேறுபட்டதைத் தேடு',
+        'icon': '🦄',
+        'description': 'Find the odd word',
+        'color': const Color(0xFFEC407A),
+        'screenBuilder': (String diff) => const OddOneOutGame(),
+        'xp': '+40 XP',
+        'difficulty': 2
+      },
+      {
+        'name': 'Word Builder',
+        'tamil': 'சொல் கட்டுதல்',
+        'icon': '🔨',
+        'description': 'Build Tamil words',
+        'color': const Color(0xFF42A5F5),
+        'screenBuilder': (String diff) => WordBuilderGame(difficulty: diff),
+        'xp': '+45 XP',
+        'difficulty': 2
+      },
     ];
 
     return Scaffold(
@@ -138,7 +439,7 @@ class GamesHubScreen extends StatelessWidget {
     return SpringyTap(
       onTap: () {
         AudioFeedbackService.playTap();
-        Navigator.push(context, FadeInSlidePageRoute(page: game['screen'] as Widget));
+        _showDifficultySelection(context, game);
       },
       child: Container(
         decoration: BoxDecoration(

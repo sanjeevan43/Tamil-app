@@ -4,18 +4,20 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../providers/enhanced_progress_provider.dart';
+import '../services/game_logic.dart';
 
 class WordSearchGame extends StatefulWidget {
-  const WordSearchGame({super.key});
+  final String difficulty;
+  const WordSearchGame({super.key, this.difficulty = 'Easy'});
 
   @override
   State<WordSearchGame> createState() => _WordSearchGameState();
 }
 
 class _WordSearchGameState extends State<WordSearchGame> {
-  final int gridSize = 6;
-  final List<String> _wordsToFind = ['அம்மா', 'ஆடு', 'பந்து', 'தமிழ்', 'மலர்'];
-  final List<String> _fillerLetters = ['க்', 'ங்', 'ச்', 'ஞ்', 'ட்', 'ண்', 'த்', 'ந்', 'ப்', 'ம்', 'ய்', 'ர்'];
+  int gridSize = 8;
+  List<String> _wordsToFind = [];
+  final List<String> _fillerLetters = ['க்', 'ங்', 'ச்', 'ஞ்', 'ட்', 'ண்', 'த்', 'ந்', 'ப்', 'ம்', 'ய்', 'ர்', 'அ', 'ஆ', 'இ', 'ஈ', 'உ', 'ஊ'];
   
   late List<List<String>> _grid;
   final List<Offset> _selectedIndices = [];
@@ -32,6 +34,13 @@ class _WordSearchGameState extends State<WordSearchGame> {
   }
 
   void _generateGrid() {
+    final searchRound = GameLogic.generateWordSearchRound(difficulty: widget.difficulty);
+    gridSize = searchRound['gridSize'] as int;
+    final wordsData = searchRound['words'] as List;
+    _wordsToFind = wordsData.map((w) => w['tamil'] as String).toList();
+    _foundWords.clear();
+    _selectedIndices.clear();
+
     _grid = List.generate(gridSize, (_) => List.generate(gridSize, (_) {
       return _fillerLetters[Random().nextInt(_fillerLetters.length)];
     }));
@@ -58,9 +67,8 @@ class _WordSearchGameState extends State<WordSearchGame> {
         if (col + chars.length <= gridSize) {
           bool canPlace = true;
           for (int i = 0; i < chars.length; i++) {
-            // Very simple overlap check
-            if (_grid[row][col + i].length > 2) { // Already a word char
-               // Overwriting is allowed if same char, but simpler to just skip
+            if (_grid[row][col + i].length > 2) {
+              // already has a word character placed
             }
           }
           if (canPlace) {
@@ -85,7 +93,6 @@ class _WordSearchGameState extends State<WordSearchGame> {
     }
   }
 
-
   void _onCellTap(int r, int c) {
     Offset pos = Offset(r.toDouble(), c.toDouble());
     setState(() {
@@ -98,11 +105,8 @@ class _WordSearchGameState extends State<WordSearchGame> {
     });
   }
 
-
   void _checkSelection() {
-    // Check if currently selected letters form any of the words
     String selectedWord = _selectedIndices.map((o) => _grid[o.dx.toInt()][o.dy.toInt()]).join('');
-    // Also check reverse
     String reversedWord = selectedWord.characters.toList().reversed.join('');
 
     if (_wordsToFind.contains(selectedWord) && !_foundWords.contains(selectedWord)) {
@@ -180,7 +184,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
     return Scaffold(
       backgroundColor: AppTheme.backgroundLight,
       appBar: AppBar(
-        title: Text('Word Search', style: GoogleFonts.outfit(fontWeight: FontWeight.w800)),
+        title: Text('Word Search (${widget.difficulty})', style: GoogleFonts.outfit(fontWeight: FontWeight.w800)),
         actions: [
           IconButton(onPressed: _generateGrid, icon: const Icon(Icons.refresh_rounded)),
         ],
@@ -189,10 +193,8 @@ class _WordSearchGameState extends State<WordSearchGame> {
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            // Target Words
             _buildWordList(),
             const SizedBox(height: 32),
-            // The Grid
             Expanded(
               child: Container(
                 decoration: AppTheme.whiteCard(radius: 28),
