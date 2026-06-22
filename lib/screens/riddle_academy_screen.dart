@@ -14,7 +14,6 @@ class RiddleAcademyScreen extends StatefulWidget {
 
 class _RiddleAcademyScreenState extends State<RiddleAcademyScreen> {
   final List<String> categories = ['nature', 'animals', 'body_parts', 'food', 'home_objects', 'sky', 'school'];
-  final List<String> difficulties = ['easy', 'medium', 'hard'];
 
   String selectedCategory = 'nature';
   String selectedDifficulty = 'easy';
@@ -24,9 +23,17 @@ class _RiddleAcademyScreenState extends State<RiddleAcademyScreen> {
   List<String> shownRiddles = [];
 
   Future<void> _generateRiddle() async {
+    // Automatically select a random category and difficulty level based on age
+    final randomCategory = categories[Random().nextInt(categories.length)];
+    final autoDifficulty = widget.childAge <= 5
+        ? 'easy'
+        : (widget.childAge <= 8 ? 'medium' : 'hard');
+
     setState(() {
       isLoading = true;
       showAnswer = false;
+      selectedCategory = randomCategory;
+      selectedDifficulty = autoDifficulty;
     });
 
     try {
@@ -59,7 +66,7 @@ class _RiddleAcademyScreenState extends State<RiddleAcademyScreen> {
       backgroundColor: AppTheme.backgroundLight,
       appBar: AppBar(
         title: Text(
-          'Tolkappiyar\'s Riddle Academy',
+          'Riddle Academy',
           style: GoogleFonts.outfit(
             fontWeight: FontWeight.w800,
             color: AppTheme.secondary,
@@ -75,88 +82,34 @@ class _RiddleAcademyScreenState extends State<RiddleAcademyScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Select Riddle Category:',
-              style: GoogleFonts.outfit(
-                fontSize: 15,
-                fontWeight: FontWeight.w800,
-                color: AppTheme.secondary,
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: AppTheme.primary.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(24),
               ),
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: categories.map((cat) {
-                final isSelected = selectedCategory == cat;
-                return ChoiceChip(
-                  label: Text(
-                    cat.toUpperCase(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '💡 Tolkappiyar\'s Riddle Academy',
                     style: GoogleFonts.outfit(
-                      fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
-                      color: isSelected ? AppTheme.white : AppTheme.secondary,
-                      fontSize: 11,
-                      letterSpacing: 0.8,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                      color: AppTheme.primary,
                     ),
                   ),
-                  selected: isSelected,
-                  selectedColor: AppTheme.primary,
-                  backgroundColor: AppTheme.topoLight,
-                  checkmarkColor: AppTheme.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(
-                      color: isSelected ? AppTheme.primary : AppTheme.topoSilver.withOpacity(0.5),
-                      width: 1.5,
+                  const SizedBox(height: 10),
+                  Text(
+                    'Welcome to Riddle Academy! Click below to generate a new riddle customized dynamically for your level.',
+                    style: GoogleFonts.outfit(
+                      fontSize: 13,
+                      height: 1.4,
+                      color: AppTheme.textSlate,
                     ),
                   ),
-                  onSelected: (selected) {
-                    setState(() => selectedCategory = cat);
-                  },
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'Select Riddle Difficulty:',
-              style: GoogleFonts.outfit(
-                fontSize: 15,
-                fontWeight: FontWeight.w800,
-                color: AppTheme.secondary,
+                ],
               ),
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: difficulties.map((diff) {
-                final isSelected = selectedDifficulty == diff;
-                return ChoiceChip(
-                  label: Text(
-                    diff.toUpperCase(),
-                    style: GoogleFonts.outfit(
-                      fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
-                      color: isSelected ? AppTheme.white : AppTheme.secondary,
-                      fontSize: 11,
-                      letterSpacing: 0.8,
-                    ),
-                  ),
-                  selected: isSelected,
-                  selectedColor: AppTheme.primary,
-                  backgroundColor: AppTheme.topoLight,
-                  checkmarkColor: AppTheme.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(
-                      color: isSelected ? AppTheme.primary : AppTheme.topoSilver.withOpacity(0.5),
-                      width: 1.5,
-                    ),
-                  ),
-                  onSelected: (selected) {
-                    setState(() => selectedDifficulty = diff);
-                  },
-                );
-              }).toList(),
             ),
             const SizedBox(height: 28),
             SizedBox(
@@ -177,7 +130,7 @@ class _RiddleAcademyScreenState extends State<RiddleAcademyScreen> {
                         child: CircularProgressIndicator(color: AppTheme.white, strokeWidth: 2.5),
                       )
                     : Text(
-                        'Generate Custom Riddle',
+                        'Generate Riddle',
                         style: GoogleFonts.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
