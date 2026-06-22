@@ -639,7 +639,12 @@ class _GamesHubScreenState extends State<GamesHubScreen>
     return SpringyTap(
       onTap: () {
         AudioFeedbackService.playTap();
-        _showDifficultySelection(context, game);
+        final progress = Provider.of<EnhancedProgressProvider>(context, listen: false);
+        final String autoDifficulty = progress.level <= 2
+            ? 'Easy'
+            : (progress.level <= 4 ? 'Medium' : 'Hard');
+        final builder = game['screenBuilder'] as Widget Function(String);
+        Navigator.push(context, FadeInSlidePageRoute(page: builder(autoDifficulty)));
       },
       child: Container(
         decoration: BoxDecoration(
