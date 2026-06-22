@@ -124,7 +124,7 @@ class LevelGameData {
     for (var cat in categories) {
       final items = TamilData.wordCategories[cat]!;
       for (var item in items.take(2)) {
-        final word = item['tamil']!;
+        final String word = item['tamil']!;
         final firstLetter = word.characters.first;
         final options = [firstLetter];
         final others = TamilData.uyirEzhuthukkal.where((l) => l != firstLetter).toList()..shuffle(_random);
@@ -158,7 +158,7 @@ class LevelGameData {
     ];
     simpleWords.shuffle(_random);
     return List.generate(min(count, simpleWords.length), (i) {
-      final word = simpleWords[i]['tamil']!;
+      final String word = simpleWords[i]['tamil']!;
       final letters = word.characters.toList();
       final scrambled = List<String>.from(letters)..shuffle(_random);
       // Ensure scrambled is different from original
@@ -261,7 +261,7 @@ class LevelGameData {
     ];
     words.shuffle(_random);
     return List.generate(min(count, words.length), (i) {
-      final word = words[i]['tamil']!;
+      final String word = words[i]['tamil']!;
       final chars = word.characters.toList();
       if (chars.length < 2) return _generateTapCorrectRounds(1).first;
       final blankIndex = _random.nextInt(chars.length);

@@ -1,10 +1,26 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class AudioFeedbackService {
   static final AudioPlayer _player = AudioPlayer();
+  static final Set<String> _existingAssets = {};
+  static final Set<String> _nonExistingAssets = {};
 
   static Future<void> playSound(String soundPath) async {
+    final fullPath = 'assets/$soundPath';
+    if (_nonExistingAssets.contains(fullPath)) return;
+
+    if (!_existingAssets.contains(fullPath)) {
+      try {
+        await rootBundle.load(fullPath);
+        _existingAssets.add(fullPath);
+      } catch (_) {
+        _nonExistingAssets.add(fullPath);
+        return;
+      }
+    }
+
     try {
       await _player.stop();
       await _player.play(AssetSource(soundPath));

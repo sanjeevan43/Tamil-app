@@ -79,7 +79,7 @@ class GameLogic {
     final id = wordData['id'] as String?;
     if (id != null) trackShown(id);
     
-    final word = wordData['tamil']!;
+    final String word = wordData['tamil']!;
     final scrambled = word.characters.toList()..shuffle();
     
     return {
@@ -100,7 +100,7 @@ class GameLogic {
     final id = wordData['id'] as String?;
     if (id != null) trackShown(id);
     
-    final word = wordData['tamil']!;
+    final String word = wordData['tamil']!;
     final wordChars = word.characters.toList();
     int blankIndex = _random.nextInt(wordChars.length);
     if (wordChars[blankIndex] == ' ') {
@@ -306,7 +306,7 @@ class GameLogic {
     final id = wordData['id'] as String?;
     if (id != null) trackShown(id);
     
-    final word = wordData['tamil']!;
+    final String word = wordData['tamil']!;
     final scrambled = word.characters.toList()..shuffle();
     
     return {
