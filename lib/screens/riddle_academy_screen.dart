@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:math';
 import 'package:tamil_app/constants/app_theme.dart';
 import 'package:tamil_app/services/claude_api_service.dart';
 
