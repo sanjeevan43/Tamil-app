@@ -100,7 +100,7 @@ class GameLogic {
     final id = wordData['id'] as String?;
     if (id != null) trackShown(id);
     
-    final String word = wordData['tamil']!;
+    final String word = (wordData['tamil'] ?? wordData['word'] ?? wordData['text'] ?? 'நாய்') as String;
     final wordChars = word.characters.toList();
     int blankIndex = _random.nextInt(wordChars.length);
     if (wordChars[blankIndex] == ' ') {
@@ -120,7 +120,7 @@ class GameLogic {
       'blankIndex': blankIndex,
       'options': options,
       'correctLetter': correctLetter,
-      'english': wordData['english'],
+      'english': wordData['english'] ?? wordData['prompt'] ?? 'Dog',
     };
   }
 
