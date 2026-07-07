@@ -13,7 +13,6 @@ import 'word_builder_game.dart';
 import 'memory_game_screen.dart';
 import 'fill_blanks_game.dart';
 import 'sentence_builder_game.dart';
-import 'pronunciation_practice_game.dart';
 import 'writing_practice_game.dart';
 import 'word_scramble_game.dart';
 import 'sound_match_game.dart';
@@ -205,7 +204,7 @@ class _GamesHubScreenState extends State<GamesHubScreen>
       _GameCategory(
         title: 'Listen & Speak',
         titleTamil: 'கேட்டல் & பேசுதல்',
-        subtitle: '2 games to train your ears and voice',
+        subtitle: '1 game to train your ears and voice',
         icon: Icons.hearing_rounded,
         gradientColors: [const Color(0xFF29B6F6), const Color(0xFF0288D1)],
         games: [
@@ -218,17 +217,6 @@ class _GamesHubScreenState extends State<GamesHubScreen>
             'screenBuilder': (String diff) => const SoundMatchGame(),
             'xp': '+30 XP',
             'difficulty': 1,
-            'isNew': false,
-          },
-          {
-            'name': 'Pronunciation',
-            'tamil': 'உச்சரிப்பு பயிற்சி',
-            'icon': '🎤',
-            'description': 'Practice speaking',
-            'color': const Color(0xFFFF8A65),
-            'screenBuilder': (String diff) => const PronunciationPracticeGame(),
-            'xp': '+40 XP',
-            'difficulty': 2,
             'isNew': false,
           },
         ],
@@ -647,18 +635,7 @@ class _GamesHubScreenState extends State<GamesHubScreen>
         Navigator.push(context, FadeInSlidePageRoute(page: builder(autoDifficulty)));
       },
       child: Container(
-        decoration: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: color.withValues(alpha: 0.12), width: 1.5),
-          boxShadow: [
-            BoxShadow(
-              color: color.withValues(alpha: 0.05),
-              blurRadius: 16,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
+        decoration: AppTheme.kidStyleCard(color: color, borderWidth: 3),
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Column(

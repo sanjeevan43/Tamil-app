@@ -103,6 +103,27 @@ class AppTheme {
     );
   }
 
+  // Kid-friendly card decoration with flat cartoon shadow and thick comic border
+  static BoxDecoration kidStyleCard({
+    required Color color,
+    double borderRadius = 24,
+    double borderWidth = 3,
+    Color? shadowColor,
+  }) {
+    return BoxDecoration(
+      color: white,
+      borderRadius: BorderRadius.circular(borderRadius),
+      border: Border.all(color: color, width: borderWidth),
+      boxShadow: [
+        BoxShadow(
+          color: shadowColor ?? color.withOpacity(0.25),
+          blurRadius: 0,
+          offset: Offset(borderWidth * 1.5, borderWidth * 1.5),
+        ),
+      ],
+    );
+  }
+
   static BoxDecoration pillBadge({Color? bgColor, double radius = 30}) {
     return BoxDecoration(
       color: bgColor ?? primary.withOpacity(0.1),

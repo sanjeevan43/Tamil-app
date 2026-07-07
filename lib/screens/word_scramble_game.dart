@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:characters/characters.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
@@ -58,10 +57,10 @@ class _WordScrambleGameState extends State<WordScrambleGame> {
       } else if (_scrambledLetters.isEmpty) {
         // Wrong answer
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Try again! Spelling not correct.'),
+          const SnackBar(
+            content: Text('Try again! Spelling not correct.'),
             backgroundColor: AppTheme.error,
-            duration: const Duration(milliseconds: 800),
+            duration: Duration(milliseconds: 800),
           ),
         );
         Future.delayed(const Duration(milliseconds: 800), () {

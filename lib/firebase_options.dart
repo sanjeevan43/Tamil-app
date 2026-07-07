@@ -63,11 +63,11 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: String.fromEnvironment('VITE_FIREBASE_API_KEY', defaultValue: ''), // fallback
-    appId: String.fromEnvironment('FIREBASE_APP_ID_IOS', defaultValue: ''),
-    messagingSenderId: String.fromEnvironment('VITE_FIREBASE_MESSAGING_SENDER_ID', defaultValue: ''),
-    projectId: String.fromEnvironment('VITE_FIREBASE_PROJECT_ID', defaultValue: ''),
-    storageBucket: String.fromEnvironment('VITE_FIREBASE_STORAGE_BUCKET', defaultValue: ''),
+    apiKey: 'AIzaSyDBW9-KUHCRABQh8-vjJodWZWQ8ixRU1UI',
+    appId: '1:356453132420:ios:7441f27d5cca2d8b96bad1',
+    messagingSenderId: '356453132420',
+    projectId: 'h3-tamil-app',
+    storageBucket: 'h3-tamil-app.firebasestorage.app',
     iosBundleId: 'com.example.tamil_app',
   );
 }

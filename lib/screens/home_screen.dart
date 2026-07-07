@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../providers/enhanced_progress_provider.dart';
-import '../services/auth_service.dart';
 import '../services/audio_service.dart';
 import '../services/audio_feedback_service.dart';
 import '../services/thirukkural_service.dart';
@@ -13,7 +12,6 @@ import '../widgets/premium_animations.dart';
 
 import 'stories_screen.dart';
 import 'profile_screen.dart';
-import 'pronunciation_practice_game.dart';
 import 'riddle_academy_screen.dart';
 import 'linguistic_scanner_screen.dart';
 import 'word_quest_hub_screen.dart';
@@ -32,33 +30,18 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedWisdomTab = 0; // 0 for Thirukkural, 1 for Proverb
   final ScrollController _quickActionsScrollController = ScrollController();
   final ScrollController _homeScrollController = ScrollController();
-  bool _showWisdomCard = true;
+  bool _isWisdomExpanded = true;
 
   @override
   void initState() {
     super.initState();
     _fetchKural();
     _fetchProverb();
-    _homeScrollController.addListener(_onHomeScroll);
-  }
-
-  void _onHomeScroll() {
-    if (!mounted) return;
-    if (_homeScrollController.offset > 180.0 && _showWisdomCard) {
-      setState(() {
-        _showWisdomCard = false;
-      });
-    } else if (_homeScrollController.offset <= 180.0 && !_showWisdomCard) {
-      setState(() {
-        _showWisdomCard = true;
-      });
-    }
   }
 
   @override
   void dispose() {
     _quickActionsScrollController.dispose();
-    _homeScrollController.removeListener(_onHomeScroll);
     _homeScrollController.dispose();
     super.dispose();
   }
@@ -167,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'VANAKKAM,',
+                    'VANAKKAM, 👋',
                     style: GoogleFonts.outfit(
                       fontSize: 12,
                       fontWeight: FontWeight.w900,
@@ -224,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(
           children: [
             Expanded(child: _buildStatBadge('🔥', '${progress.streakDays} days', 'Streak', AppTheme.primary)),
-            const SizedBox(width: 8),
+            const SizedBox(width: 12),
             Expanded(child: _buildStatBadge('💎', '${progress.totalCoins} coins', 'Coins', AppTheme.secondary)),
           ],
         ),
@@ -235,11 +218,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildStatBadge(String emoji, String val, String label, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.15), width: 1.2),
-      ),
+      decoration: AppTheme.kidStyleCard(color: color, borderWidth: 2.5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -264,9 +243,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildDailyMissions(EnhancedProgressProvider progress) {
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: AppTheme.whiteCard(radius: 28).copyWith(
-        border: Border.all(color: AppTheme.primary.withOpacity(0.1), width: 1.5),
-      ),
+      decoration: AppTheme.kidStyleCard(color: AppTheme.primary, borderWidth: 3),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -337,21 +314,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildWisdomSection() {
     if (_isLoadingKural) {
-      return AnimatedSize(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 300),
-          opacity: _showWisdomCard ? 1.0 : 0.0,
-          child: _showWisdomCard
-              ? Container(
-                  height: 180,
-                  margin: const EdgeInsets.only(bottom: 24),
-                  decoration: AppTheme.whiteCard(radius: 28),
-                  child: const Center(child: CircularProgressIndicator()),
-                )
-              : const SizedBox(width: double.infinity, height: 0),
-        ),
+      return Container(
+        height: 180,
+        margin: const EdgeInsets.only(bottom: 24),
+        decoration: AppTheme.whiteCard(radius: 28),
+        child: const Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -365,178 +332,207 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!hasKural) activeTab = 1;
     if (!hasProverb) activeTab = 0;
 
-    return AnimatedSize(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      child: AnimatedOpacity(
-        duration: const Duration(milliseconds: 300),
-        opacity: _showWisdomCard ? 1.0 : 0.0,
-        child: _showWisdomCard
-            ? Padding(
-                padding: const EdgeInsets.only(bottom: 24.0),
-                child: Container(
-                  key: const ValueKey('wisdom_card_visible'),
-                  decoration: AppTheme.whiteCard(radius: 28).copyWith(
-                    border: Border.all(color: AppTheme.primary.withOpacity(0.1), width: 1.5),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Tab bar switcher
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                        child: Row(
-                          children: [
-                            if (hasKural)
-                              GestureDetector(
-                                onTap: () {
-                                  AudioFeedbackService.playPop();
-                                  setState(() {
-                                    _selectedWisdomTab = 0;
-                                  });
-                                },
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                                  decoration: BoxDecoration(
-                                    color: activeTab == 0 ? AppTheme.primary.withOpacity(0.1) : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      const Text('📜 ', style: TextStyle(fontSize: 14)),
-                                      Text(
-                                        'THIRUKKURAL',
-                                        style: GoogleFonts.outfit(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w900,
-                                          color: activeTab == 0 ? AppTheme.primary : AppTheme.textSlate,
-                                          letterSpacing: 0.5,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            if (hasKural && hasProverb) const SizedBox(width: 8),
-                            if (hasProverb)
-                              GestureDetector(
-                                onTap: () {
-                                  AudioFeedbackService.playPop();
-                                  setState(() {
-                                    _selectedWisdomTab = 1;
-                                  });
-                                },
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                                  decoration: BoxDecoration(
-                                    color: activeTab == 1 ? AppTheme.primary.withOpacity(0.1) : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      const Text('💡 ', style: TextStyle(fontSize: 14)),
-                                      Text(
-                                        'PROVERB',
-                                        style: GoogleFonts.outfit(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w900,
-                                          color: activeTab == 1 ? AppTheme.primary : AppTheme.textSlate,
-                                          letterSpacing: 0.5,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            const Spacer(),
-                            if (activeTab == 0)
-                              IconButton(
-                                icon: const Icon(Icons.volume_up_rounded, color: AppTheme.primary, size: 20),
-                                onPressed: _speakKural,
-                                constraints: const BoxConstraints(),
-                                padding: EdgeInsets.zero,
-                              ),
-                          ],
-                        ),
-                      ),
-                      
-                      const Divider(color: AppTheme.borderLight, height: 1),
+    // Responsive design values using MediaQuery
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isNarrow = screenWidth < 375;
+    
+    final kuralLabel = 'KURAL';
+    final proverbLabel = 'PROVERB';
+    
+    final tabFontSize = isNarrow ? 9.5 : 10.5;
+    final tabPadding = const EdgeInsets.symmetric(horizontal: 10, vertical: 6);
+        
+    final iconGap = isNarrow ? 4.0 : 8.0;
 
-                      // Content body
-                      Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 250),
-                          child: activeTab == 0
-                              ? Column(
-                                  key: const ValueKey('kural_content'),
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      _dailyKural!.line1,
-                                      style: GoogleFonts.notoSansTamil(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: AppTheme.textDark,
-                                        height: 1.4,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      _dailyKural!.line2,
-                                      style: GoogleFonts.notoSansTamil(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: AppTheme.textDark,
-                                        height: 1.4,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 12),
-                                    Text(
-                                      _dailyKural!.explanation,
-                                      maxLines: 3,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.notoSansTamil(
-                                        fontSize: 12,
-                                        color: AppTheme.textSlate,
-                                        height: 1.5,
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : Column(
-                                  key: const ValueKey('proverb_content'),
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      _dailyProverb!.proverb,
-                                      style: GoogleFonts.notoSansTamil(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: AppTheme.textDark,
-                                        height: 1.4,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Text(
-                                      _dailyProverb!.meaning,
-                                      style: GoogleFonts.outfit(
-                                        fontSize: 13,
-                                        color: AppTheme.textSlate,
-                                        height: 1.5,
-                                      ),
-                                    ),
-                                  ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24.0),
+      child: Container(
+        key: const ValueKey('wisdom_card_visible'),
+        decoration: AppTheme.kidStyleCard(color: AppTheme.secondary, borderWidth: 3),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header Row (Clickable to collapse/expand)
+            GestureDetector(
+              onTap: () {
+                AudioFeedbackService.playPop();
+                setState(() {
+                  _isWisdomExpanded = !_isWisdomExpanded;
+                });
+              },
+              behavior: HitTestBehavior.opaque,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                child: Row(
+                  children: [
+                    if (hasKural)
+                      GestureDetector(
+                        onTap: () {
+                          AudioFeedbackService.playPop();
+                          setState(() {
+                            _selectedWisdomTab = 0;
+                            _isWisdomExpanded = true; // Auto-expand when tab is switched
+                          });
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: tabPadding,
+                          decoration: BoxDecoration(
+                            color: activeTab == 0 ? AppTheme.primary.withOpacity(0.1) : Colors.transparent,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('📜 ', style: TextStyle(fontSize: isNarrow ? 12 : 14)),
+                              Text(
+                                kuralLabel,
+                                style: GoogleFonts.outfit(
+                                  fontSize: tabFontSize,
+                                  fontWeight: FontWeight.w900,
+                                  color: activeTab == 0 ? AppTheme.primary : AppTheme.textSlate,
+                                  letterSpacing: 0.5,
                                 ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ],
-                  ),
+                    if (hasKural && hasProverb) SizedBox(width: iconGap),
+                    if (hasProverb)
+                      GestureDetector(
+                        onTap: () {
+                          AudioFeedbackService.playPop();
+                          setState(() {
+                            _selectedWisdomTab = 1;
+                            _isWisdomExpanded = true; // Auto-expand when tab is switched
+                          });
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: tabPadding,
+                          decoration: BoxDecoration(
+                            color: activeTab == 1 ? AppTheme.primary.withOpacity(0.1) : Colors.transparent,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('💡 ', style: TextStyle(fontSize: isNarrow ? 12 : 14)),
+                              Text(
+                                proverbLabel,
+                                style: GoogleFonts.outfit(
+                                  fontSize: tabFontSize,
+                                  fontWeight: FontWeight.w900,
+                                  color: activeTab == 1 ? AppTheme.primary : AppTheme.textSlate,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    const Spacer(),
+                    if (activeTab == 0 && _isWisdomExpanded)
+                      IconButton(
+                        icon: const Icon(Icons.volume_up_rounded, color: AppTheme.primary, size: 20),
+                        onPressed: _speakKural,
+                        constraints: const BoxConstraints(),
+                        padding: EdgeInsets.zero,
+                      ),
+                    if (activeTab == 0 && _isWisdomExpanded) SizedBox(width: iconGap),
+                    Icon(
+                      _isWisdomExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
+                      color: AppTheme.primary,
+                      size: 24,
+                    ),
+                  ],
                 ),
-              )
-            : const SizedBox(width: double.infinity, height: 0),
+              ),
+            ),
+            
+            // Content Body showing divider and content
+            AnimatedSize(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOut,
+              child: _isWisdomExpanded
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Divider(color: AppTheme.borderLight, height: 1),
+                        Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 250),
+                            child: activeTab == 0
+                                ? Column(
+                                    key: const ValueKey('kural_content'),
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        _dailyKural!.line1,
+                                        style: GoogleFonts.notoSansTamil(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppTheme.textDark,
+                                          height: 1.4,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        _dailyKural!.line2,
+                                        style: GoogleFonts.notoSansTamil(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppTheme.textDark,
+                                          height: 1.4,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        _dailyKural!.explanation,
+                                        maxLines: 3,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.notoSansTamil(
+                                          fontSize: 12,
+                                          color: AppTheme.textSlate,
+                                          height: 1.5,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : Column(
+                                    key: const ValueKey('proverb_content'),
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        _dailyProverb!.proverb,
+                                        style: GoogleFonts.notoSansTamil(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppTheme.textDark,
+                                          height: 1.4,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        _dailyProverb!.meaning,
+                                        style: GoogleFonts.outfit(
+                                          fontSize: 13,
+                                          color: AppTheme.textSlate,
+                                          height: 1.5,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : const SizedBox(width: double.infinity, height: 0),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -551,8 +547,6 @@ class _HomeScreenState extends State<HomeScreen> {
           () => Navigator.push(context, FadeInSlidePageRoute(page: const StoriesScreen()))),
       _quickActionItem('Word Quest', 'Vocabulary hub', Icons.casino_rounded, Colors.blue,
           () => Navigator.push(context, FadeInSlidePageRoute(page: const WordQuestHubScreen()))),
-      _quickActionItem('Pronounce', 'Mic practice', Icons.mic_rounded, Colors.teal,
-          () => Navigator.push(context, FadeInSlidePageRoute(page: const PronunciationPracticeGame()))),
       _quickActionItem('Riddle Hub', 'Solve puzzles', Icons.wb_sunny_rounded, Colors.indigo,
           () => Navigator.push(context, FadeInSlidePageRoute(page: RiddleAcademyScreen(childAge: adaptiveAge)))),
     ];

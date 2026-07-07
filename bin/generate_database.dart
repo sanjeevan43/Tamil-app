@@ -366,7 +366,7 @@ void main() async {
       final e = item['english']!;
       final emoji = item['emoji']!;
       // Simple Tamil plural rule: add "கள்"
-      final pluralTamil = t.endsWith('ம்') ? '${t.substring(0, t.length - 1)}ங்கள்' : '${t}கள்';
+      final pluralTamil = t.endsWith('ம்') ? '${t.substring(0, t.length - 1)}ங்கள்' : '$tகள்';
       final pluralEnglish = '${e}s';
       addWordIfUnique(pluralTamil, pluralEnglish, emoji, catName, 'Medium');
     }

@@ -141,8 +141,8 @@ class _LetterHuntGameState extends State<LetterHuntGame>
               Container(
                 width: 80,
                 height: 80,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(colors: [Color(0xFFFFD93D), Color(0xFFFF7A00)]),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(colors: [Color(0xFFFFD93D), Color(0xFFFF7A00)]),
                   shape: BoxShape.circle,
                 ),
                 child: const Center(child: Text('🎉', style: TextStyle(fontSize: 36))),
@@ -329,16 +329,11 @@ class _LetterHuntGameState extends State<LetterHuntGame>
                           child: Container(
                             width: 100,
                             height: 100,
-                            decoration: BoxDecoration(
+                            decoration: AppTheme.kidStyleCard(
                               color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.15),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, 8),
-                                ),
-                              ],
+                              borderWidth: 4,
+                              borderRadius: 50,
+                              shadowColor: Colors.black.withOpacity(0.15),
                             ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -435,18 +430,11 @@ class _LetterHuntGameState extends State<LetterHuntGame>
                         onTap: _isAnswered ? null : () => _checkAnswer(index),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 250),
-                          decoration: BoxDecoration(
-                            color: cardColor,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: borderColor, width: 2),
-                            boxShadow: [
-                              BoxShadow(
-                                color: borderColor.withOpacity(0.15),
-                                blurRadius: 12,
-                                offset: const Offset(0, 6),
-                              ),
-                            ],
-                          ),
+                          decoration: AppTheme.kidStyleCard(
+                            color: borderColor,
+                            borderWidth: 3,
+                            borderRadius: 20,
+                          ).copyWith(color: cardColor),
                           child: Stack(
                             children: [
                               Center(

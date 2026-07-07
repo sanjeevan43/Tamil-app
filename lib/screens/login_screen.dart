@@ -313,7 +313,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               children: [
                 // Illustration
-                Container(
+                SizedBox(
                   height: 100,
                   child: Image.asset(
                     imagePath,
