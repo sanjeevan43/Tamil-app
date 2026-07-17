@@ -208,7 +208,7 @@ class _OnboardingWizardState extends State<OnboardingWizard> {
           const Text('👋', style: TextStyle(fontSize: 80)),
           const SizedBox(height: 24),
           Text(
-            'Welcome to Tamil Kids Park!',
+            'Welcome to Agaravalam!',
             textAlign: TextAlign.center,
             style: GoogleFonts.outfit(
               fontSize: 32,

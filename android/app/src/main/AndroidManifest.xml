@@ -7,7 +7,7 @@
         </intent>
     </queries>
     <application
-        android:label="Tamil Kids Park"
+        android:label="Agaravalam"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

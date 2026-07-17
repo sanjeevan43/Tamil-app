@@ -184,7 +184,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   
                   // Text Branding
                   Text(
-                    'Tamil Kids Park',
+                    'Agaravalam',
                     style: GoogleFonts.outfit(
                       fontSize: 32,
                       fontWeight: FontWeight.w900,

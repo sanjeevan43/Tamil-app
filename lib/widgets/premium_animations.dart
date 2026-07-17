@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 
 /// A widget that applies a springy scale-down effect on touch.
@@ -303,3 +304,166 @@ class FadeInSlidePageRoute<T> extends PageRouteBuilder<T> {
           },
         );
 }
+
+/// A premium animated background with slowly floating, pulsing, blurred bubbles.
+/// Ideal for high-end gaming hubs or dashboard screens.
+class AnimatedBubbleBackground extends StatefulWidget {
+  final Widget child;
+  final List<Color> colors;
+
+  const AnimatedBubbleBackground({
+    super.key,
+    required this.child,
+    this.colors = const [
+      Color(0xFF7C4DFF),
+      Color(0xFF00BCD4),
+      Color(0xFFFF5722),
+      Color(0xFF4CAF50),
+    ],
+  });
+
+  @override
+  State<AnimatedBubbleBackground> createState() => _AnimatedBubbleBackgroundState();
+}
+
+class _AnimatedBubbleBackgroundState extends State<AnimatedBubbleBackground>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  final List<_FloatingBubble> _bubbles = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 10),
+    )..repeat();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_bubbles.isEmpty) {
+      final size = MediaQuery.sizeOf(context);
+      final r = size.width;
+      
+      // Initialize floating bubbles with varying sizes, speeds and color biases
+      _bubbles.addAll([
+        _FloatingBubble(
+          baseX: r * 0.15,
+          baseY: size.height * 0.25,
+          radius: r * 0.35,
+          speed: 1.0,
+          color: widget.colors[0].withValues(alpha: 0.15),
+          offsetRange: const Offset(40, 50),
+        ),
+        _FloatingBubble(
+          baseX: r * 0.85,
+          baseY: size.height * 0.12,
+          radius: r * 0.45,
+          speed: 0.8,
+          color: widget.colors[1].withValues(alpha: 0.15),
+          offsetRange: const Offset(50, 40),
+        ),
+        _FloatingBubble(
+          baseX: r * 0.50,
+          baseY: size.height * 0.65,
+          radius: r * 0.40,
+          speed: 1.2,
+          color: widget.colors[2].withValues(alpha: 0.12),
+          offsetRange: const Offset(60, 45),
+        ),
+        _FloatingBubble(
+          baseX: r * 0.20,
+          baseY: size.height * 0.85,
+          radius: r * 0.38,
+          speed: 0.95,
+          color: widget.colors[3].withValues(alpha: 0.14),
+          offsetRange: const Offset(45, 55),
+        ),
+      ]);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        // The animated background canvas
+        Positioned.fill(
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder: (context, _) {
+              return CustomPaint(
+                painter: _BubbleBackgroundPainter(
+                  bubbles: _bubbles,
+                  progress: _controller.value,
+                ),
+              );
+            },
+          ),
+        ),
+        // Glassmorphism overlay
+        Positioned.fill(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
+            child: Container(
+              color: Colors.transparent,
+            ),
+          ),
+        ),
+        // Forefront child
+        widget.child,
+      ],
+    );
+  }
+}
+
+class _FloatingBubble {
+  final double baseX;
+  final double baseY;
+  final double radius;
+  final double speed;
+  final Color color;
+  final Offset offsetRange;
+
+  const _FloatingBubble({
+    required this.baseX,
+    required this.baseY,
+    required this.radius,
+    required this.speed,
+    required this.color,
+    required this.offsetRange,
+  });
+}
+
+class _BubbleBackgroundPainter extends CustomPainter {
+  final List<_FloatingBubble> bubbles;
+  final double progress;
+
+  const _BubbleBackgroundPainter({required this.bubbles, required this.progress});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..style = PaintingStyle.fill;
+
+    for (final bubble in bubbles) {
+      // Smooth dynamic oscillation movement
+      final double dynamicX = bubble.baseX + (bubble.offsetRange.dx * (progress < 0.5 ? progress : 1.0 - progress) * 0.5);
+      final double dynamicY = bubble.baseY + (bubble.offsetRange.dy * (progress < 0.5 ? 1.0 - progress : progress) * 0.5);
+
+      paint.color = bubble.color;
+      canvas.drawCircle(Offset(dynamicX, dynamicY), bubble.radius, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _BubbleBackgroundPainter oldDelegate) => true;
+}
+

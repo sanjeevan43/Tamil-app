@@ -1,42 +1,88 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
-import '../constants/app_theme.dart';
-import '../providers/enhanced_progress_provider.dart';
 import '../widgets/premium_animations.dart';
 import '../services/audio_feedback_service.dart';
+import '../constants/app_theme.dart';
 
 // Game Screens
-import 'riddle_academy_screen.dart';
 import 'letter_hunt_game.dart';
 import 'word_builder_game.dart';
-import 'memory_game_screen.dart';
-import 'fill_blanks_game.dart';
-import 'sentence_builder_game.dart';
-import 'writing_practice_game.dart';
 import 'word_scramble_game.dart';
-import 'sound_match_game.dart';
+import 'fill_blanks_game.dart';
+import 'writing_practice_game.dart';
 import 'word_search_game.dart';
-import 'odd_one_out_game.dart';
 
 // ─────────────────────────────────────────────────
-//  GAME CATEGORY MODEL
+//  RESPONSIVE HELPER
+//  All sizes are % of MediaQuery screen dimensions.
+//  No hardcoded px values anywhere.
 // ─────────────────────────────────────────────────
-class _GameCategory {
-  final String title;
-  final String titleTamil;
-  final String subtitle;
-  final IconData icon;
+class _Rsp {
+  final double sw; // screen width
+  final double sh; // screen height
+
+  const _Rsp({required this.sw, required this.sh});
+
+  factory _Rsp.of(BuildContext ctx) {
+    final s = MediaQuery.sizeOf(ctx);
+    return _Rsp(sw: s.width, sh: s.height);
+  }
+
+  // ── Spacing (% of screen) ──
+  double get hPad => sw * 0.055;
+  double get cardPad => sw * 0.042;
+  double get listCardSpacing => sh * 0.016;
+  double get cardRadius => sw * 0.058;
+
+  // ── Component sizes ──
+  double get backBtnSize => sw * 0.095;
+  double get iconBubbleSize => sw * 0.15;
+  double get arrowBtnSize => sw * 0.085;
+  double get sheetIconSize => sw * 0.135;
+  double get orbLarge => sw * 0.55;
+  double get orbSmall => sw * 0.40;
+
+  // ── Card heights ──
+  double get featuredCardH => sh * 0.22;
+
+  // ── Typography (% of screen width) ──
+  double get titleFont => sw * 0.092;
+  double get subtitleFont => sw * 0.032;
+  double get gameTitleFont => sw * 0.055;
+  double get listNameFont => sw * 0.037;
+  double get tamilFont => sw * 0.028;
+  double get xpFont => sw * 0.022;
+  double get filterFont => sw * 0.03;
+  double get badgeFont => sw * 0.024;
+  double get sheetTitleFont => sw * 0.048;
+  double get sheetSubFont => sw * 0.028;
+  double get diffTitleFont => sw * 0.037;
+  double get diffDescFont => sw * 0.027;
+  double get starSize => sw * 0.03;
+}
+
+// ─────────────────────────────────────────────────
+//  GAME DATA MODEL
+// ─────────────────────────────────────────────────
+class _GameItem {
+  final String name;
+  final String nameTamil;
+  final String icon;
+  final String description;
+  final String xp;
+  final int difficulty;
   final List<Color> gradientColors;
-  final List<Map<String, dynamic>> games;
+  final Widget Function(String) screenBuilder;
 
-  const _GameCategory({
-    required this.title,
-    required this.titleTamil,
-    required this.subtitle,
+  const _GameItem({
+    required this.name,
+    required this.nameTamil,
     required this.icon,
+    required this.description,
+    required this.xp,
+    required this.difficulty,
     required this.gradientColors,
-    required this.games,
+    required this.screenBuilder,
   });
 }
 
@@ -52,433 +98,328 @@ class GamesHubScreen extends StatefulWidget {
 
 class _GamesHubScreenState extends State<GamesHubScreen>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+  late AnimationController _fadeCtrl;
+  late Animation<double> _fade;
+  int _filter = 0; // 0=All 1=Easy 2=Medium 3=Hard
+
+  static const _filterLabels = ['All', 'Easy', 'Medium', 'Hard'];
+
+  List<_GameItem> get _allGames => [
+        _GameItem(
+          name: 'Letter Hunt',
+          nameTamil: 'எழுத்து வேட்டை',
+          icon: '🎯',
+          description: 'Spot the correct Tamil letter',
+          xp: '+30 XP',
+          difficulty: 1,
+          gradientColors: [AppTheme.primary, AppTheme.primaryDark],
+          screenBuilder: (d) => LetterHuntGame(difficulty: d),
+        ),
+        _GameItem(
+          name: 'Word Builder',
+          nameTamil: 'சொல் கட்டுதல்',
+          icon: '🔨',
+          description: 'Arrange letters to form words',
+          xp: '+45 XP',
+          difficulty: 2,
+          gradientColors: [AppTheme.secondary, const Color(0xFF009FD0)],
+          screenBuilder: (d) => WordBuilderGame(difficulty: d),
+        ),
+        _GameItem(
+          name: 'Word Scramble',
+          nameTamil: 'சொல் கலைத்தல்',
+          icon: '🧩',
+          description: 'Unscramble jumbled Tamil words',
+          xp: '+45 XP',
+          difficulty: 2,
+          gradientColors: [const Color(0xFF9C27B0), const Color(0xFF6A1B9A)],
+          screenBuilder: (d) => WordScrambleGame(difficulty: d),
+        ),
+        _GameItem(
+          name: 'Fill Blanks',
+          nameTamil: 'இடம் நிரப்பு',
+          icon: '📝',
+          description: 'Complete the missing letter',
+          xp: '+35 XP',
+          difficulty: 2,
+          gradientColors: [AppTheme.primary, AppTheme.primaryDark],
+          screenBuilder: (d) => FillBlanksGame(difficulty: d),
+        ),
+        _GameItem(
+          name: 'Writing Practice',
+          nameTamil: 'எழுத்துப் பயிற்சி',
+          icon: '✏️',
+          description: 'Trace and learn Tamil letters',
+          xp: '+40 XP',
+          difficulty: 2,
+          gradientColors: [AppTheme.secondary, const Color(0xFF009FD0)],
+          screenBuilder: (d) => const WritingPracticeGame(),
+        ),
+        _GameItem(
+          name: 'Word Search',
+          nameTamil: 'சொல் தேடல்',
+          icon: '🔍',
+          description: 'Find hidden words in a grid',
+          xp: '+50 XP',
+          difficulty: 3,
+          gradientColors: [AppTheme.primary, AppTheme.primaryDark],
+          screenBuilder: (d) => WordSearchGame(difficulty: d),
+        ),
+      ];
+
+  List<_GameItem> get _filtered {
+    if (_filter == 0) return _allGames;
+    return _allGames.where((g) => g.difficulty == _filter).toList();
+  }
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _fadeCtrl =
+        AnimationController(vsync: this, duration: const Duration(milliseconds: 800));
+    _fade = CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut);
+    _fadeCtrl.forward();
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _fadeCtrl.dispose();
     super.dispose();
   }
 
-  List<_GameCategory> _buildCategories(int childAge) {
-    return [
-      // ── Category 1: Letters & Words
-      _GameCategory(
-        title: 'Letters & Words',
-        titleTamil: 'எழுத்தும் சொல்லும்',
-        subtitle: '6 games to master Tamil letters and vocabulary',
-        icon: Icons.translate_rounded,
-        gradientColors: [const Color(0xFFFF7043), const Color(0xFFFF5722)],
-        games: [
-          {
-            'name': 'Letter Hunt',
-            'tamil': 'எழுத்து வேட்டை',
-            'icon': '🎯',
-            'description': 'Find the correct letter',
-            'color': const Color(0xFFFF7043),
-            'screenBuilder': (String diff) => LetterHuntGame(difficulty: diff),
-            'xp': '+30 XP',
-            'difficulty': 1,
-            'isNew': false,
-          },
-          {
-            'name': 'Word Builder',
-            'tamil': 'சொல் கட்டுதல்',
-            'icon': '🔨',
-            'description': 'Build Tamil words',
-            'color': const Color(0xFF42A5F5),
-            'screenBuilder': (String diff) => WordBuilderGame(difficulty: diff),
-            'xp': '+45 XP',
-            'difficulty': 2,
-            'isNew': false,
-          },
-          {
-            'name': 'Word Scramble',
-            'tamil': 'சொல் கலைத்தல்',
-            'icon': '🧩',
-            'description': 'Unscramble words',
-            'color': const Color(0xFF7E57C2),
-            'screenBuilder': (String diff) => WordScrambleGame(difficulty: diff),
-            'xp': '+45 XP',
-            'difficulty': 2,
-            'isNew': false,
-          },
-          {
-            'name': 'Fill Blanks',
-            'tamil': 'இடம் நிரப்பு',
-            'icon': '📝',
-            'description': 'Complete the word',
-            'color': const Color(0xFFEF5350),
-            'screenBuilder': (String diff) => FillBlanksGame(difficulty: diff),
-            'xp': '+35 XP',
-            'difficulty': 2,
-            'isNew': false,
-          },
-          {
-            'name': 'Memory Match',
-            'tamil': 'நினைவக போட்டி',
-            'icon': '🧠',
-            'description': 'Match Tamil letters',
-            'color': AppTheme.success,
-            'screenBuilder': (String diff) => const MemoryGameScreen(),
-            'xp': '+35 XP',
-            'difficulty': 1,
-            'isNew': false,
-          },
-          {
-            'name': 'Writing Practice',
-            'tamil': 'எழுத்துப் பயிற்சி',
-            'icon': '✏️',
-            'description': 'Trace letters',
-            'color': const Color(0xFF5C6BC0),
-            'screenBuilder': (String diff) => const WritingPracticeGame(),
-            'xp': '+40 XP',
-            'difficulty': 2,
-            'isNew': false,
-          },
-        ],
-      ),
-
-      // ── Category 2: Sentences
-      _GameCategory(
-        title: 'Sentences',
-        titleTamil: 'வாக்கியம்',
-        subtitle: '4 games to build and understand Tamil sentences',
-        icon: Icons.chat_bubble_rounded,
-        gradientColors: [const Color(0xFF26A69A), const Color(0xFF00897B)],
-        games: [
-          {
-            'name': 'Sentence Builder',
-            'tamil': 'வாக்கிய அமைப்பு',
-            'icon': '📚',
-            'description': 'Form sentences',
-            'color': const Color(0xFF26A69A),
-            'screenBuilder': (String diff) => SentenceBuilderGame(difficulty: diff),
-            'xp': '+50 XP',
-            'difficulty': 3,
-            'isNew': false,
-          },
-          {
-            'name': 'Odd One Out',
-            'tamil': 'வேறுபட்டதைத் தேடு',
-            'icon': '🦄',
-            'description': 'Find the odd word',
-            'color': const Color(0xFFEC407A),
-            'screenBuilder': (String diff) => const OddOneOutGame(),
-            'xp': '+40 XP',
-            'difficulty': 2,
-            'isNew': false,
-          },
-          {
-            'name': 'Riddle Academy',
-            'tamil': 'புதிர் அரங்கம்',
-            'icon': '💡',
-            'description': 'Solve Tamil riddles',
-            'color': const Color(0xFFAB47BC),
-            'screenBuilder': (String diff) => RiddleAcademyScreen(childAge: childAge),
-            'xp': '+50 XP',
-            'difficulty': 3,
-            'isNew': false,
-          },
-          {
-            'name': 'Word Search',
-            'tamil': 'சொல் தேடல்',
-            'icon': '🔍',
-            'description': 'Find hidden words',
-            'color': const Color(0xFF9CCC65),
-            'screenBuilder': (String diff) => WordSearchGame(difficulty: diff),
-            'xp': '+50 XP',
-            'difficulty': 3,
-            'isNew': false,
-          },
-        ],
-      ),
-
-      // ── Category 3: Listen & Speak
-      _GameCategory(
-        title: 'Listen & Speak',
-        titleTamil: 'கேட்டல் & பேசுதல்',
-        subtitle: '1 game to train your ears and voice',
-        icon: Icons.hearing_rounded,
-        gradientColors: [const Color(0xFF29B6F6), const Color(0xFF0288D1)],
-        games: [
-          {
-            'name': 'Sound Match',
-            'tamil': 'ஒலி பொருத்தம்',
-            'icon': '🔊',
-            'description': 'Listen and match',
-            'color': const Color(0xFF29B6F6),
-            'screenBuilder': (String diff) => const SoundMatchGame(),
-            'xp': '+30 XP',
-            'difficulty': 1,
-            'isNew': false,
-          },
-        ],
-      ),
-    ];
-  }
-
-  void _showDifficultySelection(BuildContext context, Map<String, dynamic> game) {
-    final color = game['color'] as Color;
-
+  void _openDifficultySheet(BuildContext ctx, _GameItem game) {
     showModalBottomSheet(
-      context: context,
+      context: ctx,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (context) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: AppTheme.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-          ),
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Pull handle
-              Container(
-                width: 48,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: AppTheme.topoSilver,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Game Name Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(game['icon'] as String, style: const TextStyle(fontSize: 30)),
-                  const SizedBox(width: 12),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        game['name'] as String,
-                        style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w900, color: AppTheme.textDark),
-                      ),
-                      Text(
-                        game['tamil'] as String,
-                        style: TextStyle(
-                          fontFamily: GoogleFonts.notoSansTamil().fontFamily,
-                          fontSize: 12,
-                          color: color,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Choose Difficulty / நிலையைத் தேர்ந்தெடுக்கவும்',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: AppTheme.textSlate),
-              ),
-              const SizedBox(height: 20),
-
-              _buildDifficultyOption(context, game: game,
-                title: 'Easy', tamil: 'எளிய நிலை',
-                desc: 'Simple letters & short 2-3 letter words. Ideal for beginners.',
-                color: const Color(0xFF4CAF50)),
-              const SizedBox(height: 10),
-              _buildDifficultyOption(context, game: game,
-                title: 'Medium', tamil: 'நடுத்தர நிலை',
-                desc: 'Common vocabulary & daily expressions.',
-                color: const Color(0xFFFF9800)),
-              const SizedBox(height: 10),
-              _buildDifficultyOption(context, game: game,
-                title: 'Hard', tamil: 'கடின நிலை',
-                desc: 'Complex words, spelling challenges, and full sentences.',
-                color: const Color(0xFFF44336)),
-              const SizedBox(height: 10),
-              _buildDifficultyOption(context, game: game,
-                title: 'Expert', tamil: 'நிபுணர் நிலை',
-                desc: 'Advanced level quizzes, complex sentences & speed trials.',
-                color: const Color(0xFF9C27B0)),
-            ],
-          ),
-        );
-      },
+      builder: (_) => _DifficultySheet(game: game),
     );
   }
 
-  Widget _buildDifficultyOption(
-    BuildContext context, {
-    required Map<String, dynamic> game,
-    required String title,
-    required String tamil,
-    required String desc,
-    required Color color,
-  }) {
-    return SpringyTap(
-      onTap: () {
-        AudioFeedbackService.playTap();
-        Navigator.pop(context);
-        final builder = game['screenBuilder'] as Widget Function(String);
-        Navigator.push(context, FadeInSlidePageRoute(page: builder(title)));
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: color.withOpacity(0.25), width: 1.5),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        child: Row(
-          children: [
-            Container(
-              width: 12,
-              height: 12,
-              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(title,
-                        style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 16, color: AppTheme.textDark)),
-                      const SizedBox(width: 8),
-                      Text('• $tamil',
-                        style: TextStyle(
-                          fontFamily: GoogleFonts.notoSansTamil().fontFamily,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 11,
-                          color: color,
-                        )),
-                    ],
-                  ),
-                  const SizedBox(height: 3),
-                  Text(desc, style: GoogleFonts.outfit(fontSize: 11, color: AppTheme.textGray)),
-                ],
+  @override
+  Widget build(BuildContext context) {
+    final r = _Rsp.of(context);
+    final games = _filtered;
+
+    return Scaffold(
+      backgroundColor: AppTheme.backgroundLight,
+      body: AnimatedBubbleBackground(
+        colors: const [
+          AppTheme.primary,
+          AppTheme.secondary,
+          AppTheme.primary,
+          AppTheme.secondary,
+        ],
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            // ── HERO ──
+            SliverToBoxAdapter(child: _buildHero(context, r)),
+
+            // ── FILTERS ──
+            SliverToBoxAdapter(child: _buildFilters(r)),
+
+            // ── FEATURED CARD ──
+            if (games.isNotEmpty)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: r.hPad),
+                  child: _buildFeatured(context, r, games.first),
+                ),
+              ),
+
+            // ── REST OF GAMES ──
+            SliverPadding(
+              padding: EdgeInsets.fromLTRB(
+                  r.hPad, r.listCardSpacing, r.hPad, sh(context) * 0.14),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (ctx, i) {
+                    final rest = games.length > 1 ? games.sublist(1) : <_GameItem>[];
+                    final game = rest[i];
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: r.listCardSpacing),
+                      child: FadeInSlide(
+                        direction: SlideDirection.up,
+                        delay: Duration(milliseconds: 60 + i * 60),
+                        child: _buildListCard(context, r, game),
+                      ),
+                    );
+                  },
+                  childCount: games.length > 1 ? games.length - 1 : 0,
+                ),
               ),
             ),
-            Icon(Icons.arrow_forward_ios_rounded, size: 14, color: color.withOpacity(0.6)),
           ],
         ),
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final progress = Provider.of<EnhancedProgressProvider>(context, listen: false);
-    final childAge = progress.level + 5;
-    final categories = _buildCategories(childAge);
-    final totalGames = categories.fold<int>(0, (sum, c) => sum + c.games.length);
+  double sh(BuildContext ctx) => MediaQuery.sizeOf(ctx).height;
 
-    return Scaffold(
-      backgroundColor: AppTheme.backgroundLight,
-      body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          // ── HERO APP BAR ──
-          SliverAppBar(
-            pinned: true,
-            expandedHeight: 210,
-            backgroundColor: AppTheme.backgroundLight,
-            elevation: 0,
-            leading: Navigator.canPop(context)
-                ? Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: GestureDetector(
-                      onTap: () {
-                        AudioFeedbackService.playTap();
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.3),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.arrow_back_rounded, color: Colors.white),
-                      ),
-                    ),
-                  )
-                : null,
-            flexibleSpace: FlexibleSpaceBar(
-              collapseMode: CollapseMode.pin,
-              background: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFF1A1A2E), Color(0xFF16213E), Color(0xFF0F3460)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+  // ─────────────────────────────────────────────
+  //  HERO HEADER
+  // ─────────────────────────────────────────────
+  Widget _buildHero(BuildContext context, _Rsp r) {
+    return ClipRect(
+      child: Stack(
+        children: [
+          // ── Background — Fills to content height ──
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFFFFF6EE), AppTheme.backgroundLight],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
-                child: Stack(
+              ),
+            ),
+          ),
+
+          // ── Primary color glow orb — top right ──
+          Positioned(
+            top: -r.orbLarge * 0.27,
+            right: -r.orbLarge * 0.27,
+            child: Container(
+              width: r.orbLarge,
+              height: r.orbLarge,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(colors: [
+                  AppTheme.primary.withValues(alpha: 0.12),
+                  Colors.transparent,
+                ]),
+              ),
+            ),
+          ),
+
+          // ── Secondary color glow orb — left ──
+          Positioned(
+            top: r.sh * 0.04,
+            left: -r.orbSmall * 0.25,
+            child: Container(
+              width: r.orbSmall,
+              height: r.orbSmall,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(colors: [
+                  AppTheme.secondary.withValues(alpha: 0.1),
+                  Colors.transparent,
+                ]),
+              ),
+            ),
+          ),
+
+          // ── Content ──
+          SafeArea(
+            bottom: false,
+            child: FadeTransition(
+              opacity: _fade,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  r.hPad,
+                  r.sh * 0.018,
+                  r.hPad,
+                  r.sh * 0.038,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Decorative circles
-                    Positioned(
-                      top: -40,
-                      right: -40,
-                      child: Container(
-                        width: 200,
-                        height: 200,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppTheme.primary.withOpacity(0.08),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: -20,
-                      left: -30,
-                      child: Container(
-                        width: 140,
-                        height: 140,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppTheme.secondary.withOpacity(0.07),
-                        ),
-                      ),
-                    ),
-                    SafeArea(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(24, 60, 24, 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            // Badge
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    // ── Top row ──
+                    Row(
+                      children: [
+                        if (Navigator.canPop(context))
+                          GestureDetector(
+                            onTap: () {
+                              AudioFeedbackService.playTap();
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              width: r.backBtnSize,
+                              height: r.backBtnSize,
                               decoration: BoxDecoration(
-                                color: AppTheme.accent,
-                                borderRadius: BorderRadius.circular(8),
+                                color: Colors.black.withValues(alpha: 0.04),
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.black.withValues(alpha: 0.08),
+                                ),
                               ),
-                              child: Text(
-                                '$totalGames GAMES • 3 CATEGORIES',
-                                style: GoogleFonts.outfit(fontSize: 9, fontWeight: FontWeight.w900, color: const Color(0xFF1A1A2E), letterSpacing: 1),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              'விளையாட்டு அரங்கம்',
-                              style: TextStyle(
-                                fontFamily: GoogleFonts.notoSansTamil().fontFamily,
-                                fontSize: 26,
-                                fontWeight: FontWeight.w900,
-                                color: AppTheme.white,
+                              child: Icon(
+                                Icons.arrow_back_ios_new_rounded,
+                                color: AppTheme.textDark,
+                                size: r.sw * 0.042,
                               ),
                             ),
-                            Text(
-                              'Games Arena',
-                              style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w600, color: AppTheme.white.withOpacity(0.6)),
+                          ),
+                        const Spacer(),
+                        // Games count badge
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: r.sw * 0.03,
+                            vertical: r.sh * 0.008,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [AppTheme.primary, AppTheme.secondary],
                             ),
-                          ],
+                            borderRadius: BorderRadius.circular(r.sw * 0.05),
+                          ),
+                          child: Text(
+                            '${_allGames.length} GAMES',
+                            style: GoogleFonts.outfit(
+                              fontSize: r.badgeFont,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                              letterSpacing: 1,
+                            ),
+                          ),
                         ),
+                      ],
+                    ),
+
+                    SizedBox(height: r.sh * 0.04),
+
+                    // ── Tamil title line 1 ──
+                    Text(
+                      'விளையாட்டு',
+                      style: TextStyle(
+                        fontFamily: GoogleFonts.notoSansTamil().fontFamily,
+                        fontSize: r.titleFont,
+                        fontWeight: FontWeight.w900,
+                        color: AppTheme.textDark,
+                        height: 1.1,
+                      ),
+                    ),
+
+                    // ── Tamil title line 2 — gradient ──
+                    ShaderMask(
+                      shaderCallback: (b) => const LinearGradient(
+                        colors: [AppTheme.primary, AppTheme.primaryDark],
+                      ).createShader(b),
+                      child: Text(
+                        'அரங்கம்',
+                        style: TextStyle(
+                          fontFamily: GoogleFonts.notoSansTamil().fontFamily,
+                          fontSize: r.titleFont,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          height: 1.1,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: r.sh * 0.008),
+
+                    // ── English subtitle ──
+                    Text(
+                      'Spelling & Word Games Arena',
+                      style: GoogleFonts.outfit(
+                        fontSize: r.subtitleFont,
+                        color: AppTheme.textSlate,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -486,278 +427,348 @@ class _GamesHubScreenState extends State<GamesHubScreen>
               ),
             ),
           ),
-
-          // ── CATEGORY TAB BAR ──
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: _CategoryTabDelegate(
-              tabController: _tabController,
-              categories: categories,
-            ),
-          ),
         ],
+      ),
+    );
+  }
 
-        // ── GAME CARDS ──
-        body: TabBarView(
-          controller: _tabController,
-          children: categories.asMap().entries.map((catEntry) {
-            final category = catEntry.value;
-            return _buildCategoryTab(context, category, catEntry.key);
-          }).toList(),
+  // ─────────────────────────────────────────────
+  //  FILTER PILLS
+  // ─────────────────────────────────────────────
+  Widget _buildFilters(_Rsp r) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: r.hPad,
+        vertical: r.sh * 0.016,
+      ),
+      child: Row(
+        children: List.generate(_filterLabels.length, (i) {
+          final sel = _filter == i;
+          return Padding(
+            padding: EdgeInsets.only(right: r.sw * 0.025),
+            child: GestureDetector(
+              onTap: () {
+                AudioFeedbackService.playTap();
+                setState(() => _filter = i);
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 220),
+                padding: EdgeInsets.symmetric(
+                  horizontal: r.sw * 0.045,
+                  vertical: r.sh * 0.011,
+                ),
+                decoration: BoxDecoration(
+                  gradient: sel
+                      ? const LinearGradient(
+                          colors: [AppTheme.primary, AppTheme.primaryDark],
+                        )
+                      : null,
+                  color: sel ? null : AppTheme.primary.withValues(alpha: 0.06),
+                  borderRadius: BorderRadius.circular(r.sw * 0.08),
+                ),
+                child: Text(
+                  _filterLabels[i],
+                  style: GoogleFonts.outfit(
+                    fontSize: r.filterFont,
+                    fontWeight: FontWeight.w700,
+                    color: sel ? Colors.white : AppTheme.textSlate,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  // ─────────────────────────────────────────────
+  //  FEATURED CARD
+  // ─────────────────────────────────────────────
+  Widget _buildFeatured(BuildContext ctx, _Rsp r, _GameItem game) {
+    return SpringyTap(
+      onTap: () {
+        AudioFeedbackService.playTap();
+        _openDifficultySheet(ctx, game);
+      },
+      child: Container(
+        height: r.featuredCardH,
+        margin: EdgeInsets.only(bottom: r.sh * 0.008),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: game.gradientColors,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(r.cardRadius),
+          boxShadow: [
+            BoxShadow(
+              color: game.gradientColors[0].withValues(alpha: 0.3),
+              blurRadius: r.sw * 0.05,
+              offset: Offset(0, r.sh * 0.01),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            // Big emoji decoration
+            Positioned(
+              right: -r.sw * 0.02,
+              bottom: -r.sh * 0.01,
+              child: Text(
+                game.icon,
+                style: TextStyle(fontSize: r.sw * 0.27, height: 1),
+              ),
+            ),
+            // Gradient fade on right side
+            Positioned(
+              right: 0,
+              top: 0,
+              bottom: 0,
+              width: r.sw * 0.40,
+              child: ClipRRect(
+                borderRadius:
+                    BorderRadius.horizontal(right: Radius.circular(r.cardRadius)),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        game.gradientColors[1].withValues(alpha: 0.4),
+                      ],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            // Content
+            Padding(
+              padding: EdgeInsets.all(r.cardPad * 1.3),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // FEATURED badge
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: r.sw * 0.025,
+                      vertical: r.sh * 0.006,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.25),
+                      borderRadius: BorderRadius.circular(r.sw * 0.02),
+                    ),
+                    child: Text(
+                      '⭐ FEATURED',
+                      style: GoogleFonts.outfit(
+                        fontSize: r.xpFont,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  Text(
+                    game.name,
+                    style: GoogleFonts.outfit(
+                      fontSize: r.gameTitleFont,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    game.nameTamil,
+                    style: TextStyle(
+                      fontFamily: GoogleFonts.notoSansTamil().fontFamily,
+                      fontSize: r.tamilFont,
+                      color: Colors.white.withValues(alpha: 0.9),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: r.sh * 0.014),
+                  Row(
+                    children: [
+                      _Stars(n: game.difficulty, color: Colors.white, size: r.starSize),
+                      const Spacer(),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: r.sw * 0.04,
+                          vertical: r.sh * 0.011,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(r.sw * 0.05),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.play_arrow_rounded,
+                                color: game.gradientColors[0], size: r.sw * 0.04),
+                            SizedBox(width: r.sw * 0.01),
+                            Text(
+                              'PLAY NOW',
+                              style: GoogleFonts.outfit(
+                                fontSize: r.filterFont,
+                                fontWeight: FontWeight.w900,
+                                color: game.gradientColors[0],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildCategoryTab(BuildContext context, _GameCategory category, int categoryIndex) {
-    return CustomScrollView(
-      physics: const BouncingScrollPhysics(),
-      slivers: [
-        // Category Banner
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-            child: FadeInSlide(
-              direction: SlideDirection.down,
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: category.gradientColors,
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: [
-                    BoxShadow(
-                      color: category.gradientColors[0].withOpacity(0.3),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(category.icon, color: Colors.white, size: 28),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            category.title,
-                            style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w900, color: Colors.white),
-                          ),
-                          Text(
-                            category.titleTamil,
-                            style: TextStyle(
-                              fontFamily: GoogleFonts.notoSansTamil().fontFamily,
-                              fontSize: 12,
-                              color: Colors.white70,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            category.subtitle,
-                            style: GoogleFonts.outfit(fontSize: 11, color: Colors.white60),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        '${category.games.length}',
-                        style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w900, color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-
-        // Game Cards Grid
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
-          sliver: SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 14,
-              mainAxisSpacing: 14,
-              childAspectRatio: 0.75,
-            ),
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final game = category.games[index];
-                return FadeInSlide(
-                  direction: SlideDirection.up,
-                  delay: Duration(milliseconds: 60 + (index * 50)),
-                  child: _buildGameCard(context, game),
-                );
-              },
-              childCount: category.games.length,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildGameCard(BuildContext context, Map<String, dynamic> game) {
-    final color = game['color'] as Color;
-    final int difficulty = game['difficulty'] as int;
-    final String xp = game['xp'] as String;
-    final bool isNew = game['isNew'] as bool? ?? false;
-
+  // ─────────────────────────────────────────────
+  //  LIST CARD (compact row)
+  // ─────────────────────────────────────────────
+  Widget _buildListCard(BuildContext ctx, _Rsp r, _GameItem game) {
     return SpringyTap(
       onTap: () {
         AudioFeedbackService.playTap();
-        final progress = Provider.of<EnhancedProgressProvider>(context, listen: false);
-        final String autoDifficulty = progress.level <= 2
-            ? 'Easy'
-            : (progress.level <= 4 ? 'Medium' : 'Hard');
-        final builder = game['screenBuilder'] as Widget Function(String);
-        Navigator.push(context, FadeInSlidePageRoute(page: builder(autoDifficulty)));
+        _openDifficultySheet(ctx, game);
       },
       child: Container(
-        decoration: AppTheme.kidStyleCard(color: color, borderWidth: 3),
-        child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Top Row: XP + Stars + NEW badge
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: AppTheme.primary.withValues(alpha: 0.08),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      xp,
-                      style: GoogleFonts.outfit(fontSize: 9, fontWeight: FontWeight.w900, color: AppTheme.primary),
-                    ),
+        padding: EdgeInsets.all(r.cardPad),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(r.cardRadius * 0.88),
+          border: Border.all(color: AppTheme.borderLight, width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            )
+          ],
+        ),
+        child: Row(
+          children: [
+            // Icon bubble
+            Container(
+              width: r.iconBubbleSize,
+              height: r.iconBubbleSize,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: game.gradientColors,
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(r.sw * 0.045),
+                boxShadow: [
+                  BoxShadow(
+                    color: game.gradientColors[0].withValues(alpha: 0.3),
+                    blurRadius: r.sw * 0.02,
+                    offset: Offset(0, r.sh * 0.003),
                   ),
-                  if (isNew)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: AppTheme.secondary.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text('NEW',
-                        style: GoogleFonts.outfit(fontSize: 8, fontWeight: FontWeight.w900, color: AppTheme.secondary, letterSpacing: 0.5)),
-                    )
-                  else
-                    // Difficulty stars
-                    Row(
-                      children: List.generate(3, (i) => Icon(
-                        Icons.star_rounded,
-                        size: 11,
-                        color: i < difficulty ? color : AppTheme.topoSilver,
-                      )),
-                    ),
                 ],
               ),
-
-              const Spacer(),
-
-              // Emoji icon
-              Center(
-                child: Container(
-                  width: 72,
-                  height: 72,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [color.withValues(alpha: 0.12), color.withValues(alpha: 0.04)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text(game['icon'] as String, style: const TextStyle(fontSize: 36)),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 12),
-
-              // Name
-              Text(
-                game['name'] as String,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w900, color: AppTheme.textDark),
-              ),
-              const SizedBox(height: 2),
-              Center(
+              child: Center(
                 child: Text(
-                  game['tamil'] as String,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: GoogleFonts.notoSansTamil().fontFamily,
-                    fontSize: 10,
-                    color: color,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  game.icon,
+                  style: TextStyle(fontSize: r.iconBubbleSize * 0.50),
                 ),
               ),
+            ),
 
-              const Spacer(),
+            SizedBox(width: r.sw * 0.04),
 
-              // Play Button
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [color, color.withValues(alpha: 0.85)],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
+            // Text content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        game.name,
+                        style: GoogleFonts.outfit(
+                          fontSize: r.listNameFont,
+                          fontWeight: FontWeight.w900,
+                          color: AppTheme.textDark,
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: r.sw * 0.02,
+                          vertical: r.sh * 0.004,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(colors: game.gradientColors),
+                          borderRadius: BorderRadius.circular(r.sw * 0.02),
+                        ),
+                        child: Text(
+                          game.xp,
+                          style: GoogleFonts.outfit(
+                            fontSize: r.xpFont,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: color.withValues(alpha: 0.25),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
+                  SizedBox(height: r.sh * 0.004),
+                  Text(
+                    game.nameTamil,
+                    style: TextStyle(
+                      fontFamily: GoogleFonts.notoSansTamil().fontFamily,
+                      fontSize: r.tamilFont,
+                      color: game.gradientColors[0],
+                      fontWeight: FontWeight.bold,
                     ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 16),
-                    const SizedBox(width: 4),
-                    Text(
-                      'PLAY',
-                      style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 0.5),
-                    ),
-                  ],
-                ),
+                  ),
+                  SizedBox(height: r.sh * 0.007),
+                  Row(
+                    children: [
+                      _Stars(
+                        n: game.difficulty,
+                        color: game.gradientColors[0],
+                        size: r.starSize,
+                      ),
+                      SizedBox(width: r.sw * 0.02),
+                      Expanded(
+                        child: Text(
+                          game.description,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.outfit(
+                            fontSize: r.xpFont,
+                            color: AppTheme.textSlate.withValues(alpha: 0.7),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+
+            SizedBox(width: r.sw * 0.03),
+
+            // Arrow button
+            Container(
+              width: r.arrowBtnSize,
+              height: r.arrowBtnSize,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: game.gradientColors),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.arrow_forward_rounded,
+                  color: Colors.white, size: r.arrowBtnSize * 0.45),
+            ),
+          ],
         ),
       ),
     );
@@ -765,78 +776,195 @@ class _GamesHubScreenState extends State<GamesHubScreen>
 }
 
 // ─────────────────────────────────────────────────
-//  STICKY CATEGORY TAB BAR DELEGATE
+//  STAR DIFFICULTY INDICATOR
 // ─────────────────────────────────────────────────
-class _CategoryTabDelegate extends SliverPersistentHeaderDelegate {
-  final TabController tabController;
-  final List<_GameCategory> categories;
-
-  _CategoryTabDelegate({required this.tabController, required this.categories});
-
-  @override
-  double get minExtent => 72;
-  @override
-  double get maxExtent => 72;
+class _Stars extends StatelessWidget {
+  final int n;
+  final Color color;
+  final double size;
+  const _Stars({required this.n, required this.color, required this.size});
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      color: AppTheme.backgroundLight,
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-      child: Container(
-        height: 56,
-        decoration: BoxDecoration(
-          color: AppTheme.topoLight,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppTheme.topoSilver.withValues(alpha: 0.5)),
-        ),
-        child: TabBar(
-          controller: tabController,
-          indicatorSize: TabBarIndicatorSize.tab,
-          indicatorPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-          indicator: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                categories[tabController.index].gradientColors[0],
-                categories[tabController.index].gradientColors[1],
-              ],
-            ),
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: categories[tabController.index].gradientColors[0].withValues(alpha: 0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          labelColor: Colors.white,
-          unselectedLabelColor: AppTheme.textGray,
-          splashFactory: NoSplash.splashFactory,
-          overlayColor: WidgetStateProperty.all(Colors.transparent),
-          labelStyle: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w900),
-          unselectedLabelStyle: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w700),
-          tabs: categories.map((cat) {
-            return Tab(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(cat.icon, size: 16),
-                  const SizedBox(height: 2),
-                  Text(
-                    cat.title.split(' ').first,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
+  Widget build(BuildContext context) {
+    return Row(
+      children: List.generate(
+        3,
+        (i) => Icon(
+          i < n ? Icons.star_rounded : Icons.star_outline_rounded,
+          size: size,
+          color: i < n ? color : color.withValues(alpha: 0.2),
         ),
       ),
     );
   }
+}
+
+// ─────────────────────────────────────────────────
+//  DIFFICULTY BOTTOM SHEET
+// ─────────────────────────────────────────────────
+class _DifficultySheet extends StatelessWidget {
+  final _GameItem game;
+  const _DifficultySheet({required this.game});
 
   @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => true;
+  Widget build(BuildContext context) {
+    final r = _Rsp.of(context);
+    const levels = [
+      {'title': 'Easy', 'tamil': 'எளிய நிலை', 'desc': 'Simple letters & 2–3 letter words', 'hex': 0xFF4CAF50},
+      {'title': 'Medium', 'tamil': 'நடுத்தர நிலை', 'desc': 'Common vocabulary & daily words', 'hex': 0xFFFF9800},
+      {'title': 'Hard', 'tamil': 'கடின நிலை', 'desc': 'Complex words & challenges', 'hex': 0xFFF44336},
+      {'title': 'Expert', 'tamil': 'நிபுணர் நிலை', 'desc': 'Advanced vocabulary & speed', 'hex': 0xFF9C27B0},
+    ];
+
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(r.sw * 0.08)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.15),
+            blurRadius: 30,
+            offset: const Offset(0, -10),
+          )
+        ],
+      ),
+      padding: EdgeInsets.fromLTRB(
+        r.hPad,
+        r.sh * 0.015,
+        r.hPad,
+        r.sh * 0.05,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Handle
+          Container(
+            width: r.sw * 0.1,
+            height: r.sh * 0.005,
+            decoration: BoxDecoration(
+              color: AppTheme.topoSilver,
+              borderRadius: BorderRadius.circular(r.sw * 0.01),
+            ),
+          ),
+          SizedBox(height: r.sh * 0.028),
+
+          // Game identity row
+          Row(
+            children: [
+              Container(
+                width: r.sheetIconSize,
+                height: r.sheetIconSize,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: game.gradientColors),
+                  borderRadius: BorderRadius.circular(r.sw * 0.04),
+                ),
+                child: Center(
+                  child: Text(game.icon,
+                      style: TextStyle(fontSize: r.sheetIconSize * 0.5)),
+                ),
+              ),
+              SizedBox(width: r.sw * 0.04),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(game.name,
+                      style: GoogleFonts.outfit(
+                          fontSize: r.sheetTitleFont,
+                          fontWeight: FontWeight.w900,
+                          color: AppTheme.textDark)),
+                  Text(game.nameTamil,
+                      style: TextStyle(
+                        fontFamily: GoogleFonts.notoSansTamil().fontFamily,
+                        fontSize: r.sheetSubFont,
+                        color: game.gradientColors[0],
+                        fontWeight: FontWeight.bold,
+                      )),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: r.sh * 0.01),
+          Text('Choose your difficulty level',
+              style: GoogleFonts.outfit(
+                  fontSize: r.sheetSubFont,
+                  color: AppTheme.textSlate)),
+          SizedBox(height: r.sh * 0.025),
+
+          // Difficulty rows
+          ...levels.map((lv) {
+            final color = Color(lv['hex']! as int);
+            final title = lv['title']! as String;
+            return Padding(
+              padding: EdgeInsets.only(bottom: r.sh * 0.012),
+              child: GestureDetector(
+                onTap: () {
+                  AudioFeedbackService.playTap();
+                  Navigator.pop(context);
+                  Navigator.push(context,
+                      FadeInSlidePageRoute(page: game.screenBuilder(title)));
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: r.sw * 0.04,
+                    vertical: r.sh * 0.016,
+                  ),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(r.sw * 0.045),
+                    border:
+                        Border.all(color: color.withValues(alpha: 0.15), width: 1.5),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: r.sw * 0.025,
+                        height: r.sw * 0.025,
+                        decoration:
+                            BoxDecoration(color: color, shape: BoxShape.circle),
+                      ),
+                      SizedBox(width: r.sw * 0.035),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(title,
+                                    style: GoogleFonts.outfit(
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: r.diffTitleFont,
+                                        color: AppTheme.textDark)),
+                                SizedBox(width: r.sw * 0.02),
+                                Text(
+                                  '• ${lv['tamil']}',
+                                  style: TextStyle(
+                                    fontFamily:
+                                        GoogleFonts.notoSansTamil().fontFamily,
+                                    fontSize: r.xpFont,
+                                    color: color,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Text(lv['desc']! as String,
+                                style: GoogleFonts.outfit(
+                                    fontSize: r.diffDescFont,
+                                    color: AppTheme.textSlate)),
+                          ],
+                        ),
+                      ),
+                      Icon(Icons.arrow_forward_ios_rounded,
+                          size: r.sw * 0.033,
+                          color: color.withValues(alpha: 0.6)),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
 }
